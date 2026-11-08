@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="theme-color" content="#f5f8ff" />
+<title>小通同学 · 校园事务一站通</title>
+<meta name="description" content="把请假、报修、开证明、报销等校园事务收进一个对话框：事务问答给分步骤答案，一键办事生成可打印请假条，智能问数直出课表、空教室与图书馆座位。参赛原型，全部为虚构脱敏模拟数据。" />
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<div class="page">
+
+  <!-- 1. 顶栏 -->
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="小通同学首页">
+      <span class="brand-mark" aria-hidden="true">通</span>
+      <span class="brand-text">
+        <strong>小通同学</strong>
+        <small>校园事务一站通</small>
+      </span>
+    </a>
+    <div class="topbar-right">
+      <button class="intro-btn" id="introBtn" type="button" aria-label="查看介绍">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.4v.2"/></svg>
+        介绍
+      </button>
+      <span class="demo-chip">参赛原型 · 模拟数据</span>
+    </div>
+  </header>
+
+  <!-- 2. 轻量身份选择器：非登录，选择结果只存浏览器本地 -->
+  <div class="identity-bar">
+    <label for="identitySelect"><span class="id-dot" aria-hidden="true"></span>当前身份</label>
+    <select id="identitySelect" aria-label="当前身份"></select>
+    <span class="identity-hint" id="identityHint">切换即时生效 · 本地保存 · 无需登录</span>
+  </div>
+
+  <main id="top">
+
+    <!-- 3. 对话窗口：占满内容区宽度 -->
+    <section class="workspace" aria-label="对话窗口">
+      <div class="chat-card">
+        <div class="chat-head">
+          <span class="mini-avatar">通</span>
+          <div class="chat-head-text">
+            <strong>和小通同学聊聊</strong>
+            <small>把事说一句话就行，我来判断该「答」、该「办」还是该「查」</small>
+          </div>
+          <span class="ai-chip" id="aiStatus">AI 意图识别 · 连接中</span>
+        </div>
+
+        <div class="chat-log" id="chatLog" role="log" aria-live="polite">
+          <div class="msg msg-bot">
+            <span class="bubble-avatar">通</span>
+            <div class="bubble">
+              <p>你好，我是<strong>小通同学</strong> 👋 办一件事不用跑五个入口。</p>
+              <p>可以直接问流程、说「我要请假三天」，或者查课表、空教室和图书馆座位：</p>
+              <div class="quick-chips">
+                <button type="button" data-q="请假流程">请假流程</button>
+                <button type="button" data-q="在读证明去哪开">在读证明去哪开</button>
+                <button type="button" data-q="报销要哪些材料">报销要哪些材料</button>
+                <button type="button" data-q="我要请假三天" class="quick-do">我要请假三天</button>
+                <button type="button" data-q="我明天有什么课" class="quick-data">我明天有什么课</button>
+                <button type="button" data-q="图书馆还有座位吗" class="quick-data">图书馆还有座位吗</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer">
+          <button class="faq-open-btn" id="faqOpenBtn" type="button">
+            <span class="faq-open-ico" aria-hidden="true">☰</span>
+            <span class="faq-open-main">30 条高频问答 · 点开看看</span>
+            <span class="faq-open-sub">10 类 · 每类 3 条</span>
+            <span class="faq-open-arrow" aria-hidden="true">›</span>
+          </button>
+          <div class="composer-box">
+            <textarea id="userInput" rows="1" placeholder="例如：请假流程 / 我要请假三天 / 我明天有什么课" aria-label="输入你的问题"></textarea>
+            <button id="sendBtn" class="send-btn" type="button" aria-label="发送">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 20 4l-7.5 16-2.2-6.3z"/></svg>
+            </button>
+          </div>
+          <div class="composer-hint">
+            <span>Enter 发送 · Shift + Enter 换行</span>
+            <span id="modeHint">内容库：云数据库</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. 页脚 -->
+    <footer class="footer">
+      <span>模拟数据 · 不接真实学校系统 · 无需登录</span>
+    </footer>
+  </main>
+</div>
+
+<!-- ===== 首次访问引导弹窗：首屏全部内容都在这里 ===== -->
+<div class="modal-backdrop intro-backdrop" id="introModal" hidden>
+  <div class="modal intro-dialog" role="dialog" aria-modal="true" aria-labelledby="heroTitle">
+    <button class="intro-close" id="closeIntro" type="button" aria-label="关闭介绍">×</button>
+    <div class="intro-scroll">
+
+      <!-- 上半：左文案 / 右示意图 -->
+      <div class="intro-grid">
+        <div class="intro-copy">
+          <span class="eyebrow">给高校在校生与教职工的校园事务小助手</span>
+          <h1 id="heroTitle">办一件事，<em>不用跑五个入口</em></h1>
+          <p class="hero-lead">
+            请假要去教务系统，报修要找后勤，开证明要跑 OA，社团活动还要翻通知……
+            入口分散、流程看不懂、只能反复问人。<strong>「小通同学」把这些事收进一个对话框</strong>：先问清楚，再一步办完。
+          </p>
+          <div class="hero-actions">
+            <button class="btn btn-primary" type="button" data-demo="请假流程">试试问一句：请假流程</button>
+            <button class="btn btn-ghost" type="button" data-demo="我要请假三天">试试办一件：我要请假三天</button>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="true">
+          <div class="visual-title">以前：一件事，四个地方找</div>
+          <div class="entry-grid">
+            <span class="entry e1">教务系统</span>
+            <span class="entry e2">OA 办公</span>
+            <span class="entry e3">后勤平台</span>
+            <span class="entry e4">社团通知</span>
+          </div>
+          <div class="flow-lines">
+            <svg viewBox="0 0 300 62" preserveAspectRatio="none">
+              <path d="M38 2 C 38 34, 140 26, 150 56" />
+              <path d="M112 2 C 112 32, 146 28, 150 56" />
+              <path d="M188 2 C 188 32, 154 28, 150 56" />
+              <path d="M262 2 C 262 34, 160 26, 150 56" />
+            </svg>
+          </div>
+          <div class="one-box">
+            <div class="one-box-head"><span class="mini-avatar">通</span><b>现在：一个对话框</b></div>
+            <div class="one-box-row"><span class="dot dot-qa"></span>事务问答 → 分步骤答案</div>
+            <div class="one-box-row"><span class="dot dot-do"></span>一键办事 → 请假条 + 审批顺序</div>
+            <div class="one-box-row"><span class="dot dot-data"></span>智能问数 → 结论 + 明细</div>
+          </div>
+          <div class="visual-foot">示意 · 全部为虚构流程</div>
+        </div>
+      </div>
+
+      <!-- 中间：数据证据（数值/来源全部来自 evidence.js） -->
+      <div class="evidence" id="evidence" aria-label="数据依据"></div>
+
+      <!-- 底部：三个能力紧凑一行 -->
+      <div class="intro-caps" aria-label="本版三个能力">
+        <div class="intro-cap">
+          <span class="intro-cap-ico blue" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v9a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.5v-3.5A2.5 2.5 0 0 1 4 14.5z"/><path d="M8 8h8M8 11.5h5"/></svg>
+          </span>
+          <div><b>事务问答</b><span>分步骤讲清去哪办、带什么、多久</span></div>
+        </div>
+        <div class="intro-cap">
+          <span class="intro-cap-ico orange" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M7 3h10a1 1 0 0 1 1 1v16l-3-2-3 2-3-2-3 2V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
+          </span>
+          <div><b>一键办事</b><span>说一句「我要请假三天」，直接出请假条</span></div>
+        </div>
+        <div class="intro-cap">
+          <span class="intro-cap-ico mint" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M4 19V9M9 19V5M14 19v-7M19 19v-4"/><path d="M3 19h18"/></svg>
+          </span>
+          <div><b>智能问数</b><span>课表、空教室、图书馆座位，问一句出结果</span></div>
+        </div>
+      </div>
+
+      <div class="intro-foot">模拟数据 · 不接真实学校系统 · 无需登录</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 30 条高频问答弹窗 ===== -->
+<div class="modal-backdrop faq-backdrop" id="faqModal" hidden>
+  <div class="modal faq-dialog" role="dialog" aria-modal="true" aria-labelledby="faqTitle">
+    <div class="modal-head">
+      <div>
+        <span class="pill faq-pill">内容库</span>
+        <h2 id="faqTitle">30 条高频问答</h2>
+      </div>
+      <button class="icon-btn" id="closeFaq" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="faq-body">
+      <p class="faq-intro">10 个分类 · 每类 3 条 · 点任意一条，直接把答案发到对话里</p>
+      <div id="faqList"></div>
+      <div class="faq-foot">三段式答案：分步骤办理 · 去哪办 · 大概耗时 ｜ 全部为虚构脱敏模拟数据，学生以同学A / B / C 代称</div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 一键办事：请假表单 / 生成结果 ===== -->
+<div class="modal-backdrop" id="leaveModal" hidden>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
+    <div class="modal-head">
+      <div>
+        <span class="pill">一键办事</span>
+        <h2 id="leaveTitle">请假条生成</h2>
+      </div>
+      <button class="icon-btn" id="closeModal" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="modal-body" id="leaveBody"></div>
+  </div>
+</div>
+
+<!-- 云服务 SDK：CDN @dev 优先，失败时用本地同版本副本 -->
+<script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js" onerror="window.__sdkCdnFailed=true"></script>
+<script>if (window.__sdkCdnFailed || !window.WorkBuddyCloud) { document.write('<script src="./vendor/workbuddy-cloud-sdk.global.js"><\/script>'); }</script>
+<script src="config.js"></script>
+<script src="evidence.js"></script>
+<script src="faqs.js"></script>
+<script src="campus-data.js"></script>
+<script src="data-query.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

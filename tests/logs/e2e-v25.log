@@ -1,0 +1,56 @@
+
+=== 静态源码检查（不依赖浏览器） ===
+PASS  四 · 30 问答 / 云数据库种子 / 门禁 / 医生预约 / 主色毛玻璃等 12 文件一字未改  {"checked":12,"changed":[]}
+PASS  一 · 方位词文案不写死在 HTML（无「右边 / 右侧 / 右边的球」，长 placeholder 已移除）  {"hasV25":true}
+PASS  一 · JS 用 matchMedia(1024) 动态生成文案，并监听 change + resize 实时刷新
+PASS  一 · 三处方位词（欢迎语 / 模块概览 / 我的预约空态）都改为 dirSpan 动态节点
+PASS  二 · 「去点球」按钮由 JS 生成，携带 major/minor + group（+mod）
+PASS  二 · 按钮样式 13px / #1E8C82 / rgba(42,167,155,.08) / 999px / 6px 14px / 居右 / 桌面 none
+PASS  三 · 抽屉展开高度由 82vh 下调到 76vh（且不低于 70vh）  {"height":"76vh"}
+PASS  三 · 舞台展开态小球同步缩小上移（translateY 负值 + scale < 1）
+PASS  二 · 高亮复用既有 orbHot 600ms（1 → 1.15 → 1 + 光晕），并新增中球/聚焦出口
+PASS  四 · 大球名 / 九子分类 / 投影公式 / 分裂动画代码未改
+
+=== 桌面端 (1440x1000) ===
+PASS  一 · 桌面欢迎语方位短语 =「点右边的球」（JS 动态生成）  {"dWelcome":"点右边的球"}
+PASS  三 · 桌面 placeholder 保留完整版本  {"dPh":"例如：我肚子疼怎么办 / 我睡不着 / 这周睡眠质量如何"}
+PASS  验收1 · 桌面点大球，说明文案含「点右边的球看看。」且不含手机文案  {"hint":"点右边的球看看。","tail":"食序，也就是饮食健康。包含三个模块：菜品营养、饮食记录、食堂安全。点右边的球看看。"}
+PASS  验收4 · 桌面端「去点球」按钮 display:none  {"text":"去点球 →","display":"none","go":"major","group":"food","mod":null,"w":0,"rightGap":1440}
+SHOT  v25-desktop-major.png  851524 bytes
+
+=== 验收3 · 宽 → 窄 实时切换（不刷新页面） ===
+PASS  验收2 · 手机端点大球，说明文案是「收起对话，点上面的球看看。」  {"mHint":"收起对话，点上面的球看看。"}
+PASS  验收3 · 窗口从宽拖到窄，同一条已渲染文案实时切换（未 reload）  {"before":"点右边的球看看。","after":"收起对话，点上面的球看看。","welcome":"点上面的球"}
+PASS  验收7 · 手机 placeholder 切为短版「例如：我肚子疼怎么办」  {"mPh":"例如：我肚子疼怎么办"}
+PASS  验收4 · 拖窄后「去点球」按钮即时可见（DOM 常驻 + CSS 断点）  {"text":"去点球 →","display":"block","go":"major","group":"food","mod":null,"w":84,"rightGap":43}
+SHOT  v25-narrow-major.png  260993 bytes
+PASS  验收3 · 窄 → 宽 也能实时切回桌面文案  {"hint":"点右边的球看看。","ph":"例如：我肚子疼怎么办 / 我睡不着 / 这周睡眠质量如何"}
+
+=== 手机端 (390x844) 独立流程 ===
+PASS  验收7 · 手机 placeholder 不截断（文本像素宽 + 内边距 ≤ 输入框宽）  {"textW":140,"boxW":297,"padL":2,"padR":2,"font":"14px -apple-system, BlinkMacSystemFont, \"PingFang SC\", \"Hiragino Sans GB\", \"Microsoft YaHei\", sans-serif"}
+PASS  验收8 · 抽屉展开后上方可见带内三个缩小大球完整可见  {"topbarBottom":56,"drawerTop":203,"vh":844,"chatH":641,"shrunk":true,"balls":[{"id":"food","top":65,"bottom":102,"left":176,"right":214,"w":37,"h":37},{"id":"sleep","top":128,"bottom":165,"left":213,"right":250,"w":37,"h":37},{"id":"sport","top":128,"bottom":165,"left":140,"right":177,"w":37,"h":37}]}
+SHOT  v25-mobile-drawer-open.png  130949 bytes
+PASS  二 · 手机端模块概览卡片下方有「去点球 →」按钮，属性指向 food 大球  {"text":"去点球 →","display":"block","go":"major","group":"food","mod":null,"w":84,"rightGap":43}
+SHOT  v25-mobile-go-btn.png  131438 bytes
+PASS  验收5 · 点「去点球」后抽屉走既有逻辑收起（drawer-open / orb-shrunk 均清除）  {"open":false,"shrunk":false}
+SHOT  v25-mobile-hot-pulse.png  261500 bytes
+PASS  验收5 · 收起完成后 food 大球脉冲高亮，持续 ≈600ms 且用 orbHot 动画  {"hits":11,"spanMs":620,"first":525,"last":1145,"css":{"name":"orbHot","dur":"0.6s"}}
+PASS  验收5 · 高亮结束后恢复常态（is-hot 移除，回到大球层静止态）  {"hot":false,"root":true}
+SHOT  v25-mobile-hot-major.png  259847 bytes
+PASS  验收6 · 点中球后卡片也有「去点球」按钮，指向 minor / food / 菜品营养  {"text":"去点球 →","display":"block","go":"minor","group":"food","mod":"菜品营养","w":84,"rightGap":43}
+PASS  验收6 · 中球按钮行为一致：抽屉收起 + 对应中球高亮 ≈600ms  {"closed":true,"hits":12,"spanMs":559}
+SHOT  v25-mobile-hot-minor.png  261034 bytes
+PASS  验收9 · 抽屉 3 轮展开/收起状态正确、过渡 320ms 无卡顿、无横向溢出  {"trans":{"dur":"0.32s","prop":"transform","timing":"cubic-bezier(0.22, 1, 0.36, 1)"},"hs":{"sw":390,"iw":390}}
+PASS  一 · 我的预约空态也按设备生成方位短语（手机＝「点上面的校医院球」）  {"empty":"你还没有预约记录。点上面的校医院球可以发起预约。"}
+
+=== 保留项回归 ===
+PASS  四 · 30 条问答与匹配算法不变（沿用 v24 同一用例：食堂几点开饭 → top=1）  {"n":30,"q1":"食堂几点开饭","source":"cloud","best":1,"top":1}
+PASS  四 · 10 个分类标签前三类仍为 食序/息衡/动跃，其余 7 类不变  ["食序","息衡","动跃","校医就诊","心理健康","常见病症","用药常识","体检体测","急救常识","健康档案"]
+PASS  四 · 医生列表三卡与动态预约按钮不变、无「查看排班」  {"open":true,"cards":3,"btns":["预约 明日 08:00","立即预约","预约 明日 00:00"]}
+PASS  四 · 原有「我要请假」流程完全不受影响  {"open":true,"form":true,"title":"请假条生成"}
+PASS  四 · 背景 / 主色 / 毛玻璃基线未变（bg-v2.css 与 polish.css 文件哈希已校验）  {"bg":"rgb(247, 250, 249)","blue":"#2AA79B"}
+SHOT  v25-mobile-final.png  140218 bytes
+PASS  验收10 · 全流程 0 未捕获 jsError / console.error  {"count":0,"sample":[]}
+
+================ 汇总 ================
+PASS 35/35

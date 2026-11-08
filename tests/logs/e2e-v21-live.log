@@ -1,0 +1,11 @@
+PASS  线上 · 首页引用 bg-v2.css  ["styles.css","orb-view.css","split.css","gate.css","doctors.css","polish.css","bg-v2.css"]
+PASS  线上 · 桌面图 cover/center/fixed/#F7FAF9 生效  {"img":"url(\"https://xiaotong-campus.app.workbuddy.host/bg-desktop-v2.png\")","size":"cover","pos":"50% 50%","attach":"fixed","color":"rgb(247, 250, 249)"}
+PASS  线上 · 三个新资源在浏览器会话内均为 200  {"bg-v2.css":{"status":200,"type":"text/css"},"bg-desktop-v2.png":{"status":200,"type":"image/png"},"bg-mobile-v2.png":{"status":200,"type":"image/png"}}
+PASS  线上 · 桌面 PNG 解码 1920x1064  [1920,1064]
+PASS  线上 · 左栏 .58 磨砂 / 右栏+舞台透明 / 顶栏纯白 / 中心遮罩在  {"chat":"rgba(255, 255, 255, 0.58)","chatBf":"blur(24px) saturate(1.4)","orb":"rgba(0, 0, 0, 0)","scene":"none","topbar":"rgb(255, 255, 255)"}
+PASS  线上 · 背景图资源实际下载成功（performance 非空）  [{"name":"bg-v2.css","bytes":2739,"status":200},{"name":"bg-desktop-v2.png","bytes":993218,"status":200},{"name":"bg-v2.css","bytes":2739,"status":200},{"name":"bg-desktop-v2.png","bytes":993218,"status":200},{"name":"bg-mobile-v2.png","bytes":787671,"status":200},{"name":"bg-desktop-v2.png","bytes":993218,"status":200}]
+SHOT  v21-live-desktop.png  846927 bytes
+PASS  线上 · 390px 自动切到 bg-mobile-v2.png  "url(\"https://xiaotong-campus.app.workbuddy.host/bg-mobile-v2.png\")"
+PASS  线上 · 无 jsError  []
+
+==== LIVE 8/8 PASS ====

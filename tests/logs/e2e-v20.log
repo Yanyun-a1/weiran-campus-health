@@ -1,0 +1,42 @@
+
+=== 桌面端 (1440x1000) 环境光 / 毛玻璃 / 圆角 ===
+PASS  验收1 · body 两层极淡光晕(青绿.07/淡紫.05)+#F7FAF9 底色  {"img":"radial-gradient(900px 700px at 12% 8%, rgba(42, 167, 155, 0.07), rgba(0, 0, 0, 0) 62%), radial-gradient(800px 600px at 88% 92%, rgba(107, 123, 232, 0.05), rgba(0, 0, 0, 0) 62%), none","color":"rgb(247, 250, 249)"}
+PASS  验收1b · 左栏 rgba(247,250,249,.72) 半透明 / 右栏与顶栏纯白不透  {"chat":"rgba(247, 250, 249, 0.72)","orb":"rgb(255, 255, 255)","orbBf":"none","topbar":"rgb(255, 255, 255)"}
+PASS  硬约束 · 桌面无横向滚动条  {"sw":1440,"iw":1440}
+PASS  验收2 · AI 气泡毛玻璃(rgba.72 / blur20 saturate140 / 白缘 / 柔影)  {"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)","border":"1px solid rgba(255, 255, 255, 0.7)","shadow":"rgba(31, 58, 54, 0.06) 0px 8px 32px 0px","radius":"4px 20px 20px"}
+PASS  验收2b · 快捷胶囊毛玻璃 + 999px 圆角保持  {"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)","border":"1px solid rgba(255, 255, 255, 0.7)","shadow":"rgba(31, 58, 54, 0.06) 0px 8px 32px 0px","radius":"999px"}
+PASS  验收2c · 底部两个按钮毛玻璃(FAQ/我的预约)  {"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)","border":"1px solid rgba(255, 255, 255, 0.7)","shadow":"rgba(31, 58, 54, 0.06) 0px 8px 32px 0px","radius":"11px"}
+PASS  硬约束 · 用户气泡仍为青绿实心、不加毛玻璃  {"bg":"rgb(42, 167, 155)","bf":"none","border":"0px none rgb(255, 255, 255)","shadow":"rgba(42, 167, 155, 0.18) 0px 5px 14px 0px","radius":"16px 16px 4px"}
+PASS  验收3 · 小球舞台纯白，舞台/小球各层均无 backdrop-filter  {".pane-orb":"none",".orb-view":"none",".orb-scene":"none",".orb-stage":"none",".orb-skin":"none",".orb-item":"none",".orb-center":"none"}
+PASS  验收3b · 小球视图结构未受损(3 大球 / 3 条虚线 / 中心球在)  {"majors":3,"links":3}
+PASS  验收4 · AI 气泡圆角 20px(保留 4px 左上切角)  {"bot":"4px 20px 20px","botTL":"4px","user":"16px 16px 4px","userBR":"4px","chip":"999px"}
+PASS  验收4b · 用户气泡保持原样 16px + 右下角 4px 切角 / 胶囊仍 999px  {"bot":"4px 20px 20px","botTL":"4px","user":"16px 16px 4px","userBR":"4px","chip":"999px"}
+PASS  验收5 · 主色 #2AA79B 未改(--blue / 头像 / 用户气泡一致)  {"v":"#2AA79B","avatar":"rgb(42, 167, 155)","user":"rgb(42, 167, 155)"}
+SHOT  v20-desktop-initial.png  436042 bytes
+PASS  验收2d · 医生列表弹窗容器毛玻璃 + 圆角 24px  {"glass":{"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)","radius":"24px"},"w":720}
+PASS  验收2e · 三张医生卡片毛玻璃 + 圆角 20px  {"glass":{"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)","radius":"20px"},"n":3}
+PASS  验收5b · 主色实心「立即预约」按钮未被改动  {"btn":"rgb(42, 167, 155)"}
+PASS  硬约束 · 医生弹窗打开时无横向滚动条  {"sw":1440,"iw":1440}
+SHOT  v20-desktop-doctors.png  246812 bytes
+PASS  验收2f · 请假表单弹窗容器毛玻璃 + 圆角 24px  {"glass":{"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)","radius":"24px"}}
+PASS  功能回归 · 预约流程仍完整(表单打开/理由预填/提交按钮)  {"open":true,"form":true,"reason":"因身体不适，需前往校医院就诊，申请病假半天（4 小时）。","submit":"提交请假申请"}
+SHOT  v20-desktop-booking.png  212398 bytes
+PASS  验收6 · 拖动期间小球舞台不被模糊、所有毛玻璃临时关闭  {"dragging":true,"bubbleBf":"none","btnBf":"none","orbBf":"none"}
+PASS  验收6b · 松手后毛玻璃自动恢复、拖动标记清除  {"restored":"blur(20px) saturate(1.4)","dragging":false}
+PASS  验收6c · 拖动过程帧间隔平稳(rAF 采样,无掉帧)  {"n":40,"avg":16.7,"max":16.8}
+PASS  功能回归 · 「我的预约」空态提示仍正常
+PASS  功能回归 · 三段式分裂动画仍正常(进入中球层)  {"sub":true}
+PASS  功能回归 · 三条虚线仍在(投影重算未受影响)
+
+=== 手机端 (390x844) 毛玻璃 / 无溢出 ===
+PASS  验收7 · 手机 390 左栏半透明 / 小球舞台纯白 / 顶栏纯白  {"chat":"rgba(247, 250, 249, 0.72)","orb":"rgb(255, 255, 255)","topbar":"rgb(255, 255, 255)"}
+PASS  验收7b · 手机抽屉把手条毛玻璃正常  {"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)","border":"1px solid rgba(255, 255, 255, 0.7)","shadow":"rgba(31, 58, 54, 0.06) 0px 8px 32px 0px","radius":"20px 20px 0px 0px"}
+PASS  验收7c · 手机 AI 气泡 / 快捷胶囊毛玻璃正常  {"bubble":"blur(20px) saturate(1.4)","chip":"blur(20px) saturate(1.4)"}
+PASS  验收7d · 390px 无横向溢出  {"sw":390,"iw":390}
+SHOT  v20-mobile-initial.png  92264 bytes
+PASS  验收7e · 手机医生弹窗毛玻璃 + 24px 圆角 + 92vw + 竖堆 + 不溢出  {"w":359,"radius":"24px","grid":"328.797px","hs":{"sw":390,"iw":390},"bf":"blur(20px) saturate(1.4)"}
+PASS  硬约束 · 手机弹窗不遮挡顶栏  {"backdropTop":56,"topbarBottom":56}
+SHOT  v20-mobile-doctors.png  61004 bytes
+PASS  验收8 · 全流程无 jsError  []
+
+==== 31/31 PASS ====

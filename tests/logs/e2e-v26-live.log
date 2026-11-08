@@ -1,0 +1,60 @@
+
+=== 静态源码检查（不依赖浏览器） ===
+PASS  保留不动 · 18 个既有文件（小球/问答/云数据库/门禁/医生/主色毛玻璃）一字未改  {"checked":18,"changed":[]}
+PASS  一 · 棱镜文案只在桌面这一处，HTML 有 v26.css / v26.js 引用
+PASS  一 · 完整渐变配方 / 220% / clip:text / 柔光 / 9s 流动 / 光斑伪元素
+PASS  一 · 降级 / reduced-motion / 拖动暂停 / 手机隐藏 / 不占布局不拦拖拽
+PASS  二 · 把手条：背景 .92 / 顶部淡蓝 1px / 44×4 渐变横线 / 深蓝 600 文字 / ↑ 箭头
+PASS  二 · 首次引导 400ms：0→200ms ease-out 上移 10px，200→400ms ease-in 回落
+PASS  二 · 引导只用 sessionStorage + 不改抽屉 transform / 不介入拖拽
+
+=== 桌面端 (1440x1000) 棱镜渐变文案 ===
+PASS  验收1 · 舞台上方显示「未然 · 防患于未然」，蓝紫青渐变文字（clip:text + 透明填充）  {"text":"未然 · 防患于未然","clip":"text","fill":"rgba(0, 0, 0, 0)"}
+PASS  验收2 · 文字柔光 drop-shadow + 背后 340×110 淡蓝光斑（blur 18px / z-index -1）  {"w":"340px","h":"110px","bg":"radial-gradient(rgba(79, 168, 232, 0.13) 0%, rgba(123, 140, 255, 0.08) 40%, rgba(0, 0, 0, 0) 72%)","filter":"blur(18px)","z":"-1"}
+PASS  验收3 · 渐变缓慢流动：prism-flow 9s infinite，实测背景位置随时间推进  {"name":"prism-flow","dur":"9s","size":"220% 100%"}
+PASS  验收3b · 9 秒周期内背景位置确实在移动（两次采样不同）  {"pos1":"81.0724% 50%","pos2":"96.9589% 50%"}
+PASS  验收4 · 23px / 600 / 0.12em，明显大于周围 11.5px 提示与 12.5px 按钮  {"size":"23px","weight":"600","spacing":"2.76px","orbHint":"11.5px"}
+PASS  验收5 · 浅色背景上为渐变文字 + 柔光（非纯透明消失），配色含深蓝/青绿主色
+PASS  验收6 · 两侧各 24×1px 装饰线 rgba(79,168,232,.25)，与文字垂直居中、左右各 12px  {"lines":[{"w":"24px","h":"1px","bg":"rgba(79, 168, 232, 0.25)","cy":136},{"w":"24px","h":"1px","bg":"rgba(79, 168, 232, 0.25)","cy":136}],"gaps":[12,12]}
+PASS  硬约束 · 文案在顶部 56px 水平居中，绝对定位不占布局；三大球 + 九中球共 12 个未变  {"top":"56px","wrapTop":56,"offset":0,"spheres":3,"allItems":12}
+SHOT  v26-desktop-prism.png  857906 bytes
+PASS  验收7 · 拖动小球时 prism-flow 暂停（is-dragging → animation-play-state:paused）  {"dragging":true,"state":"paused"}
+SHOT  v26-desktop-drag-paused.png  996076 bytes
+PASS  验收7b · 松手后动画自动恢复 running  {"dragging":false,"state":"running"}
+PASS  降级 · prefers-reduced-motion 开启时 prism-flow / arrow-hint 均关闭  {"prism":"none","arrow":"none"}
+
+=== 手机端 (390x844) 上拉栏 ===
+PASS  验收8 · 把手条文字「和助手聊聊」14px / 600 / 深蓝 #2B5CD9 / 0.02em  {"text":"和助手聊聊","size":"14px","weight":"600","color":"rgb(43, 92, 217)"}
+PASS  验收9 · 文字前有 ↑，15px / 700 / 深蓝，间距 6px，arrow-hint 2.4s 上浮动画  {"arrow":"↑","size":"15px","weight":"700","color":"rgb(43, 92, 217)","display":"block","anim":"arrow-hint","dur":"2.4s","gap":"6px"}
+PASS  验收9b · ↑ 箭头实测在上浮（采样到负 translateY，幅度 ≤2px）  {"frames":["matrix(1, 0, 0, 1, 0, -1.57403)","matrix(1, 0, 0, 1, 0, -1.88761)","matrix(1, 0, 0, 1, 0, -1.99925)","matrix(1, 0, 0, 1, 0, -1.92286)","matrix(1, 0, 0, 1, 0, -1.61146)","matrix(1, 0, 0, 1, 0, -1.14364)","matrix(1, 0, 0, 1, 0, -0.629126)"]}
+PASS  验收10 · 横线 44×4 / 999px，两端深蓝、中间青绿的三段渐变  {"w":"44px","h":"4px","bg":"linear-gradient(90deg, rgba(43, 92, 217, 0.3) 0%, rgba(30, 140, 130, 0.6) 50%, rgba(43, 92"}
+PASS  验收11 · 背景 .92 白 + 顶部 1px 极淡蓝边，圆角上边缘保留  {"bg":"rgba(255, 255, 255, 0.92)","radius":"20px"}
+PASS  验收16 · 手机端不显示桌面棱镜文案
+SHOT  v26-mobile-handle.png  259512 bytes
+
+=== 首次引导动效（等待 1.5s 触发） ===
+PASS  验收12 · 主界面就绪 1.5s 后把手条播放一次 400ms「上移 10px 再回落」  {"hint":{"ready":true,"scheduled":true,"played":1,"skipped":0,"suppressed":false},"log":[{"type":"start","t":4519},{"type":"end","t":4919}]}
+PASS  验收12b · 动画结束后 class 已移除，把手条回到常态（不残留 transform）
+SHOT  v26-mobile-hint.png  260116 bytes
+PASS  验收13 · 同会话刷新后不重播（sessionStorage 生效，0 次动画）  {"hint":{"ready":true,"scheduled":false,"played":0,"skipped":0,"suppressed":true},"log":[]}
+
+=== 抽屉已展开时不播（独立场景） ===
+PASS  验收14 · 抽屉已展开时不播引导（skipped=1 / played=0 / 0 次动画）  {"openedBefore":true,"hint":{"ready":true,"scheduled":true,"played":0,"skipped":1,"suppressed":false},"log":[]}
+
+=== 验收15 · 把手条点击与拖拽回归 ===
+PASS  验收15a · 点击把手条正常切换为展开  {"afterTap":true}
+PASS  验收15b · 再次点击正常收起  {"afterTap2":false}
+PASS  验收15c · 向上拖拽 >30% 正常展开，抽屉 transform 回到 class 终态  {"open":true,"tf":"matrix(1, 0, 0, 1, 0, 0)"}
+SHOT  v26-mobile-drag.png  134534 bytes
+PASS  硬约束 · 手机端无横向溢出  {"sw":390,"iw":390}
+
+=== 通用回归（问答 / 医生 / 预约 / 请假 / 主色） ===
+PASS  回归 · 30 条问答与云数据库匹配未变  {"n":30,"best":1,"source":"cloud"}
+PASS  回归 · 10 个分类标签完整（前三类显示名仍为 食序/息衡/动跃）  {"count":10,"first3":["食序","息衡","动跃"]}
+PASS  回归 · 医生列表三卡与动态预约按钮未受影响  {"n":3,"btns":["预约 明日 08:00","立即预约","预约 明日 00:00"]}
+PASS  回归 · 我的预约空态文案不变  {"empty":"你还没有预约记录。点上面的校医院球可以发起预约。"}
+PASS  回归 · 主色 #2AA79B 未变（CSS 文件哈希亦已校验）  {"theme":"#2AA79B"}
+PASS  验收17 · 全流程 0 未捕获 jsError / console.error  {"count":0,"sample":[]}
+
+================ 汇总 ================
+PASS 38/38

@@ -1,0 +1,6 @@
+PASS  真实时钟 · 当前 21 点，恰好一人在线且为 li  {"h":21,"list":[{"id":"zhang","status":"明日 08:00 在线","online":false,"btn":"预约 明日 08:00"},{"id":"li","status":"当前在线","online":true,"btn":"立即预约"},{"id":"wang","status":"明日 00:00 在线","online":false,"btn":"预约 明日 00:00"}]}
+PASS  真实时钟 · 未冻结时按钮与状态文案同步生成  ["zhang:预约 明日 08:00","li:立即预约","wang:预约 明日 00:00"]
+PASS  真实时钟 · 无 jsError  []
+SHOT  v23-realtime-doctors.png  330709 bytes
+
+==== 3/3 PASS ====

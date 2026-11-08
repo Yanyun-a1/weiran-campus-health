@@ -1,0 +1,6 @@
+.workbuddy/
+chrome-prof/
+node_modules/
+.DS_Store
+Thumbs.db
+*.tmp

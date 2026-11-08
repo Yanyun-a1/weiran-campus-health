@@ -1,0 +1,43 @@
+
+=== 资源：bg-desktop-v2.png / bg-mobile-v2.png ===
+PASS  资源 · 桌面图 200 / image/png / 1920x1064 可解码  {"status":200,"type":"image/png","w":1920,"h":1064}
+PASS  资源 · 手机图 200 / image/png / 1064x1920 可解码  {"status":200,"type":"image/png","w":1064,"h":1920}
+
+=== 桌面端 (1440x1000) 背景 / 透明层 / 遮罩 ===
+PASS  验收1 · body 桌面图 bg-desktop-v2.png / cover / center / fixed / #F7FAF9  {"img":"url(\"http://127.0.0.1:8123/bg-desktop-v2.png\")","size":"cover","pos":"50% 50%","attach":"fixed","repeat":"no-repeat","color":"rgb(247, 250, 249)"}
+PASS  验收2 · 右栏与小球舞台背景完全透明（v20 纯白 + v9 白色渐变均已清除）  {"pane":{"color":"rgba(0, 0, 0, 0)","img":"none","bf":"none"},"scene":{"color":"rgba(0, 0, 0, 0)","img":"none","bf":"none"},"view":{"color":"rgba(0, 0, 0, 0)","img":"none","bf":"none"},"shell":{"color":"rgba(0, 0, 0, 0)","img":"radial-gradient(circle closest-side, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0) 52%, rgba(255, 255, 255, 0.04) 72%, rgba(255, 255, 255, 0.14) 86%, rgba(255, 255, 255, 0.3) 94%, rgba(255, 255, 255, 0.05) 100%)","bf":"none"}}
+PASS  验收2b · 舞台/球层各层仍无 backdrop-filter（小球视觉不受污染）  {"pane":"none","scene":"none","view":"none"}
+PASS  验收3 · 左栏 rgba(255,255,255,.58) + blur(24px) saturate(140%)  {"bg":"rgba(255, 255, 255, 0.58)","bf":"blur(24px) saturate(1.4)","border":"0px none rgb(22, 35, 61)","shadow":"none","radius":"0px"}
+PASS  验收4 · 顶栏纯白不透明且无毛玻璃  {"bg":"rgb(255, 255, 255)","bf":"none","border":"0px none rgb(22, 35, 61)","shadow":"none","radius":"0px"}
+PASS  验收5 · 中心白色径向遮罩(.55 / .25 / transparent 72%) 已生成  {"content":"\"\"","img":"radial-gradient(circle, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0.25) 45%, rgba(0, 0, 0, 0) 72%)"}
+PASS  验收5b · 遮罩在球层下方(z0 < z1) / 不拦截交互 / 尺寸跟随 --shell-d  {"z":"0","stageZ":"1","pe":"none","w":"720px","shellD":720}
+PASS  硬约束 · 小球玻璃五层配方与投影公式未改（skin 渐变 / inset+外投影 / 3 大球 / 3 虚线 / 中心球）  {"majors":3,"links":3,"shadow":"rgba(0, 0, 0, 0.28) 0px 0px 24px 0px inset, rgba(255, 255, 255, 0.18) 0px -18px 26px 0px i"}
+PASS  硬约束 · AI 气泡 / 胶囊毛玻璃配方与圆角不变、用户气泡仍为青绿实心  {"bubble":{"bg":"rgba(255, 255, 255, 0.72)","bf":"blur(20px) saturate(1.4)"},"chip":"999px"}
+PASS  硬约束 · 主色 #2AA79B 与弹窗 24px 圆角未改  {"blue":"#2AA79B","radius":"24px"}
+PASS  硬约束 · 桌面无横向溢出  {"sw":1440,"iw":1440}
+SHOT  v21-desktop-initial.png  875906 bytes
+PASS  验收6 · 拖动小球时左栏磨砂临时关闭、松手恢复（沿用 v20 性能守卫）  {"during":{"dragging":true,"chatBf":"none"},"afterDrag":{"bf":"blur(24px) saturate(1.4)","dragging":false}}
+PASS  功能回归 · 点校医院打开医生弹窗（3 张卡 / 毛玻璃 / 24px）  {"open":true,"cards":3,"glass":"blur(20px) saturate(1.4)","radius":"24px"}
+SHOT  v21-desktop-doctors.png  378127 bytes
+PASS  功能回归 · 立即预约 → 专用表单打开且理由预填  {"open":true,"reason":"因身体不适，需前往校医院就诊，申请病假半天（4 小时）。"}
+PASS  功能回归 · 「我的预约」空态提示正常
+PASS  功能回归 · 三段式分裂动画仍正常
+PASS  功能回归 · 三条虚线仍在
+
+=== 平板 (820x1180) 换竖版背景图 ===
+PASS  验收7 · 820px 使用 bg-mobile-v2.png（≤1023 切换）  {"img":"url(\"http://127.0.0.1:8123/bg-mobile-v2.png\")","size":"cover","pos":"50% 50%","attach":"fixed","repeat":"no-repeat","color":"rgb(247, 250, 249)"}
+SHOT  v21-tablet.png  594740 bytes
+
+=== 手机端 (390x844) 背景 / 抽屉 / 无溢出 ===
+PASS  验收8 · 390px 使用 bg-mobile-v2.png / cover / center / fixed  {"img":"url(\"http://127.0.0.1:8123/bg-mobile-v2.png\")","size":"cover","pos":"50% 50%","attach":"fixed","repeat":"no-repeat","color":"rgb(247, 250, 249)"}
+PASS  验收8b · 手机右栏/舞台透明、左栏 .58 磨砂、顶栏纯白  {"chat":{"bg":"rgba(255, 255, 255, 0.58)","color":"rgba(255, 255, 255, 0.58)","img":"none","bf":"blur(24px) saturate(1.4)"},"pane":{"bg":"rgba(0, 0, 0, 0)","color":"rgba(0, 0, 0, 0)","img":"none","bf":"none"},"scene":{"bg":"rgba(0, 0, 0, 0)","color":"rgba(0, 0, 0, 0)","img":"none","bf":"none"},"topbar":{"bg":"rgb(255, 255, 255)","color":"rgb(255, 255, 255)","img":"none","bf":"none"},"handle":{"bg":"rgba(255, 255, 255, 0.72)","color":"rgba(255, 255, 255, 0.72)","img":"none","bf":"blur(20px) saturate(1.4)"}}
+PASS  验收8c · 手机抽屉把手仍为 v20 毛玻璃  {"bg":"rgba(255, 255, 255, 0.72)","color":"rgba(255, 255, 255, 0.72)","img":"none","bf":"blur(20px) saturate(1.4)"}
+PASS  验收8d · 390px 无横向溢出  {"sw":390,"iw":390}
+SHOT  v21-mobile-collapsed.png  263377 bytes
+PASS  功能回归 · 手机抽屉拖拽展开仍正常，且展开后仍为 .58 磨砂  {"open":true,"transform":"matrix(1, 0, 0, 1, 0, 0)","chat":"rgba(255, 255, 255, 0.58)","bf":"blur(24px) saturate(1.4)"}
+SHOT  v21-mobile-open.png  107926 bytes
+PASS  功能回归 · 手机医生弹窗不遮顶栏、92vw、毛玻璃、无溢出  {"dmM":{"open":true,"w":359,"top":56,"tb":56,"bf":"blur(20px) saturate(1.4)"},"hsM2":{"sw":390,"iw":390}}
+SHOT  v21-mobile-doctors.png  67415 bytes
+PASS  验收9 · 全流程无 jsError  []
+
+==== 27/27 PASS ====

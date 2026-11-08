@@ -1,0 +1,57 @@
+
+=== 静态源码检查（不依赖浏览器） ===
+PASS  保留不动 · 20 个既有文件（小球/问答/云数据库/门禁/医生/把手条/主色）一字未改  {"checked":20,"changed":[]}
+PASS  结构 · v27.css / v27.js 最后加载，桌面与手机文案各一处
+PASS  一 · 桌面只改 3 个尺寸值：32px / .26em / 40px 线 / 20px 间距 / 光斑 460×140 blur24
+PASS  一 · 渐变配方/220%/9s 流动/柔光/拖动暂停/手机隐藏 全部沿用 v26.css 未改
+PASS  二 · 手机端：20px/600/.2em、同套六段渐变、clip:text 透明、10px 柔光、静态无动画
+PASS  二 · 手机端：顶栏下 60px / 28px 线 / 14px 间距 / 桌面隐藏 / fixed 不拦拖拽 / 避让规则
+PASS  三 · v27.js 只读几何、不写 transform、不调用 XT_DRAWER、含中点与空隙不足避让
+
+=== 桌面 (1440x1000) 棱镜文案放大拉开 ===
+PASS  验收1 · 桌面字号 32px、字间距 .26em，明显比 v26 更大更开  {"size":"32px","spacing":"8.32px","weight":"600"}
+PASS  验收2 · 整行视觉面积更宽（文字 ≥310px、整行 ≥430px），仍不压小球  {"textW":340,"wrapW":460,"top":"56px","offset":0}
+PASS  验收3 · 两侧装饰线 40×1px rgba(79,168,232,.25)，与文字间距 20px  {"lines":[{"w":"40px","h":"1px","bg":"rgba(79, 168, 232, 0.25)","cy":142},{"w":"40px","h":"1px","bg":"rgba(79, 168, 232, 0.25)","cy":142}],"gaps":[20,20]}
+PASS  验收4 · ::before 光斑 460×140 / blur24 / z-index -1 跟着放大  {"w":"460px","h":"140px","filter":"blur(24px)","z":"-1","bg":"radial-gradient(rgba(79, 168, 232, 0.13) 0%, rgba(123, 140, 255, 0.08) 40%, rgba(0, 0, 0, 0) 72%)"}
+PASS  验收5 · 六段棱镜渐变 / 220% / clip:text / 透明填充 / 14px 柔光 / prism-flow 9s 全部不变  {"bgSize":"220% 100%","clip":"text","fill":"rgba(0, 0, 0, 0)","filter":"drop-shadow(rgba(79, 168, 232, 0.35) 0px 0px 14px)","anim":"prism-flow","dur":"9s"}
+PASS  验收5b · 渐变 9s 缓慢流动（520ms 内背景位持续变化）  {"pos1":"87.9951% 50%","pos2":"101.031% 50%"}
+PASS  通用16 · 桌面端不显示手机文案，桌面文案 fixed/absolute 不占布局、pointer-events:none  {"mobileWrap":"none","pos":"absolute","pe":"none","spheres":3,"items":12}
+PASS  验收9 · 小球位置/尺寸/投影变量在文案显隐前后完全一致（12 个球逐个对比）  {"count":12,"sample":{"id":"food/null","x":823,"y":241,"w":174,"h":174,"px":"0.00px","py":"-203.54px","sc":"1.1527"}}
+SHOT  v27-desktop-prism.png  865393 bytes
+PASS  验收5c · 拖动小球时棱镜动画暂停（保留 v26 规则）  {"dragging":true,"state":"paused"}
+SHOT  v27-desktop-drag-paused.png  1003132 bytes
+PASS  验收5d · 松手后自动恢复 running  {"dragging":false,"state":"running"}
+PASS  通用 · 桌面 1440 无横向溢出  {"sw":1440,"iw":1440,"sh":1000,"ih":1000}
+
+=== 手机 (390x844) 静态渐变文案与避让 ===
+PASS  验收6 · 手机端显示「防患于未然」，20px / 600 / .2em  {"text":"防患于未然","size":"20px","weight":"600","spacing":"4px"}
+PASS  验收6b · 同套六段渐变 / clip:text / 透明 / 10px 柔光 / 静态无流动动画  {"clip":"text","fill":"rgba(0, 0, 0, 0)","filter":"drop-shadow(rgba(79, 168, 232, 0.3) 0px 0px 10px)","anim":"none","bgSize":"100% 100%"}
+PASS  验收7 · 不与顶栏重叠、不压球舞台（文案底 < 球壳顶），水平居中  {"wrap":{"t":116,"b":144,"l":93,"w":204},"topbarBottom":56,"shellTop":227,"offset":0}
+PASS  验收7b · 位置为顶栏下方 60px（116px），fixed 且不拦拖拽  {"top":116,"pos":"fixed","pe":"none","z":"6"}
+PASS  验收8 · 两侧 28×1px 装饰线 rgba(79,168,232,.25)，与文字间距 14px  {"lines":[{"w":"28px","h":"1px","bg":"rgba(79, 168, 232, 0.25)"},{"w":"28px","h":"1px","bg":"rgba(79, 168, 232, 0.25)"}],"gap":"14px","gaps":[14,14]}
+PASS  通用16 · 手机端不显示桌面棱镜文案，12 个球仍在  {"deskWrap":"none","items":12}
+SHOT  v27-mobile-prism.png  263273 bytes
+PASS  保留不动 · 手机把手条深蓝 14px/600 文字、↑箭头动画、44×4 渐变横线、顶部淡蓝边  {"text":"和助手聊聊","size":"14px","color":"rgb(43, 92, 217)","arrow":"↑"}
+PASS  验收7c · 抽屉展开时文案淡出，不压缩小后的球舞台（300ms 收起逻辑未改动）  {"open":true,"opacity":"0","visibility":"hidden","shrunken":true}
+SHOT  v27-mobile-drawer-open.png  130245 bytes
+PASS  验收7d · 收起后文案恢复显示且位置不变  {"open":false,"opacity":"1","visibility":"visible","top":116}
+PASS  保留不动 · 把手条点击展开 / 再次点击收起功能正常  {"tapOpen":true,"tapClose":false,"hr":{"x":195,"y":808},"hr2":{"x":195,"y":229}}
+PASS  通用 · 手机 390 无横向溢出  {"sw":390,"iw":390,"sh":844,"ih":844}
+
+=== 平板 (820x1180) 与窄横屏 (1023x768) 避让 ===
+PASS  验收7e · 820 平板：文案顶栏下 60px、水平居中、不压球舞台  {"top":122,"topbarBottom":62,"shellTop":254,"wrapBottom":150}
+SHOT  v27-tablet-prism.png  592619 bytes
+PASS  验收7f · 1023×768 空隙仅 23px：自动避让（隐藏或居中），仍不压顶栏/球舞台  {"visibility":"hidden","opacity":"0","wrap":{"t":122,"b":150,"l":410,"w":204},"topbarBottom":62,"shellTop":85}
+SHOT  v27-narrow-avoid.png  429627 bytes
+
+=== 通用回归（问答 / 医生 / 预约 / 请假 / 主色） ===
+PASS  回归 · 30 条问答与云数据库匹配未变  {"n":30,"best":1}
+PASS  回归 · 10 个分类标签完整（前三类 食序/息衡/动跃）  {"count":10}
+PASS  回归 · 医生列表三卡与动态预约按钮未受影响  {"n":3,"btns":["预约 明日 08:00","立即预约","预约 明日 00:00"]}
+PASS  回归 · 我的预约空态文案不变  {"empty":"你还没有预约记录。点右侧中间的校医院球可以发起预约。"}
+PASS  回归 · 「我要请假」流程未受影响  {"open":true,"form":true}
+PASS  回归 · 主色 #2AA79B 未变  {"theme":"#2AA79B"}
+PASS  验收10 · 全流程 0 未捕获 jsError / console.error  {"count":0,"sample":[]}
+
+================ 汇总 ================
+PASS 38/38

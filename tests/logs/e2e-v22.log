@@ -1,0 +1,40 @@
+
+=== 桌面端 (1440x1000) 医生列表 / 三套预填 / 凭证卡 ===
+PASS  验收8(前置) · 「我的预约」空态文案一字未改
+PASS  验收1 · 三张卡都是预约按钮，文字为「立即预约 / 预约 16:00 / 预约明日 08:00」  [{"btn":"立即预约","cls":"dc-btn is-primary","data":"zhang"},{"btn":"预约 16:00","cls":"dc-btn is-outline","data":"li"},{"btn":"预约明日 08:00","cls":"dc-btn is-outline","data":"wang"}]
+PASS  验收2 · 「查看排班」按钮与展开提示文字均已删除  {"schedBtns":0,"schedTips":0}
+PASS  硬约束 · 卡片布局/头像/状态标签保持（3 列 / 三色头像 / 在线与灰色标签）  {"grid":"214px 214px 214px"}
+PASS  验收1b · 未在线医生按钮为绿色描边（#2AA79B 边框 / 青绿文字）  {"border":"1px rgb(42, 167, 155)","color":"rgb(30, 140, 130)","bg":"rgb(255, 255, 255)"}
+SHOT  v22-desktop-doctors.png  338510 bytes
+PASS  验收3 · 张医生：今天当前整点 → +4h、理由不含医生名  {"start":"2026-11-11T20:00","end":"2026-11-12T00:00","doctor":"张医生（内科）","reason":"因身体不适，需前往校医院就诊，申请病假半天（4 小时）。"}
+PASS  验收6a · 张医生预约时段只读字段 = 今日 HH:00 – HH:30  {"slot":"今日 20:00 – 20:30","readonly":true}
+SHOT  v22-desktop-form-zhang.png  267357 bytes
+PASS  验收4 · 李医生：16:00 → 20:00、理由含「预约李医生（外科）16:00 门诊」  {"start":"2026-11-11T16:00","end":"2026-11-11T20:00","doctor":"李医生（外科）","reason":"因身体不适，需前往校医院就诊，预约李医生（外科）16:00 门诊，申请病假半天（4 小时）。"}
+PASS  验收6b · 李医生预约时段只读 = 今日 16:00 – 16:30  {"slot":"今日 16:00 – 16:30"}
+PASS  硬约束 · 其余字段仍沿用现有自动填充（姓名/学号/班级/辅导员/病假/4 小时）  {"name":"同学A","sid":"SIM20260101","cls":"2026级1班","type":"病假","duration":"4 小时（半天）"}
+SHOT  v22-desktop-form-li.png  268562 bytes
+PASS  验收7a · 提交后表单关闭且不再出现弹窗成功页，卡片作为消息气泡进入对话流  {"modalHidden":true,"successPage":false,"inBubble":true}
+PASS  验收7b · 凭证卡内容：✅ 预约成功 / 李医生·外科 / 今日 16:00 – 16:30 / 凭证号 / 候诊提示  "✅ 预约成功医生：李医生 · 外科时段：今日 16:00 – 16:30凭证号：MOCK-20261111-001提示：请提前 10 分钟到校医院候诊"
+PASS  验收7c · 凭证号按提交日期 + 三位流水号生成  {"ymd":"20261111","txt":"✅ 预约成功医生：李医生 · 外科时段：今日 16:00 – 16:30凭证号：MOCK-20261111-001提示：请提前 10 分钟到校医院候诊"}
+PASS  验收7d · 卡片样式：白底/20px/浅青绿左边框3px/标题15px·600·#2C3A38/正文13.5px·#5A6B68·1.7/凭证号等宽12.5px·#8A9694  {"bg":"rgb(255, 255, 255)","radius":"20px","bl":"3px rgb(183, 221, 214)","h4":{"size":"15px","weight":"600","color":"rgb(44, 58, 56)"},"p":{"size":"13.5px","color":"rgb(90, 107, 104)","lh":"22.95px"},"no":{"size":"12.5px","color":"rgb(138, 150, 148)","font":"ui-monospace, SFMono-Regular, Consolas, \"Liberation Mono\", Menlo, monospace"}}
+SHOT  v22-desktop-ticket.png  857847 bytes
+PASS  验收8 · 「我的预约」显示刚提交的记录（医生/时段/等待辅导员审批/凭证号）  {"n":1,"last":"李医生（外科）· 今日 16:00 – 16:30等待辅导员审批凭证号 MOCK-20261111-001","title":"我的预约 · 1 条"}
+SHOT  v22-desktop-bookings.png  866421 bytes
+PASS  验收5 · 王医生：明日 08:00 → 12:00、理由含「预约王医生（全科）明日 08:00 门诊」  {"start":"2026-11-12T08:00","end":"2026-11-12T12:00","doctor":"王医生（全科）","reason":"因身体不适，需前往校医院就诊，预约王医生（全科）明日 08:00 门诊，申请病假半天（4 小时）。"}
+PASS  验收6c · 王医生预约时段只读 = 明日 08:00 – 08:30（固定值）  {"slot":"明日 08:00 – 08:30"}
+PASS  验收7e · 第二次提交凭证号流水递增到 -002  {"n":2,"last":"✅ 预约成功医生：张医生 · 内科时段：今日 20:00 – 20:30凭证号：MOCK-20261111-002提示：请提前 10 分钟到校医院候诊"}
+PASS  验收9 · 「我要请假」仍打开原请假条表单（无预约时段字段、无凭证卡、非 booking-mode）  {"open":true,"mode":false,"form":true,"title":"请假条生成","slot":false,"ticketInForm":false,"submit":"生成请假条 →"}
+PASS  验收9b · 请假条生成结果页仍正常（复制/打印/审批顺序链路未断）  {"doc":true,"title":"请假条已生成"}
+PASS  硬约束 · 主色/毛玻璃/圆角/小球结构/问答入口全部未改  {"blue":"#2AA79B","bubbleBg":"rgba(255, 255, 255, 0.72)","bubbleBf":"blur(20px) saturate(1.4)","bubbleRadius":"4px 20px 20px","majors":3,"links":3,"chip":"999px","doctorRadius":"24px","faqBtn":true,"faqCount":1}
+PASS  硬约束 · 桌面 1440 无横向溢出  {"sw":1440,"iw":1440}
+
+=== 手机端 (390x844) 三卡竖堆 / 按钮 / 凭证卡 ===
+PASS  验收10 · 手机三卡竖向堆叠、三个预约按钮正常且不遮顶栏  {"grid":"328.797px","btns":["立即预约","预约 16:00","预约明日 08:00"],"w":359,"top":56,"tb":56}
+SHOT  v22-mobile-doctors.png  67325 bytes
+PASS  验收10b · 手机点李医生仍能打开表单且预填一致、预约时段只读  {"start":"2026-11-11T16:00","slot":"今日 16:00 – 16:30"}
+PASS  验收10c · 手机提交后凭证卡进入对话流且抽屉自动展开可见  {"card":true,"txt":"✅ 预约成功医生：李医生 · 外科时段：今日 16:00 – 16:30凭证号：MOCK-20261111-001提示：请提前 10 分钟到校医院候诊","drawerOpen":true,"modalHidden":true}
+PASS  验收10d · 390px 无横向溢出  {"sw":390,"iw":390}
+SHOT  v22-mobile-ticket.png  123012 bytes
+PASS  验收11 · 全流程无 jsError  []
+
+==== 27/27 PASS ====

@@ -1,0 +1,75 @@
+
+=== 静态源码检查（不依赖浏览器） ===
+PASS  保留不动 · 23 个既有文件（问答/云数据库/门禁/医生/把手条/小球 CSS/棱镜 CSS）一字未改  {"checked":23,"changed":[]}
+PASS  一 · 棱镜 DOM 已移除、CSS 类定义保留；桌面新文案结尾无句号；v28 最后加载
+PASS  一 · 硬约束：三色蓝→青绿渐变 / 无 drop-shadow / 无流动动画 / 无紫色 / @supports 降级
+PASS  一 · v28.js 按给定公式自适应（40px / box*.96 / floor / <1200 下限 16 / 纯色降级 / resize）
+PASS  一 · 位置用「顶栏底 → 球舞台圆顶」实测 + flex 居中，不写死像素
+PASS  二 · 手机说明行：12px/400/rgba(60,80,90,.50)/.02em/下方 10px/绝对定位/桌面隐藏
+PASS  三 · 球下标签：三球映射 / 11px/500/rgba(...,.45)/.06em/6px/低于球/中球层隐藏/桌面不显示
+PASS  三 · 投影公式与三段式动画逐字未改，只新增标签同步（不改球的 --px/--py/--sc 写法）
+
+=== 桌面 1440x1000：验收 1-7 ===
+PASS  验收1 · 舞台上方只有那一整句话，结尾无句号；棱镜 DOM 与装饰线已移除  {"text":"持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然","prismNodes":0}
+PASS  验收2 · 单行不换行、中蓝→青绿三色渐变、无紫色相  {"size":"22px","bg":"linear-gradient(95deg, rgb(44, 110, 160) 0%, rgb(37, 127, 156) 45%, rgb(26, 132, 126) 100%)","clip":"text"}
+PASS  验收3 · 无发光/无光晕/无流动动画（filter、animation、::before、背景位全静态）  {"filter":"none","anim":"none","before":"none","bgSize":"auto","bgPos":"0% 0%"}
+PASS  验收3b · 520ms 后背景位置不变（无 background-position 流动动画）  {"p1":"0% 0%","p2":"0% 0%"}
+PASS  验收4 · 渐变起止色在奶白与青绿背景上对比度均 ≥3（可读）  {"milk":[5.2,4.3],"green":[4.54,3.76]}
+PASS  验收5 · 1440 文字占容器 92%–96%，不溢出右栏  {"ratio":0.9315,"textW":987,"boxW":1060,"fontSize":"22px"}
+PASS  验收6 · 顶栏底→球舞台圆顶空隙内 flex 垂直居中、水平居中小球舞台  {"textCy":118,"gapCy":118,"barBottom":64,"shellTop":172,"vars":{"top":"0.0px","gap":"108.0px"}}
+PASS  验收16 · 桌面端看不到球下标签与手机说明行（12 球仍在）  {"tag":"none","sub":"none","items":12}
+PASS  验收7 · 小球位置/尺寸/投影变量在新文案显隐前后完全一致（12 球逐个对比）  {"count":12,"sample":{"id":"food/null","x":823,"y":241,"w":174,"h":174,"px":"0.00px","py":"-203.54px","sc":"1.1527"}}
+SHOT  v28-desktop-1440.png  865591 bytes
+PASS  通用 · 桌面 1440 无横向溢出  {"sw":1440,"iw":1440}
+PASS  验收7b · 三段式分裂动画回归：点大球进入中球层  {"split":true,"isSub":true,"lv":"sub"}
+PASS  验收7c · 返回大球层正常  {"level":"root"}
+
+=== 桌面 1920x1080 / 1024x800 ===
+PASS  验收5b · 1920 文字占容器 92%–96%、居中、无溢出  {"ratio":0.9326,"size":"32px","textW":1436}
+SHOT  v28-desktop-1920.png  1193645 bytes
+PASS  验收5c · 窗口 <1200 且放不下：字号下限 16px、降级纯色 #2C6EA0、保持单行不换行  {"size":"16px","solid":true,"fill":"rgb(44, 110, 160)","bg":"none"}
+PASS  通用 · 1024 桌面无横向滚动（页面 overflow:hidden）  {"sw":1024,"iw":1024}
+SHOT  v28-desktop-1024-solid.png  505018 bytes
+
+=== 手机 390x844：验收 8-15 ===
+PASS  验收8 · 顶部两行字：「防患于未然」+ 下方 10px 的「校园健康助手 · 点球看数据，上拉聊天」  {"title":"防患于未然","sub":"校园健康助手 · 点球看数据，上拉聊天","gap":10}
+PASS  验收9 · 说明行 12px/400/rgba(60,80,90,.50)/.02em，明显小于上一行且更淡  {"sub":"12px","title":"20px","color":"rgba(60, 80, 90, 0.5)","ls":"0.24px"}
+PASS  二 · 手机顶部「防患于未然」20px 渐变保持不动（drop-shadow / 静态 / 100%）  {"fs":"20px","filter":"drop-shadow(rgba(79, 168, 232, 0.3) 0px 0px 10px)"}
+PASS  二 · 说明行是绝对定位子元素，父元素 offsetHeight 不变（不参与球舞台定位计算）  {"offsetHeight":28,"wrapBottom":144,"subBottom":171,"shellTop":227}
+PASS  验收10/11 · 三标签 11px/500/.06em、距球底 6px、共用 translate3d 无 scale/旋转、z-index 低于球  [{"tag":"food","txt":"饮食","dx":0,"dy":6,"z":"-1","tf":"matrix(1, 0, 0, 1, -11.6641, -"},{"tag":"sleep","txt":"作息","dx":0,"dy":6,"z":"-1","tf":"matrix(1, 0, 0, 1, 75.8159, 97"},{"tag":"sport","txt":"运动","dx":0,"dy":6,"z":"-1","tf":"matrix(1, 0, 0, 1, -99.1441, 9"}]
+PASS  验收10b · 文案映射正确：食序→饮食 / 息衡→作息 / 动跃→运动；校医院球无标签  ["food:饮食","sleep:作息","sport:运动"]
+PASS  验收12 · 三个标签互不重叠，动跃与息衡间距 ≥12px  {"overlap":false,"sleepSportGap":152}
+PASS  验收13 · 390 下标签不超出屏幕左右边界、无横向溢出  {"rects":[[183,207],[271,294],[96,119]],"sw":390,"iw":390}
+PASS  验收14 · 标签不压到底部把手条  {"maxTagBottom":535,"handleTop":792}
+PASS  验收16b · 手机端不显示桌面主文案  {"heroDisplay":"none"}
+SHOT  v28-mobile-390.png  267761 bytes
+PASS  验收11b · 改变投影角度后标签与球同步位移（逐帧跟随，无错位）  [{"tag":"food","px":"37.91px","dx":0,"dy":6},{"tag":"sleep","px":"114.55px","dx":0,"dy":6},{"tag":"sport","px":"-41.06px","dx":0,"dy":6}]
+PASS  验收11c · 真实拖动小球舞台时标签仍贴合球底、不错位  {"dragging":true,"dx":0,"dy":6,"tpx":"103.30px","px":"103.30px"}
+SHOT  v28-mobile-drag.png  269484 bytes
+PASS  验收15 · 进入中球层后大球标签隐藏  {"split":true,"isSub":true,"vis":"hidden","op":"0"}
+SHOT  v28-mobile-sub-hidden.png  267685 bytes
+PASS  验收15b · 返回大球层后标签恢复  {"vis":"visible","op":"1"}
+PASS  通用 · 抽屉展开：标签字号反向补偿后视觉仍约 11px、不压把手条；顶部文案淡出  {"open":true,"comp":"2.381","fs":"26.191px","visualH":15,"tagBottom":123,"handleTop":203,"wrapOp":"0","wrapVis":"hidden","shrunken":true}
+SHOT  v28-mobile-drawer-open.png  130825 bytes
+PASS  通用 · 抽屉收起后标签字号恢复 11px  {"fs":"11px"}
+PASS  保留不动 · 手机把手条深蓝 14px/600 文字、↑ 箭头与引导动画  {"text":"和助手聊聊","size":"14px","color":"rgb(43, 92, 217)","arrow":"↑","anim":"arrow-hint"}
+
+=== 手机 320x568 / 平板 820x1180 / 1023x768 ===
+PASS  验收13b · 320 下标签不超屏、互不重叠、不压把手条、无横向溢出  {"rects":[[148,172,258],[219,242,380],[78,101,380]],"handleTop":516}
+SHOT  v28-mobile-320.png  164953 bytes
+PASS  通用 · 820 平板：两行文案、三标签、互不压球舞台  {"subBottom":177,"shellTop":254}
+SHOT  v28-tablet-820.png  597382 bytes
+PASS  通用 · 1023 横屏：顶部两行文案随 v27 避让一起淡出，不压顶栏/球舞台  {"wrap":{"top":122,"bottom":150,"h":28,"display":"flex","opacity":"0","vis":"hidden","offsetHeight":28},"subVis":"hidden"}
+SHOT  v28-narrow-1023.png  431187 bytes
+
+=== 通用回归（问答 / 医生 / 预约 / 请假 / 主色） ===
+PASS  回归 · 30 条问答与云数据库匹配未变  {"n":30,"best":1}
+PASS  回归 · 10 个分类标签完整（前三类 食序/息衡/动跃）  {"count":10}
+PASS  回归 · 医生列表三卡与动态预约按钮未受影响  {"n":3,"btns":["预约 明日 08:00","立即预约","预约 明日 00:00"]}
+PASS  回归 · 我的预约空态文案不变  {"empty":"你还没有预约记录。点右侧中间的校医院球可以发起预约。"}
+PASS  回归 · 「我要请假」流程未受影响  {"open":true,"form":true}
+PASS  回归 · 主色 #2AA79B 未变  {"theme":"#2AA79B"}
+PASS  验收17 · 全流程 0 未捕获 jsError / console.error  {"count":0,"sample":[]}
+
+================ 汇总 ================
+PASS 50/50

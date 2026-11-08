@@ -1,0 +1,215 @@
+INTRO: {
+ "autoOpen": true,
+ "backdrop": "rgba(15, 23, 42, 0.55)",
+ "dialog": {
+  "w": 880,
+  "h": 513,
+  "top": 194,
+  "bottom": 706
+ },
+ "maxAllowedH": 792,
+ "maxAllowedW": 1325,
+ "scrollH": 513,
+ "clientH": 513,
+ "closeBtn": {
+  "w": 44,
+  "h": 44,
+  "top": 202,
+  "bottom": 246
+ },
+ "closePosition": "absolute",
+ "closeParent": "modal intro-dialog",
+ "heroTitle": "办一件事，不用跑五个入口",
+ "lead": "请假要去教务系统，报修要找后勤，开证明要跑 OA，社团活动还要翻通知…… 入口分散、流程看不懂、只能反复问人。「小通同学」把这些事收进一个对话框：先问清楚，再一步办完。",
+ "leadLines": 3,
+ "ctas": [
+  "试试问一句：请假流程",
+  "试试办一件：我要请假三天"
+ ],
+ "visual": true,
+ "eviCards": 3,
+ "eviH": [
+  76,
+  76,
+  76
+ ],
+ "eviClipped": [
+  false,
+  false,
+  false
+ ],
+ "eviText": [
+  "41个 | 高校平均拥有的业务系统数量 | 《2024年中国高校数字化发展报告》· 1407 所高校填报",
+  "58.51% | 手机里同时装着 5 个以上校园 App 的大学生 | 中国青年报·中青校媒 · 2895 份有效问卷",
+  "67.63% | 期待学校整合资源、为校园 App「瘦身」的大学生 | 中国青年报·中青校媒 · 2895 份有效问卷"
+ ],
+ "note": "数据来自公开发布的第三方调查 · 本校抽样验证中",
+ "caps": [
+  "事务问答 | 分步骤讲清去哪办、带什么、多久",
+  "一键办事 | 说一句「我要请假三天」，直接出请假条",
+  "智能问数 | 课表、空教室、图书馆座位，问一句出结果"
+ ],
+ "foot": "模拟数据 · 不接真实学校系统 · 无需登录",
+ "gridCols": "422.391px 345.609px"
+}
+PASS  验收1 · 1440px 首次访问自动弹出引导弹窗，内容完整无截断  {"dialog":{"w":880,"h":513,"top":194,"bottom":706},"scrollH":513,"clientH":513,"leadLines":3,"ctas":["试试问一句：请假流程","试试办一件：我要请假三天"]}
+PASS  验收1b · 遮罩色 / 关闭按钮 44×44 固定 / 数据卡 ≤80px / 数值来源文案  {"closeBtn":{"w":44,"h":44,"top":202,"bottom":246},"eviH":[76,76,76],"note":"数据来自公开发布的第三方调查 · 本校抽样验证中"}
+PASS  验收1c · 桌面弹窗上半两栏（约 55% / 45%）  {"gridCols":"422.391px 345.609px"}
+SHELL: {
+ "introHidden": true,
+ "pageKids": [
+  "header.topbar",
+  "div.identity-bar",
+  "main."
+ ],
+ "mainKids": [
+  "section.workspace",
+  "footer.footer"
+ ],
+ "bodyOverflow": "",
+ "legacy": {
+  "hero": 0,
+  "caps": 0,
+  "side": 0
+ },
+ "pageH": 900,
+ "innerH": 900,
+ "scrollWidth": 1440,
+ "clientWidth": 1440,
+ "innerWidth": 1440,
+ "inputBottom": 597,
+ "cardH": 520,
+ "cardW": 1152,
+ "wsW": 1152,
+ "hint": "Enter 发送 · Shift + Enter 换行 | 内容库：云数据库（30 条）",
+ "faqBtn": "☰ | 30 条高频问答 · 点开看看 | 10 类 · 每类 3 条 | ›",
+ "quickTop": [
+  285,
+  285,
+  285,
+  285,
+  285,
+  285
+ ]
+}
+PASS  验收2 · 关闭后主界面只有顶栏 / 身份 / 对话 / 页脚，能力卡与右侧目录已删除  {"pageKids":["header.topbar","div.identity-bar","main."],"mainKids":["section.workspace","footer.footer"],"legacy":{"hero":0,"caps":0,"side":0}}
+PASS  验收3 · 页面总高 ≤1.5 屏，输入框在首屏内可见，对话占满内容区  {"pageH":900,"innerH":900,"inputBottom":597,"cardH":520,"cardW":1152,"wsW":1152}
+PASS  验收3b · 桌面快捷按钮一行、输入区上方有「30 条高频问答」入口  {"quickRows":1,"faqBtn":"☰ | 30 条高频问答 · 点开看看 | 10 类 · 每类 3 条 | ›","hint":"Enter 发送 · Shift + Enter 换行 | 内容库：云数据库（30 条）"}
+PASS  弹窗行为 · 关闭后刷新不再自动弹（localStorage 记录）  {"hidden":true,"seen":"1"}
+PASS  验收4 · 顶栏「介绍」可重新打开，点击遮罩可关闭  {"reopened":true,"closedByMask":true}
+CTA: {
+ "introHidden": true,
+ "lastUser": "请假流程",
+ "badge": "🧠 AI 意图识别 · 事务问答",
+ "qaTitle": "请假流程怎么走？",
+ "steps": 3
+}
+PASS  验收5 · 点「试试问一句」→ 弹窗关闭且「请假流程」自动发出并显示答案  {"introHidden":true,"lastUser":"请假流程","badge":"🧠 AI 意图识别 · 事务问答","qaTitle":"请假流程怎么走？","steps":3}
+PASS  验收5b · 点「试试办一件」→ 弹窗关闭且自动进入请假表单（6 字段）  {"introHidden":true,"leaveOpen":true,"lastUser":"我要请假三天","fields":6}
+FAQ OPEN: {
+ "open": true,
+ "tabs": 10,
+ "totalItems": 30,
+ "panels": 10,
+ "visibleItems": 3,
+ "activeTab": "请假",
+ "questions": [
+  "请假流程怎么走？",
+  "病假需要哪些材料？",
+  "请假超过三天怎么审批？"
+ ],
+ "matchesLocal": true
+}
+PASS  验收6a · 「30 条高频问答」弹窗：10 个分类标签 + 当前分类 3 条，30 条内容未改  {"open":true,"tabs":10,"totalItems":30,"panels":10,"visibleItems":3,"activeTab":"请假","questions":["请假流程怎么走？","病假需要哪些材料？","请假超过三天怎么审批？"],"matchesLocal":true}
+PASS  验收6b · 切换分类标签后只显示该分类 3 条  {"active":"图书馆","visible":["借书、续借和借阅上限是怎样的？","图书逾期或遗失怎么处理？","研讨间和座位怎么预约？"],"allVisible":3}
+FAQ PICK: {
+ "faqHidden": true,
+ "lastUser": "借书、续借和借阅上限是怎样的？",
+ "qaTitle": "借书、续借和借阅上限是怎样的？",
+ "steps": 3,
+ "badge": "🧠 目录直达 · 事务问答"
+}
+PASS  验收6c · 点任一问题 → 弹窗关闭、问题自动发送并显示答案  {"faqHidden":true,"lastUser":"借书、续借和借阅上限是怎样的？","qaTitle":"借书、续借和借阅上限是怎样的？","steps":3,"badge":"🧠 目录直达 · 事务问答"}
+PASS  验收7 · 桌面无横向滚动条、快捷按钮一行、仅保留 Shift+Enter 提示  {"scrollWidth":1425,"clientWidth":1425,"innerWidth":1440,"bodyScrollWidth":1425,"quickDisplay":"flex","quickRows":1,"hint":"Enter 发送 · Shift + Enter 换行 | 内容库：云数据库（30 条）","chatW":1152,"pageH":915,"innerH":900,"innerW":1440}
+PASS  回归 · 两个原用例不串场景：「请假流程」走事务问答  {"badge":"🧠 AI 意图识别 · 事务问答","qaTitle":"请假流程怎么走？"}
+PASS  回归 · 「我要请假三天」打开请假表单，字段与身份联动不变  {"name":"同学A","sid":"SIM20260101","fields":6}
+PASS  回归 · 课表问数与 1 班数据一致  {"lead":"明天（11 月 9 日 周一）你有 3 门课","rows":["第 1-2 节 高等数学 A101 · 张老师","第 3-4 节 大学英语 B203 · 李老师","第 5-6 节 数据结构 A105 · 王老师"]}
+PASS  回归 · 空教室问数返回教室列表  {"lead":"最近上课日 11 月 9 日 周一 · 下午第 3-4 节（全天第 7-8 节）：6 间教室空着","rooms":["A101","A102","A103","B202","B205","B206"]}
+PASS  回归 · 图书馆座位三区 + 合计（剩余=总−已用）  {"lead":"图书馆现在还有 59 个空位（共 240 座）","table":[["二楼自习区","120","87","33"],["三楼阅览区","80","63","17"],["四楼研讨区","40","31","9"],["合计","240","181","59"]]}
+PASS  回归 · 切到 2026级2班 同学B 后课程结果变化  {"context":"当前身份：2026级2班 同学B · 「我」按这个身份的班级与姓名计算","rows":["第 1-2 节 线性代数 A102 · 陈老师","第 3-4 节 中国近现代史纲要 B201 · 赵老师","第 7-8 节 大学物理 A106 · 刘老师"]}
+PASS  回归 · 切身份后请假条姓名/学号自动跟随  {"name":"同学B","sid":"SIM20260201"}
+PASS  回归 · 范围外问题走事务问答，不串问数  {"badge":"🧠 事务问答"}
+MOBILE INTRO: {
+ "autoOpen": true,
+ "gridCols": "320.797px",
+ "dialogW": 359,
+ "maxW": 359,
+ "dialogH": 743,
+ "maxH": 743,
+ "scrollWidth": 390,
+ "innerWidth": 390,
+ "cards": [
+  {
+   "w": 321,
+   "h": 56,
+   "right": 351,
+   "clip": false
+  },
+  {
+   "w": 321,
+   "h": 44,
+   "right": 351,
+   "clip": false
+  },
+  {
+   "w": 321,
+   "h": 58,
+   "right": 351,
+   "clip": false
+  }
+ ],
+ "note": "数据来自公开发布的第三方调查 · 本校抽样验证中"
+}
+PASS  验收8a · 390px 首次访问也自动弹窗，单栏、无横向溢出、数据卡完整  {"dialogW":359,"gridCols":"320.797px","scrollWidth":390,"cards":[{"w":321,"h":56,"right":351,"clip":false},{"w":321,"h":44,"right":351,"clip":false},{"w":321,"h":58,"right":351,"clip":false}]}
+MOBILE SHELL: {
+ "pageKids": [
+  "header.topbar",
+  "div.identity-bar",
+  "main."
+ ],
+ "mainKids": [
+  "section.workspace",
+  "footer.footer"
+ ],
+ "cardW": 390,
+ "innerWidth": 390,
+ "quickRows": 2,
+ "quickCols": 3,
+ "scrollWidth": 390,
+ "faqBtn": "☰ | 30 条高频问答 · 点开看看 | ›",
+ "inputBottom": 642
+}
+PASS  验收8b · 390px 主界面结构一致、对话占满视口、快捷按钮两行  {"pageKids":["header.topbar","div.identity-bar","main."],"mainKids":["section.workspace","footer.footer"],"cardW":390,"innerWidth":390,"quickRows":2,"quickCols":3,"scrollWidth":390,"faqBtn":"☰ | 30 条高频问答 · 点开看看 | ›","inputBottom":642}
+PASS  验收8c · 390px 问数 / 问答功能无回归  {"lead":"明天（11 月 9 日 周一）你有 3 门课","rows":3}
+PASS  验收8d · 390px 事务问答无回归  {"badge":"🧠 AI 意图识别 · 事务问答"}
+PASS  验收8e · 320px 无横向溢出  {"scrollWidth":320,"innerWidth":320,"cardW":320}
+PASS  验收9a · 全流程无 JS 异常  {"jsErrors":[]}
+OFFLINE BOOT: {
+ "aiStatus": "意图识别 · 关键词匹配",
+ "modeHint": "内容库：本地镜像（30 条）",
+ "items": 30,
+ "tabs": 10,
+ "eviCards": 3,
+ "sdk": "undefined"
+}
+OFFLINE ASKS: {
+ "o1": "🧠 目录直达 · 事务问答",
+ "o2": "📊 智能问数 · 课表查询",
+ "o3": "🧠 意图识别 · 一键办事（请假）",
+ "rows": 3
+}
+PASS  验收9b · 模型/SDK 不可用时仍降级可用，弹窗与问答目录照常渲染  {"aiStatus":"意图识别 · 关键词匹配","modeHint":"内容库：本地镜像（30 条）","o1":"🧠 目录直达 · 事务问答","o2":"📊 智能问数 · 课表查询","o3":"🧠 意图识别 · 一键办事（请假）"}
+PASS  验收9c · 降级演练阶段也无 JS 异常  {"jsErrors":[]}
+
+===== SUMMARY =====
+TOTAL 30 PASS 30 FAIL 0
