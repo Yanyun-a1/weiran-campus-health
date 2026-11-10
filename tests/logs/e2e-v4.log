@@ -1,0 +1,158 @@
+INIT: {
+ "title": "校园健康助手 · 校园健康",
+ "brand": "校园健康助手",
+ "sub": "校园健康 · 食品 / 作息 / 运动",
+ "orbShown": true,
+ "chatHidden": true,
+ "idHidden": true,
+ "introHidden": true,
+ "activeSeg": "小球视图",
+ "segs": [
+  "小球视图",
+  "对话视图"
+ ],
+ "slots": 3,
+ "minis": 9,
+ "labels": [
+  "食品健康",
+  "作息健康",
+  "运动健康"
+ ],
+ "mainRect": {
+  "w": 150,
+  "h": 150,
+  "left": 645,
+  "top": 212
+ },
+ "mainBg": "radial-gradient(circle at 32% 28%, rgb(255, 178, 122), rgb(232, 93, 61) 55%, rgb(178, 58, 32))",
+ "mainShadow": "rgba(0, 0, 0, 0.18) -6px -8px 18px 0px inset, rgba(255, 255, 255, 0.22) 6px 8px 16px 0px inset, rgba(0, 0, 0, 0.14) 0px 12px 28px 0px",
+ "mainTransform": "matrix(1, 0, 0, 1, 0, 0)",
+ "labelLayer": "orb-slot",
+ "labelFont": [
+  "17px",
+  "600",
+  "rgb(255, 255, 255)",
+  "rgba(0, 0, 0, 0.25) 0px 1px 2px"
+ ],
+ "miniOpacity": "0.14",
+ "miniFilter": "blur(5px)",
+ "miniTransform": "matrix(0.82, 0, 0, 0.82, -118, -72)",
+ "miniLabelOpacity": "0",
+ "primary": "#2AA79B",
+ "sendBg": "rgb(42, 167, 155)",
+ "stage": {
+  "w": 1152,
+  "h": 630,
+  "left": 144,
+  "top": 118
+ },
+ "pageH": 900,
+ "scrollWidth": 1440,
+ "clientWidth": 1440,
+ "ai": "AI 意图识别 · 已就绪",
+ "mode": "内容库：云数据库（30 条）",
+ "imgs": 0,
+ "scripts": [
+  "https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js",
+  "http://127.0.0.1:8123/config.js",
+  "http://127.0.0.1:8123/evidence.js",
+  "http://127.0.0.1:8123/faqs.js",
+  "http://127.0.0.1:8123/campus-data.js",
+  "http://127.0.0.1:8123/data-query.js",
+  "http://127.0.0.1:8123/app.js",
+  "http://127.0.0.1:8123/orb-view.js"
+ ]
+}
+PASS  验收1 · 默认小球视图，三个大球立体感明显、文字清晰可读  {"mainRect":{"w":150,"h":150,"left":645,"top":212},"labels":["食品健康","作息健康","运动健康"],"labelFont":["17px","600","rgb(255, 255, 255)","rgba(0, 0, 0, 0.25) 0px 1px 2px"]}
+PASS  验收9 · 桌面 1440px 布局正常，无横向滚动条  {"scrollWidth":1440,"clientWidth":1440,"pageH":900,"stage":{"w":1152,"h":630,"left":144,"top":118}}
+PASS  主题框架 · 改名 / 副标题 / 青绿主色 / 圆角字体保留 / 介绍不自动弹  {"brand":"校园健康助手","sub":"校园健康 · 食品 / 作息 / 运动","primary":"#2AA79B","introHidden":true}
+PASS  主题框架 · 只换主色（桌面段圆角/间距/字体/结构未动），球体纯 CSS 无 3D 库无外链图片  {"oldLines":512,"newLines":516}
+PASS  主题框架 · 顶栏「介绍」按钮仍可手动打开
+PASS  验收2a · 每个大球背后 3 个中球若隐若现、无文字  {"count":3,"opacity":["0.14","0.14","0.14"],"filter":["blur(5px)","blur(5px)","blur(5px)"],"scale":["matrix(0.82, 0, 0, 0.82, -118, -72)","matrix(0.82, 0, 0, 0.82, 118, -72)","matrix(0.82, 0, 0, 0.82, 0, 118)"],"labelOpacity":["0","0","0"],"text":["菜品营养","饮食记录","食堂安全"]}
+PASS  验收2b · hover 大球后中球变清晰（0.3 / blur2.5 / scale0.9）  {"opacity":["0.3","0.3","0.3"],"filter":["blur(2.5px)","blur(2.5px)","blur(2.5px)"],"scale":["matrix(0.9, 0, 0, 0.9, -118, -72)","matrix(0.9, 0, 0, 0.9, 118, -72)","matrix(0.9, 0, 0, 0.9, 0, 118)"]}
+PASS  验收2c · 鼠标离开后恢复 0.14  {"opacity":"0.14"}
+SPLIT: {
+ "stageSplit": true,
+ "activeOrb": "food",
+ "dimCount": 2,
+ "dim": [
+  {
+   "op": "0.25",
+   "label": "0.25",
+   "tr": "matrix(0.9, 0, 0, 0.9, 0, 0)"
+  },
+  {
+   "op": "0.25",
+   "label": "0.25",
+   "tr": "matrix(0.9, 0, 0, 0.9, 0, 0)"
+  }
+ ],
+ "pickedTransform": "matrix(0.9, 0, 0, 0.9, 0, 0)",
+ "minis": [
+  {
+   "name": "菜品营养",
+   "w": 100,
+   "font": "13px",
+   "op": "1",
+   "filter": "blur(0px)",
+   "tr": "matrix(1, 0, 0, 1, -118, -72)",
+   "dur": "0.6s",
+   "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+   "labelOp": "1",
+   "mainColor": "#d15437",
+   "bg": "radial-gradient(circle at 32% 28%, rgb(230, 160, 110), rgb(209, 84, 55) 55%, rgb(160, 52, 29))"
+  },
+  {
+   "name": "饮食记录",
+   "w": 100,
+   "font": "13px",
+   "op": "1",
+   "filter": "blur(0px)",
+   "tr": "matrix(1, 0, 0, 1, 118, -72)",
+   "dur": "0.6s",
+   "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+   "labelOp": "1",
+   "mainColor": "#e85d3d",
+   "bg": "radial-gradient(circle at 32% 28%, rgb(255, 178, 122), rgb(232, 93, 61) 55%, rgb(178, 58, 32))"
+  },
+  {
+   "name": "食堂安全",
+   "w": 100,
+   "font": "13px",
+   "op": "1",
+   "filter": "blur(0px)",
+   "tr": "matrix(1, 0, 0, 1, 0, 118)",
+   "dur": "0.6s",
+   "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+   "labelOp": "1",
+   "mainColor": "#ea6d50",
+   "bg": "radial-gradient(circle at 32% 28%, rgb(255, 186, 135), rgb(234, 109, 80) 55%, rgb(186, 78, 54))"
+  }
+ ],
+ "resetShown": true,
+ "pageScroll": 1440,
+ "clientWidth": 1440
+}
+PASS  验收3 · 点「食品健康」：另两球变暗缩小、中球弹出、动画 600ms  {"dim":[{"op":"0.25","label":"0.25","tr":"matrix(0.9, 0, 0, 0.9, 0, 0)"},{"op":"0.25","label":"0.25","tr":"matrix(0.9, 0, 0, 0.9, 0, 0)"}],"pickedTransform":"matrix(0.9, 0, 0, 0.9, 0, 0)","minis":[{"name":"菜品营养","op":"1","dur":"0.6s","ease":"cubic-bezier(0.22, 1, 0.36, 1)"},{"name":"饮食记录","op":"1","dur":"0.6s","ease":"cubic-bezier(0.22, 1, 0.36, 1)"},{"name":"食堂安全","op":"1","dur":"0.6s","ease":"cubic-bezier(0.22, 1, 0.36, 1)"}]}
+PASS  验收3b · 三个中球名称正确、颜色明度依次区分、位置在三个方向  {"names":["菜品营养","饮食记录","食堂安全"],"colors":["#d15437","#e85d3d","#ea6d50"],"transforms":["matrix(1, 0, 0, 1, -118, -72)","matrix(1, 0, 0, 1, 118, -72)","matrix(1, 0, 0, 1, 0, 118)"]}
+PASS  验收4 · 点「菜品营养」右侧滑出 480px 详情面板，标题/返回/占位正确  {"hidden":false,"open":true,"w":480,"right":1440,"h":900,"backdropShown":true,"title":"菜品营养","tag":"模块开发中","desc":"每道菜的热量、蛋白质、脂肪、钠含量与搭配建议","backBtn":true,"footBtn":"返回小球视图"}
+PASS  验收4b · 九个子模块占位说明齐全且逐字一致  {"count":9}
+PASS  验收5 · 点返回回到小球视图，中球收起、大球恢复  {"detailHidden":true,"backdropHidden":true,"split":false,"actives":0,"dimmed":0,"resetHidden":true,"miniOpacity":"0.14","miniFilter":"blur(5px)","miniLabel":"0","mainTransform":"matrix(1, 0, 0, 1, 0, 0)","bodyOverflow":""}
+PASS  验收5b · 底部「返回小球视图」同样恢复状态  {"hidden":true,"split":false}
+PASS  验收6a · 切换即时生效且存 localStorage，对话视图结构完好  {"chatShown":true,"orbHidden":true,"idShown":true,"activeSeg":"对话视图","stored":"chat","scrollWidth":1440,"clientWidth":1440,"ai":"AI 意图识别 · 已就绪","mode":"内容库：云数据库（30 条）","quick":6,"faqBtn":"☰ 30 条高频问答 · 点开看看 10 类 · 每类 3 条 ›"}
+PASS  验收6b · 问「请假流程」有分步骤答案  {"cards":1,"steps":3}
+PASS  验收6c · 问「我明天有什么课」返回课表且与数据一致  {"expected":"明天（11 月 11 日 周三）你有 2 门课","rows":2,"leads":["明天（11 月 11 日 周三）你有 2 门课"]}
+PASS  验收6d · 身份切换即时生效并存本地  {"hint":"已选 2026级2班 同学B · 切换即时生效 · 本地保存 · 无需登录","stored":"c2","sel":"c2"}
+PASS  验收6e · 30 条问答弹窗能打开（10 类 / 30 条 / 当前 3 条）  {"shown":true,"tabs":10,"items":30,"visible":3,"cats":["请假","报修","证明开具","报销","选课","补考","宿舍","校园卡","图书馆","社团"]}
+PASS  验收6f · 请假表单回归（字段与身份联动未改）  {"name":"同学B","sid":"SIM20260201","fields":6,"hasReason":true}
+PASS  验收7a · 视图选择刷新后仍保持（localStorage）  {"chat":true,"stored":"chat"}
+PASS  验收7b · 切回小球视图状态正常  {"orbShown":true,"chatHidden":true,"stored":"orb","split":false,"slots":3,"miniOpacity":"0.14","scrollWidth":1440,"clientWidth":1440}
+PASS  验收8a · 390px 三球竖排 120px、间距 20px、切换器不换行、无横向溢出  {"scrollWidth":390,"clientWidth":390,"mainRects":[{"w":120,"cx":195,"cy":182},{"w":120,"cx":195,"cy":322},{"w":120,"cx":195,"cy":462}],"gaps":[140,140],"labelFont":"15px","switchW":186,"switchLines":2,"segs":["小球视图","对话视图"],"vertical":true,"orbShown":true}
+PASS  验收8b · 手机分裂后中球呈下方三角、84px、不超出屏幕  {"count":3,"rects":[{"name":"菜品营养","w":84,"left":71,"right":155,"top":232,"bottom":316},{"name":"饮食记录","w":84,"left":235,"right":319,"top":232,"bottom":316},{"name":"食堂安全","w":84,"left":153,"right":237,"top":298,"bottom":382}],"opacity":["1","1","1"],"pageScroll":390,"clientWidth":390,"activeH":280}
+PASS  验收8c · 手机详情面板全屏滑出，标题与返回按钮正确  {"w":390,"h":844,"left":0,"open":true,"title":"饮食记录","desc":"今日三餐记录与营养摄入进度","back":true,"scrollWidth":390,"clientWidth":390}
+PASS  验收8d · 手机点遮罩返回，状态恢复  {"hidden":true,"split":false}
+PASS  验收8e · 390px 对话视图无回归（两行快捷按钮、无溢出）  {"shown":true,"scrollWidth":390,"clientWidth":390,"quickRows":2}
+PASS  验收10 · 全流程无 jsError  {"jsErrors":[]}
+
+===== SUMMARY =====
+TOTAL 28 PASS 28 FAIL 0

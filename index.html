@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<meta name="theme-color" content="#f5f8ff" />
-<title>小通同学 · 校园事务一站通</title>
-<meta name="description" content="把请假、报修、开证明、报销等校园事务收进一个对话框：事务问答给分步骤答案，一键办事生成可打印请假条，智能问数直出课表、空教室与图书馆座位。参赛原型，全部为虚构脱敏模拟数据。" />
+<meta name="theme-color" content="#eff9f7" />
+<title>校园健康助手 · 校园健康</title>
+<meta name="description" content="校园健康助手（参赛原型）：食品 / 作息 / 运动三大健康主题的小球视图，以及可查询 30 条校园事务问答的对话视图。全部为虚构脱敏模拟数据。" />
 <link rel="stylesheet" href="styles.css" />
+<link rel="stylesheet" href="orb-view.css" />
 </head>
 <body>
 
@@ -14,11 +15,11 @@
 
   <!-- 1. 顶栏 -->
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="小通同学首页">
-      <span class="brand-mark" aria-hidden="true">通</span>
+    <a class="brand" href="#top" aria-label="校园健康助手首页">
+      <span class="brand-mark" aria-hidden="true">健</span>
       <span class="brand-text">
-        <strong>小通同学</strong>
-        <small>校园事务一站通</small>
+        <strong>校园健康助手</strong>
+        <small>校园健康 · 食品 / 作息 / 运动</small>
       </span>
     </a>
     <div class="topbar-right">
@@ -30,8 +31,14 @@
     </div>
   </header>
 
-  <!-- 2. 轻量身份选择器：非登录，选择结果只存浏览器本地 -->
-  <div class="identity-bar">
+  <!-- 2. 双 UI 视图切换：即时生效，状态存 localStorage -->
+  <div class="ui-switch" id="uiSwitch" role="tablist" aria-label="界面视图切换">
+    <button class="ui-seg active" type="button" data-view="orb" role="tab" aria-selected="true">小球视图</button>
+    <button class="ui-seg" type="button" data-view="chat" role="tab" aria-selected="false">对话视图</button>
+  </div>
+
+  <!-- 3. 轻量身份选择器：非登录，选择结果只存浏览器本地（对话视图专用） -->
+  <div class="identity-bar" id="identityBar">
     <label for="identitySelect"><span class="id-dot" aria-hidden="true"></span>当前身份</label>
     <select id="identitySelect" aria-label="当前身份"></select>
     <span class="identity-hint" id="identityHint">切换即时生效 · 本地保存 · 无需登录</span>
@@ -39,13 +46,23 @@
 
   <main id="top">
 
-    <!-- 3. 对话窗口：占满内容区宽度 -->
-    <section class="workspace" aria-label="对话窗口">
+    <!-- 4. 小球视图：三大健康主题，默认显示 -->
+    <section class="orb-view" id="orbView" aria-label="小球视图">
+      <div class="orb-stage" id="orbStage">
+        <button class="orb-reset" id="orbReset" type="button" hidden>← 收起</button>
+        <div class="orb-row orb-row-top" id="orbRowTop"></div>
+        <div class="orb-row orb-row-bottom" id="orbRowBottom"></div>
+      </div>
+      <p class="orb-hint" id="orbHint">点一个大球，展开它的三个子模块</p>
+    </section>
+
+    <!-- 5. 对话窗口：原有功能完整保留，只做显示/隐藏切换 -->
+    <section class="workspace" id="chatView" aria-label="对话窗口" hidden>
       <div class="chat-card">
         <div class="chat-head">
-          <span class="mini-avatar">通</span>
+          <span class="mini-avatar">健</span>
           <div class="chat-head-text">
-            <strong>和小通同学聊聊</strong>
+            <strong>和校园健康助手聊聊</strong>
             <small>把事说一句话就行，我来判断该「答」、该「办」还是该「查」</small>
           </div>
           <span class="ai-chip" id="aiStatus">AI 意图识别 · 连接中</span>
@@ -53,9 +70,9 @@
 
         <div class="chat-log" id="chatLog" role="log" aria-live="polite">
           <div class="msg msg-bot">
-            <span class="bubble-avatar">通</span>
+            <span class="bubble-avatar">健</span>
             <div class="bubble">
-              <p>你好，我是<strong>小通同学</strong> 👋 办一件事不用跑五个入口。</p>
+              <p>你好，我是<strong>校园健康助手</strong> 👋 办一件事不用跑五个入口。</p>
               <p>可以直接问流程、说「我要请假三天」，或者查课表、空教室和图书馆座位：</p>
               <div class="quick-chips">
                 <button type="button" data-q="请假流程">请假流程</button>
@@ -90,14 +107,14 @@
       </div>
     </section>
 
-    <!-- 4. 页脚 -->
+    <!-- 6. 页脚 -->
     <footer class="footer">
       <span>模拟数据 · 不接真实学校系统 · 无需登录</span>
     </footer>
   </main>
 </div>
 
-<!-- ===== 首次访问引导弹窗：首屏全部内容都在这里 ===== -->
+<!-- ===== 首次访问引导弹窗：本轮取消自动弹出，内容保留旧版供「介绍」按钮手动打开 ===== -->
 <div class="modal-backdrop intro-backdrop" id="introModal" hidden>
   <div class="modal intro-dialog" role="dialog" aria-modal="true" aria-labelledby="heroTitle">
     <button class="intro-close" id="closeIntro" type="button" aria-label="关闭介绍">×</button>
@@ -206,6 +223,24 @@
   </div>
 </div>
 
+<!-- ===== 小球视图：模块详情占位面板 ===== -->
+<div class="orb-detail-backdrop" id="orbDetailBackdrop" hidden></div>
+<aside class="orb-detail" id="orbDetail" hidden aria-label="模块详情">
+  <div class="orb-detail-head">
+    <button class="orb-detail-back" id="orbDetailBack" type="button" aria-label="返回">← 返回</button>
+    <h2 id="orbDetailTitle">模块详情</h2>
+  </div>
+  <div class="orb-detail-body">
+    <div class="orb-detail-card">
+      <span class="orb-detail-tag">模块开发中</span>
+      <p id="orbDetailDesc"></p>
+    </div>
+  </div>
+  <div class="orb-detail-foot">
+    <button class="orb-detail-return" id="orbDetailReturn" type="button">返回小球视图</button>
+  </div>
+</aside>
+
 <!-- 云服务 SDK：CDN @dev 优先，失败时用本地同版本副本 -->
 <script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js" onerror="window.__sdkCdnFailed=true"></script>
 <script>if (window.__sdkCdnFailed || !window.WorkBuddyCloud) { document.write('<script src="./vendor/workbuddy-cloud-sdk.global.js"><\/script>'); }</script>
@@ -215,5 +250,6 @@
 <script src="campus-data.js"></script>
 <script src="data-query.js"></script>
 <script src="app.js"></script>
+<script src="orb-view.js"></script>
 </body>
 </html>

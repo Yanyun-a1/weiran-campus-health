@@ -666,7 +666,7 @@
     bind();
     renderEvidence();
     renderIdentityBar();
-    maybeShowIntro(); // 首访引导不依赖云连接，立即展示
+    // 本轮取消介绍弹窗自动弹出；顶栏「介绍」按钮仍可手动打开
     try { await bootCloud(); } catch (e) { useLocalData(); cloud = null; aiReady = false; }
     if (!FAQS.length) useLocalData();
     renderFaqModal();
