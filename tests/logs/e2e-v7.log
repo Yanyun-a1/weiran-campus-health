@@ -1,0 +1,26 @@
+GEO: {"scene":{"cx":713,"cy":488,"left":137,"right":1289,"top":118,"bottom":858},"balls":[{"x":713,"y":272,"w":174,"h":174,"left":625,"right":800},{"x":896,"y":588,"w":176,"h":176,"left":809,"right":984},{"x":529,"y":588,"w":176,"h":176,"left":441,"right":616}],"back":{"x":0,"y":0}}
+S0: {"state":{"ry":0,"rx":0,"layer":"major","picked":null,"mode":"idle","pointerId":null,"isDragging":false,"downOrb":null,"R":250,"d":1200,"dragSign":1},"px":[0,183.96,-183.96],"w":[174,176,176]}
+PASS  硬约束 · 视觉/尺寸/配色/投影公式逐字未改，只新增指针交互 CSS 规则  {"cssMissing":[],"projSame":true,"orbSame":true,"htmlSame":true,"cssRulesOK":true}
+BLANK_DRAG: {"state":{"ry":-38.4,"rx":0,"layer":"major","picked":null,"mode":"drag","pointerId":1,"isDragging":true,"downOrb":null,"R":250,"d":1200,"dragSign":1},"px":[-116.65,18.33,-239.45],"dragging":true,"cursor":"grabbing","selection":""}
+PASS  验收1 · 透明背景任意空白处按住拖动，三个球都跟着转  {"ry":-38.4,"px0":[0,183.96,-183.96],"px1":[-116.65,18.33,-239.45]}
+PASS  验收2 · 拖动过程中不选中任何文字、无蓝色选区  {"selection":""}
+PASS  验收8 · 拖动中光标 grabbing，松手后恢复 grab  {"dragging":true,"cursor":"grabbing"}
+PASS  验收3 · 原生拖拽 / 长按菜单 / 手势被挡住，无图片可拖  {"dragstart":true,"contextmenu":true}
+PASS  验收8b · 松手后光标恢复 grab、状态复位、角度归零  {"cursor":"grab","state":{"ry":0,"rx":0,"layer":"major","picked":null,"mode":"idle","pointerId":null,"isDragging":false,"downOrb":null,"R":250,"d":1200,"dragSign":1}}
+PASS  验收6 · 单击空白不触发分裂，只做回弹  {"split":false,"state":{"ry":0,"rx":0,"layer":"major","picked":null,"mode":"idle","pointerId":null,"isDragging":false,"downOrb":null,"R":250,"d":1200,"dragSign":1}}
+PASS  验收7 · 拖动超过 8px 后松手不触发分裂  {"split":false,"ry":0}
+PASS  验收7b · 按在球上拖动照样旋转且松手不分裂  {"ry":-35.2,"downOrb":"食品健康","split":false}
+PASS  验收9 · 拖到容器外再松手仍能复位，不卡在拖动状态  {"outX":1329,"during":{"ry":42,"rx":0,"layer":"major","picked":null,"mode":"drag","pointerId":1,"isDragging":true,"downOrb":null,"R":250,"d":1200,"dragSign":1},"after":{"ry":0,"rx":0,"layer":"major","picked":null,"mode":"idle","pointerId":null,"isDragging":false,"downOrb":null,"R":250,"d":1200,"dragSign":1}}
+PASS  验收5.1 · 单击「食品健康」打开对应细分种类  {"split":true,"group":"food","count":3,"ry":0}
+PASS  验收5.2 · 单击「作息健康」打开对应细分种类  {"split":true,"group":"sleep","count":3,"ry":0}
+PASS  验收5.3 · 单击「运动健康」打开对应细分种类  {"split":true,"group":"sport","count":3,"ry":0}
+PASS  验收10a · 中球层同样支持空白处拖动（同一套 scene 事件）  {"ry":-28.8,"px":[-61.69,43.33,-162.63]}
+PASS  验收10b · 点中球仍滑出详情面板，标题与占位文案正确  {"hidden":false,"open":true,"w":480,"title":"菜品营养","desc":"每道菜的热量、蛋白质、脂肪、钠含量与搭配建议"}
+PASS  验收10c · 左上角返回按钮仍可用，分裂倒放回到三大球  {"layer":"major","split":false}
+PASS  回归 · 对话视图 30 条问答 / 问数 / 请假表单 / 9 条占位文案 / 无横向滚动条全部未受影响  {"qaOk":true,"dqOk":true,"faq":{"tabs":10,"items":30},"form":6,"descs":9,"scrollWidth":1425}
+PASS  验收4 · 390px 手指拖动不会变成页面滚动（touch-action / overscroll 生效）  {"scrollBefore":0,"during":0,"after":0,"ry":-19.2,"css":{"touchAction":"none","overscroll":"contain","select":"none"}}
+PASS  验收11 · 390px 触摸拖动逐帧流畅、无横向滚动、松手复位  {"frames":[-102.2,-108,-113.2,-117.7,-121.7],"scrollWidth":390,"clientWidth":390}
+PASS  验收12 · 全流程无 jsError  {"jsErrors":[]}
+
+===== SUMMARY =====
+TOTAL 20 PASS 20 FAIL 0

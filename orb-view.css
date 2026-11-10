@@ -42,10 +42,24 @@
     radial-gradient(520px 300px at 50% 0%, rgba(42, 167, 155, .07), transparent 70%),
     linear-gradient(180deg, rgba(255, 255, 255, .74), rgba(240, 250, 248, .88));
   box-shadow: var(--shadow);
+  /* 指针交互控制：移动端不滚动、拖动手势不被浏览器抢走、不选中文字 */
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  overscroll-behavior: contain;
   cursor: grab;
 }
-.orb-scene.dragging { cursor: grabbing; }
+.orb-scene.is-dragging { cursor: grabbing; }
+
+/* 球及其内部层同样禁止选中 / 原生拖拽，视觉样式一概不动 */
+.orb-item,
+.orb-item *,
+.orb-skin {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
+}
 
 /* 透明大球外壳：球心完全透明，只有边缘一圈亮 + 顶部弧形高光 + 底部反光 */
 .orb-shell {

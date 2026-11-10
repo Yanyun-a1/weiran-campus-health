@@ -1,4 +1,6 @@
-/* 校园健康助手 · 小球视图 v6
+/* 校园健康助手 · 小球视图 v7
+ * v6 的逐帧投影 / 质感 / 尺寸 / 文案一字未改，本轮只重做指针交互：
+ * 事件全绑 .orb-scene、preventDefault、pointer capture、pointerup 自判点击。
  * JS 每帧计算球面坐标 → 两次旋转 → 透视投影，只写位置 / 缩放 / 深度。
  * 球自身只有 translate + scale，永远是正圆；不使用任何 3D 库。
  * 对话视图（30 条问答 / 智能问数 / 请假表单 / 身份切换 / 问答弹窗）完全不碰。
@@ -191,7 +193,6 @@
   var mode = 'idle';                 // idle | drag | ease
   var rafId = null;
   var easeStart = 0, easeFrom = { ry: 0, rx: 0 };
-  var suppressClick = false;
 
   function tick(ts) {
     rafId = null;
@@ -205,56 +206,121 @@
       if (mode !== 'idle') rafId = requestAnimationFrame(tick);
       return;
     }
-    if (mode === 'drag') { cur.ry = target.ry; cur.rx = target.rx; }
+    if (mode === 'drag') {
+      cur.ry = target.ry; cur.rx = target.rx;
+      applyProjection(cur.ry, cur.rx);
+      rafId = requestAnimationFrame(tick); // 按住期间持续逐帧，直到松手进入回弹
+      return;
+    }
     applyProjection(cur.ry, cur.rx);
   }
   function requestFrame() { if (rafId === null) rafId = requestAnimationFrame(tick); }
+  function startRAF() { requestFrame(); }
+  function startEaseBack() {
+    if (Math.abs(cur.ry) < .001 && Math.abs(cur.rx) < .001) {
+      cur.ry = 0; cur.rx = 0; mode = 'idle';
+      applyProjection(0, 0);
+      return;
+    }
+    easeFrom = { ry: cur.ry, rx: cur.rx };
+    easeStart = performance.now();
+    mode = 'ease';
+    requestFrame();                        // 500ms 内缓动回 0deg / 0deg
+  }
+
+  /* ================= 指针事件：全部绑在 .orb-scene 上 =================
+   * 大球层与中球层共用同一个 scene 和同一套逻辑，靠 downOrb 的 class 区分，
+   * 不写两遍。点击不再依赖 click：pointerdown 里 preventDefault，
+   * 所有点击判定都在 pointerup 里用 downOrb 自己算。
+   */
+  var pointerId = null;
+  var downX = 0, downY = 0;
+  var downOrb = null;        // pointerdown 命中的球，空白处为 null
+  var downBack = false;      // 命中的是左上角返回按钮
+  var isDragging = false;
 
   function bindDrag() {
     var scene = $('#orbScene');
     if (!scene) return;
-    var start = null, moved = 0, dragging = false;
+
+    function handleMove(e) {
+      var dx = e.clientX - downX, dy = e.clientY - downY;
+      if (!isDragging && Math.hypot(dx, dy) > 8) isDragging = true;
+      if (isDragging) {
+        /* 符号沿用 v6 已验收的方向（左拖 → 左球退后变暗）；
+         * 需按字面 -dx 时可在控制台 __orbDragSign(-1) 切换。 */
+        target.ry = clamp(DRAG_SIGN * dx * 0.32, -RY_MAX, RY_MAX);
+        target.rx = clamp(dy * 0.20, -RX_MAX, RX_MAX);
+      }
+    }
+
+    function handleUp(e, allowClick) {
+      var pid = e.pointerId;
+      var moved = Math.hypot(e.clientX - downX, e.clientY - downY);
+      var hitOrb = downOrb, hitBack = downBack;
+      pointerId = null;                  // 先置空，避免兜底逻辑重复收尾
+      try { scene.releasePointerCapture(pid); } catch (err) {}
+      if (allowClick && moved < 8) {     // pointerup 的 target 已被捕获，只能用 downOrb
+        if (hitOrb) triggerSplit(hitOrb);
+        else if (hitBack) collapse();
+      }
+      scene.classList.remove('is-dragging');
+      target.ry = 0; target.rx = 0;
+      downOrb = null; downBack = false; isDragging = false;
+      startEaseBack();                   // 点击与拖动都走回弹，角度归零
+    }
+
+    function handleCancel() {
+      if (pointerId === null) return;
+      pointerId = null; downOrb = null; downBack = false; isDragging = false;
+      scene.classList.remove('is-dragging');
+      target.ry = 0; target.rx = 0;
+      startEaseBack();
+    }
 
     scene.addEventListener('pointerdown', function (e) {
-      if (e.button != null && e.button !== 0) return;
-      start = { x: e.clientX, y: e.clientY };
-      moved = 0; dragging = false;
+      if (e.button != null && e.button !== 0) return;   // 只响应左键 / 单指
+      if (pointerId !== null) return;                    // 已有指针在拖，忽略第二根手指
+      e.preventDefault();                                // 挡住选中、手势、原生拖拽
+      pointerId = e.pointerId;
+      downX = e.clientX; downY = e.clientY;
+      downOrb = (e.target && e.target.closest) ? e.target.closest('.orb-item') : null;
+      downBack = !!(e.target && e.target.closest && e.target.closest('#orbBack'));
+      isDragging = false;
+      scene.classList.add('is-dragging');
       try { scene.setPointerCapture(e.pointerId); } catch (err) {}
+      target.ry = cur.ry; target.rx = cur.rx;            // 从当前角度接着拖，不跳变
+      mode = 'drag';
+      startRAF();
     });
 
-    window.addEventListener('pointermove', function (e) {
-      if (!start) return;
-      var dx = e.clientX - start.x, dy = e.clientY - start.y;
-      moved = Math.max(moved, Math.hypot(dx, dy));
-      if (!dragging && moved < 8) return;   // 位移 < 8px 判定为点击，不触发旋转
-      dragging = true;
-      mode = 'drag';
-      scene.classList.add('dragging');
-      /* 规格写的是 ry = -dx·0.32；但按验收 3/4（左拖 → 左球退后变暗、
-       * 右球转到前面变亮）以及上一轮已授权的方向修正，符号取正：
-       * 左拖 dx<0 → ry<0 → 左球 z2 变小、右球 z2 变大。
-       * 若需按字面公式反向，可在控制台调用 __orbDragSign(-1) 实时切换。 */
-      target.ry = clamp(DRAG_SIGN * dx * 0.32, -RY_MAX, RY_MAX);
-      target.rx = clamp(dy * 0.20, -RX_MAX, RX_MAX);
-      requestFrame();                       // pointermove 里不直接改 DOM
-    }, { passive: true });
+    scene.addEventListener('pointermove', function (e) {
+      if (pointerId === null || pointerId !== e.pointerId) return;
+      handleMove(e);
+    });
+    scene.addEventListener('pointerup', function (e) {
+      if (pointerId === null || pointerId !== e.pointerId) return;
+      handleUp(e, true);
+    });
+    scene.addEventListener('pointercancel', handleCancel);
+    scene.addEventListener('dragstart', function (e) { e.preventDefault(); });
+    scene.addEventListener('contextmenu', function (e) { e.preventDefault(); });
 
-    function finish() {
-      if (!start) return;
-      start = null;
-      scene.classList.remove('dragging');
-      if (dragging) {
-        suppressClick = true;
-        setTimeout(function () { suppressClick = false; }, 80);
-        easeFrom = { ry: cur.ry, rx: cur.rx };
-        easeStart = performance.now();
-        mode = 'ease';
-        requestFrame();                     // 500ms 内缓动回 0deg / 0deg
-      }
-      dragging = false;
+    /* 兜底：Chrome 在 pointerdown 被 preventDefault 后会释放显式鼠标捕获，
+     * 指针拖出容器时 scene 收不到 move / up。window 上只在「捕获丢失且目标
+     * 不在 scene 内」时补一次，避免重复处理；主键事件仍全部绑在 scene 上。 */
+    function handledByScene(e) {
+      return e.target === scene || (e.target && scene.contains(e.target));
     }
-    window.addEventListener('pointerup', finish);
-    window.addEventListener('pointercancel', finish);
+    window.addEventListener('pointermove', function (e) {
+      if (pointerId === null || pointerId !== e.pointerId || handledByScene(e)) return;
+      handleMove(e);
+    });
+    window.addEventListener('pointerup', function (e) {
+      if (pointerId === null || pointerId !== e.pointerId || handledByScene(e)) return;
+      handleUp(e, false);                // 容器外松手只复位，不当作点击
+    });
+    window.addEventListener('pointercancel', handleCancel);
   }
 
   /* ================= 分裂 / 倒放（时序保持 v4/v5） ================= */
@@ -290,6 +356,7 @@
   }
 
   function collapse() {
+    if (layer !== 'minor') return;   // 幂等：pointerup 与原生 click 可能各来一次
     var stage = $('#orbStage');
     stage.classList.remove('minor-on', 'major-out'); // 大球 240ms 淡入
     stage.classList.add('minor-out');                // 中球 240ms 淡出 + blur
@@ -306,6 +373,16 @@
       $$('.orb-major').forEach(function (m) { m.removeAttribute('data-picked'); });
       applyProjection(cur.ry, cur.rx);
     }, 270);
+  }
+
+  /* 单击判定唯一入口：按在哪个球上由 pointerdown 记录的 downOrb 决定。
+   * 大球 → 分裂；当前中球 → 详情面板；键盘 Enter / Space 也走这里。 */
+  function triggerSplit(it) {
+    if (!it || detailOpen) return;
+    if (it.classList.contains('orb-major')) split(it.getAttribute('data-orb'));
+    else if (it.classList.contains('orb-minor') && it.classList.contains('is-current')) {
+      openDetail(it.getAttribute('data-mod'), it.getAttribute('data-desc'));
+    }
   }
 
   /* ================= 详情占位面板（保持 v4） ================= */
@@ -363,21 +440,12 @@
       if (e.target.id === 'orbBack') { collapse(); return; }
     });
 
+    /* 球不再绑 click：所有激活都在 pointerup / 键盘里走 triggerSplit */
     var stage = $('#orbStage');
-    stage.addEventListener('click', function (e) {
-      if (suppressClick) { suppressClick = false; return; } // 拖动结束后的 click 不触发分裂
-      if (detailOpen) return;
-      var it = e.target.closest && e.target.closest('.orb-item');
-      if (!it) return;
-      if (it.classList.contains('orb-major')) split(it.getAttribute('data-orb'));
-      else if (it.classList.contains('orb-minor')) {
-        openDetail(it.getAttribute('data-mod'), it.getAttribute('data-desc'));
-      }
-    });
     stage.addEventListener('keydown', function (e) {
       if (e.key !== 'Enter' && e.key !== ' ') return;
       var it = e.target.closest && e.target.closest('.orb-item');
-      if (it) { e.preventDefault(); it.click(); }
+      if (it) { e.preventDefault(); triggerSplit(it); }
     });
 
     document.addEventListener('keydown', function (e) {
@@ -406,7 +474,8 @@
       applyProjection(ry, rx);
     };
     window.__orbState = function () {
-      return { ry: cur.ry, rx: cur.rx, layer: layer, picked: picked,
+      return { ry: cur.ry, rx: cur.rx, layer: layer, picked: picked, mode: mode,
+               pointerId: pointerId, isDragging: isDragging, downOrb: downOrb ? downOrb.getAttribute('aria-label') : null,
                R: R_CACHE[layer], d: CAMERA_D, dragSign: DRAG_SIGN };
     };
     window.__orbDragSign = function (s) { DRAG_SIGN = Number(s) < 0 ? -1 : 1; return DRAG_SIGN; };
