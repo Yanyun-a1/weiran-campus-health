@@ -1,5 +1,6 @@
-/* 校园健康助手 · 小球视图 v5
- * CSS 3D 球面自转 + 逐帧深度处理 + 分裂/倒放 + 双 UI 切换。
+/* 校园健康助手 · 小球视图 v6
+ * JS 每帧计算球面坐标 → 两次旋转 → 透视投影，只写位置 / 缩放 / 深度。
+ * 球自身只有 translate + scale，永远是正圆；不使用任何 3D 库。
  * 对话视图（30 条问答 / 智能问数 / 请假表单 / 身份切换 / 问答弹窗）完全不碰。
  */
 (function () {
@@ -16,6 +17,9 @@
 
   var UI_KEY = 'xiaotong.ui.v1';
   var D2R = Math.PI / 180;
+  var CAMERA_D = 1200;          // 相机距离 d
+  var RY_MAX = 42, RX_MAX = 22; // 拖动角度上限（度）
+  var DRAG_SIGN = 1;            // 见下方拖动说明：验收 3/4 要求左拖时左球退后
 
   /* 三色与九个占位文案逐字沿用 v4，不动 */
   var ORBS = [
@@ -94,33 +98,73 @@
     stage.innerHTML = html;
   }
 
-  /* ================= 深度处理 =================
-   * 主项就是规格里的公式：Z/R = cos(el) · cos(az + ry)
-   * 另加 rotateX(rx) 的修正项，使上下拖动也有真实的深度变化。
-   * t = (Z - Zmin) / (Zmax - Zmin)，取球面理论极值 Zmin = -R、Zmax = +R。
-   * 每帧只写 CSS 变量：--ry / --rx / --t / --txt-op，
-   * opacity、brightness、blur 全部由 .orb-skin 上的 calc() 自动求值。
-   */
-  var layer = 'major';
-  function activeItems() {
-    return layer === 'major' ? $$('.orb-major') : $$('.orb-minor.is-current');
+  /* 预索引：避免每帧做 DOM 查询；半径 R 从 CSS 变量读，自动跟随桌面/手机断点 */
+  var MAJORS = [], MINORS = {}, R_CACHE = { major: 250, minor: 175 };
+  function rec(el) {
+    return {
+      el: el, skin: el.querySelector('.orb-skin'),
+      az: Number(el.getAttribute('data-az')) * D2R,
+      elv: Number(el.getAttribute('data-el')) * D2R
+    };
   }
-  function applyRotation(ry, rx) {
-    var stage = $('#orbStage');
-    if (!stage) return;
-    stage.style.setProperty('--ry', ry.toFixed(3) + 'deg');
-    stage.style.setProperty('--rx', rx.toFixed(3) + 'deg');
-    var ryR = ry * D2R, rxR = rx * D2R;
-    activeItems().forEach(function (it) {
-      var az = Number(it.getAttribute('data-az')) * D2R;
-      var el = Number(it.getAttribute('data-el')) * D2R;
-      var z = Math.cos(ryR) * (-Math.sin(el) * Math.sin(rxR) +
-                               Math.cos(el) * Math.cos(az) * Math.cos(rxR)) -
-              Math.cos(el) * Math.sin(az) * Math.sin(ryR);
-      var t = clamp((z + 1) / 2, 0, 1);
-      it.style.setProperty('--t', t.toFixed(4));
-      it.style.setProperty('--txt-op', t < 0.25 ? '0.35' : '1');
+  function indexItems() {
+    MAJORS = $$('.orb-major').map(rec);
+    MINORS = {};
+    $$('.orb-minor').forEach(function (m) {
+      var g = m.getAttribute('data-group');
+      (MINORS[g] = MINORS[g] || []).push(rec(m));
     });
+  }
+  function measure() {
+    var a = $('.orb-major'), b = $('.orb-minor');
+    if (a) R_CACHE.major = parseFloat(getComputedStyle(a).getPropertyValue('--R')) || 250;
+    if (b) R_CACHE.minor = parseFloat(getComputedStyle(b).getPropertyValue('--R')) || 175;
+  }
+
+  var layer = 'major';
+  function activeRecs() { return layer === 'major' ? MAJORS : (MINORS[picked] || []); }
+
+  /* ================= 每帧投影（核心公式） =================
+   *  x0 = R cos(el) sin(az), y0 = R sin(el), z0 = R cos(el) cos(az)
+   *  绕 Y：x1 = x0 cos(ry) + z0 sin(ry)，z1 = -x0 sin(ry) + z0 cos(ry)，y1 = y0
+   *  绕 X：y2 = y1 cos(rx) - z1 sin(rx)，z2 = y1 sin(rx) + z1 cos(rx)，x2 = x1
+   *  投影：k = d / (d - z2)，px = x2·k，py = -y2·k，sc = k
+   *  深度：t = (z2 + R) / (2R)
+   * 每帧只写三个球的 --px / --py / --sc / --txt-op，
+   * 以及 opacity / filter（质感层）与 z-index（球层），不碰其他属性。
+   */
+  function applyProjection(ryDeg, rxDeg) {
+    var ry = ryDeg * D2R, rx = rxDeg * D2R;
+    var cy = Math.cos(ry), sy = Math.sin(ry);
+    var cx = Math.cos(rx), sx = Math.sin(rx);
+    var R = R_CACHE[layer];
+    var list = activeRecs();
+    for (var i = 0; i < list.length; i++) {
+      var o = list[i], el = o.el;
+      var ce = Math.cos(o.elv), se = Math.sin(o.elv);
+      var x0 = R * ce * Math.sin(o.az);
+      var y0 = R * se;
+      var z0 = R * ce * Math.cos(o.az);
+
+      var x1 = x0 * cy + z0 * sy;
+      var z1 = -x0 * sy + z0 * cy;
+      var y1 = y0;
+
+      var y2 = y1 * cx - z1 * sx;
+      var z2 = y1 * sx + z1 * cx;
+      var x2 = x1;
+
+      var k = CAMERA_D / (CAMERA_D - z2);
+      var t = clamp((z2 + R) / (2 * R), 0, 1);
+
+      el.style.setProperty('--px', (x2 * k).toFixed(2) + 'px');
+      el.style.setProperty('--py', (-y2 * k).toFixed(2) + 'px');
+      el.style.setProperty('--sc', k.toFixed(4));
+      el.style.setProperty('--txt-op', t < 0.25 ? '0.35' : '1');
+      o.skin.style.opacity = (0.35 + 0.65 * t).toFixed(3);
+      o.skin.style.filter = 'brightness(' + (0.65 + 0.35 * t).toFixed(3) + ') blur(' + ((1 - t) * 2.2).toFixed(2) + 'px)';
+      el.style.zIndex = String(Math.round(t * 100));
+    }
   }
 
   /* 规格里的缓动：cubic-bezier(.22,1,.36,1)，用二分反解参数 t */
@@ -141,7 +185,7 @@
   var EASE = cubicBezier(.22, 1, .36, 1);
   var EASE_MS = 500;
 
-  /* ================= 拖动自转（rAF 节流） ================= */
+  /* ================= 拖动（rAF 节流） ================= */
   var cur = { ry: 0, rx: 0 };
   var target = { ry: 0, rx: 0 };
   var mode = 'idle';                 // idle | drag | ease
@@ -157,16 +201,12 @@
       cur.ry = easeFrom.ry * k;
       cur.rx = easeFrom.rx * k;
       if (p >= 1) { mode = 'idle'; cur.ry = 0; cur.rx = 0; }
-      applyRotation(cur.ry, cur.rx);
+      applyProjection(cur.ry, cur.rx);
       if (mode !== 'idle') rafId = requestAnimationFrame(tick);
       return;
     }
-    if (mode === 'drag') {
-      cur.ry = target.ry; cur.rx = target.rx;
-      applyRotation(cur.ry, cur.rx);
-      return;                       // 下一次 pointermove 再请求帧
-    }
-    applyRotation(0, 0);
+    if (mode === 'drag') { cur.ry = target.ry; cur.rx = target.rx; }
+    applyProjection(cur.ry, cur.rx);
   }
   function requestFrame() { if (rafId === null) rafId = requestAnimationFrame(tick); }
 
@@ -185,15 +225,17 @@
     window.addEventListener('pointermove', function (e) {
       if (!start) return;
       var dx = e.clientX - start.x, dy = e.clientY - start.y;
-      moved = Math.max(moved, Math.abs(dx) + Math.abs(dy));
+      moved = Math.max(moved, Math.hypot(dx, dy));
       if (!dragging && moved < 8) return;   // 位移 < 8px 判定为点击，不触发旋转
       dragging = true;
       mode = 'drag';
       scene.classList.add('dragging');
-      /* 规格给的是 ry = -dx × 0.35。实机验证方向后按授权把符号改回正号：
-       * 手指向左拖（dx<0）→ ry<0 → 左边的球退到背面变暗，右边的球转到前面变亮。 */
-      target.ry = clamp(dx * 0.35, -38, 38);
-      target.rx = clamp(dy * 0.22, -20, 20);
+      /* 规格写的是 ry = -dx·0.32；但按验收 3/4（左拖 → 左球退后变暗、
+       * 右球转到前面变亮）以及上一轮已授权的方向修正，符号取正：
+       * 左拖 dx<0 → ry<0 → 左球 z2 变小、右球 z2 变大。
+       * 若需按字面公式反向，可在控制台调用 __orbDragSign(-1) 实时切换。 */
+      target.ry = clamp(DRAG_SIGN * dx * 0.32, -RY_MAX, RY_MAX);
+      target.rx = clamp(dy * 0.20, -RX_MAX, RX_MAX);
       requestFrame();                       // pointermove 里不直接改 DOM
     }, { passive: true });
 
@@ -215,7 +257,7 @@
     window.addEventListener('pointercancel', finish);
   }
 
-  /* ================= 分裂 / 倒放 ================= */
+  /* ================= 分裂 / 倒放（时序保持 v4/v5） ================= */
   var picked = null;
   var detailOpen = false;
 
@@ -231,7 +273,7 @@
       m.classList.toggle('is-current', m.getAttribute('data-group') === id);
     });
     stage.classList.remove('minor-out', 'minor-on');
-    stage.classList.add('major-out');      // 大球 240ms 淡出 + translateZ 收/推
+    stage.classList.add('major-out');      // 大球 240ms 淡出
     layer = 'minor';
     document.querySelector('.page').classList.add('orb-split');
     $('#orbBack').hidden = false;
@@ -244,25 +286,25 @@
     });
     void stage.offsetWidth;
     stage.classList.add('minor-on');
-    applyRotation(cur.ry, cur.rx);
+    applyProjection(cur.ry, cur.rx);       // 中球同样按 JS 投影摆位
   }
 
   function collapse() {
     var stage = $('#orbStage');
-    stage.classList.remove('minor-on', 'major-out'); // 大球 240ms 淡入 + push 归零
+    stage.classList.remove('minor-on', 'major-out'); // 大球 240ms 淡入
     stage.classList.add('minor-out');                // 中球 240ms 淡出 + blur
     layer = 'major';
     picked = null;
     document.querySelector('.page').classList.remove('orb-split');
     $('#orbBack').hidden = true;
     $('#orbHint').textContent = '拖动旋转大球 · 点一个球展开子模块';
-    applyRotation(cur.ry, cur.rx);
+    applyProjection(cur.ry, cur.rx);
     setTimeout(function () {
       if (layer !== 'major') return;
       stage.classList.remove('minor-out');
       $$('.orb-minor').forEach(function (m) { m.classList.remove('is-current'); });
       $$('.orb-major').forEach(function (m) { m.removeAttribute('data-picked'); });
-      applyRotation(cur.ry, cur.rx);
+      applyProjection(cur.ry, cur.rx);
     }, 270);
   }
 
@@ -346,17 +388,28 @@
     });
 
     bindDrag();
+    window.addEventListener('resize', function () { measure(); requestFrame(); });
   }
 
   function boot() {
     buildStage();
+    indexItems();
+    measure();
     var saved = null;
     try { saved = localStorage.getItem(UI_KEY); } catch (e) { saved = null; }
     setView(saved === 'chat' ? 'chat' : 'orb', false);
     bind();
-    applyRotation(0, 0);
-    /* 只读验收钩子：供无头浏览器直接指定角度，验证背面文字保护等分支 */
-    window.__orbApply = applyRotation;
+    applyProjection(0, 0);
+    /* 只读验收钩子：供无头浏览器直接指定角度、读取状态 */
+    window.__orbApply = function (ry, rx) {
+      cur.ry = ry; cur.rx = rx; target.ry = ry; target.rx = rx;
+      applyProjection(ry, rx);
+    };
+    window.__orbState = function () {
+      return { ry: cur.ry, rx: cur.rx, layer: layer, picked: picked,
+               R: R_CACHE[layer], d: CAMERA_D, dragSign: DRAG_SIGN };
+    };
+    window.__orbDragSign = function (s) { DRAG_SIGN = Number(s) < 0 ? -1 : 1; return DRAG_SIGN; };
   }
   boot();
 })();

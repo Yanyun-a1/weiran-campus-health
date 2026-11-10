@@ -1,8 +1,9 @@
-/* 校园健康助手 · 小球视图 v5：真正的 CSS 3D 球面
- * 四层：.orb-scene(3D 舞台) → .orb-shell(透明大球) / .orb-stage(旋转层) → .orb-item(球面三球) / .orb-rim(边缘光)
- * .orb-stage 与 .orb-item 均无 overflow:hidden，3D 上下文不被打断；
- * 玻璃质感与裁剪收在最内层的 .orb-skin。
- * 纯 CSS，无 Three.js / 无 rotate3d / 无外部图片。
+/* 校园健康助手 · 小球视图 v6：JS 逐帧透视投影
+ * 四层：.orb-scene(定位容器) → .orb-shell(透明大球，背景层)
+ *       .orb-stage(球层容器) → .orb-item(三个正圆球) / .orb-rim(边缘光)
+ * 球自身只做 translate + scale，永远是正圆；位置、大小、前后层级全部由
+ * orb-view.js 每帧算出来写进 CSS 变量。无 Three.js / 无 3D 库 / 无外部图片。
+ * 对话视图（30 条问答 / 智能问数 / 请假表单 / 身份切换 / 问答弹窗）完全不碰。
  */
 :root {
   --orb-ease: cubic-bezier(.22, 1, .36, 1);
@@ -29,15 +30,13 @@
 .ui-seg.active { background: var(--blue); color: #fff; box-shadow: 0 4px 12px rgba(42, 167, 155, .26); }
 .ui-seg.active:hover { background: var(--blue-dark); color: #fff; }
 
-/* ===== 第一层：3D 舞台 ===== */
+/* ===== 第一层：定位容器（纯 2D） ===== */
 .orb-view { min-width: 0; }
 .orb-scene {
   --shell-d: 720px;
   position: relative;
-  width: 100%; height: 740px;
-  perspective: 1200px;
-  perspective-origin: 50% 50%;
-  overflow: hidden;              /* 仅舞台裁剪外壳；stage / item 绝不裁剪 */
+  width: 100%; height: 100%; min-height: 740px;
+  overflow: hidden;              /* 只裁舞台边缘，不裁球 */
   border: 1px solid var(--line); border-radius: var(--radius);
   background:
     radial-gradient(520px 300px at 50% 0%, rgba(42, 167, 155, .07), transparent 70%),
@@ -48,50 +47,62 @@
 }
 .orb-scene.dragging { cursor: grabbing; }
 
-/* 透明大球外壳：背景层，不参与旋转 */
+/* 透明大球外壳：球心完全透明，只有边缘一圈亮 + 顶部弧形高光 + 底部反光 */
 .orb-shell {
   position: absolute; left: 50%; top: 50%;
   width: var(--shell-d); height: var(--shell-d);
   margin-left: calc(var(--shell-d) / -2); margin-top: calc(var(--shell-d) / -2);
   z-index: 0; border-radius: 50%; pointer-events: none;
-  background: radial-gradient(circle at 50% 50%,
-      rgba(255, 255, 255, .02) 0%,
-      rgba(255, 255, 255, .05) 58%,
-      rgba(255, 255, 255, .12) 78%,
-      rgba(255, 255, 255, .24) 90%,
-      transparent 100%);
+  /* closest-side：让 72% / 86% / 94% 这些边缘停靠点落在可见的圆内，
+   * 否则按默认 farthest-corner 计算会全部落在圆形之外、边缘光看不见。 */
+  background: radial-gradient(circle closest-side at 50% 50%,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0) 52%,
+      rgba(255, 255, 255, .04) 72%,
+      rgba(255, 255, 255, .14) 86%,
+      rgba(255, 255, 255, .30) 94%,
+      rgba(255, 255, 255, .05) 100%);
   box-shadow:
-      inset 0 0 90px rgba(255, 255, 255, .10),
-      inset 0 -50px 90px rgba(255, 255, 255, .06),
-      0 0 140px rgba(42, 167, 155, .10);
+      inset 0 0 60px rgba(255, 255, 255, .05),
+      inset 0 -30px 70px rgba(255, 255, 255, .04);
+}
+.orb-shell::before {           /* 顶部弧形高光 */
+  content: ""; position: absolute; left: 20%; top: 6%;
+  width: 42%; height: 20%; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, .50), transparent 72%);
+  filter: blur(16px);
+}
+.orb-shell::after {            /* 底部反光 */
+  content: ""; position: absolute; left: 26%; bottom: 8%;
+  width: 48%; height: 16%; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 60%, rgba(255, 255, 255, .22), transparent 70%);
+  filter: blur(14px);
 }
 
-/* 第二层：旋转层（无 overflow / 无 opacity / 无 filter） */
+/* 第二层：球层容器（只做定位，不做任何形变） */
 .orb-stage {
   position: absolute; inset: 0; z-index: 1;
-  transform-style: preserve-3d;
-  transform: rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg));
 }
 
-/* 第三层：挂在球面上的球 */
+/* 第三层：三个球 —— 只有位移与等比缩放，球永远是正圆 */
 .orb-item {
   --R: 250px;
   --d: 150px;
-  --push: 0px;
-  --t: 1;
+  --px: 0px; --py: 0px; --sc: 1;
   --txt-op: 1;
   position: absolute; left: 50%; top: 50%;
   width: var(--d); height: var(--d);
   margin-left: calc(var(--d) / -2); margin-top: calc(var(--d) / -2);
-  transform-style: preserve-3d;
-  transform: rotateY(var(--az)) rotateX(var(--el)) translateZ(calc(var(--R) + var(--push)));
-  transition: transform .24s var(--orb-ease), opacity .24s var(--orb-ease);
+  transform: translate3d(var(--px), var(--py), 0) scale(var(--sc));
+  transform-origin: center center;
+  will-change: transform;
+  transition: opacity .24s var(--orb-ease);
   cursor: pointer;
-  /* 分裂淡出由 .orb-item 的 opacity 承担；深度由 .orb-skin 承担 */
 }
 .orb-item:focus-visible { outline: 3px solid rgba(42, 167, 155, .5); outline-offset: 6px; }
 
-/* 质感层：唯一允许 overflow:hidden 的元素 */
+/* 质感层：五层配方保持不变，唯一允许 overflow:hidden 的元素。
+ * opacity / filter 由 JS 每帧写内联样式（深度效果）。 */
 .orb-skin {
   position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
   background:
@@ -101,9 +112,6 @@
     inset 0 0 24px rgba(0, 0, 0, .28),
     inset 0 -18px 26px rgba(255, 255, 255, .18),
     0 18px 40px rgba(0, 0, 0, .22);
-  /* 深度：Zmin = -R，Zmax = +R，t = (Z + R) / 2R */
-  opacity: calc(.30 + .70 * var(--t));
-  filter: brightness(calc(.62 + .38 * var(--t))) blur(calc((1 - var(--t)) * 2.5px));
   will-change: opacity, filter;
 }
 .orb-skin::before {           /* 顶部弧形高光 */
@@ -117,7 +125,7 @@
   background: radial-gradient(circle at 68% 78%, transparent 55%, rgba(255, 255, 255, .22) 82%, transparent 92%);
 }
 
-/* 文字层：跟着球面一起缩小、透视形变，不做反向抵消 */
+/* 文字层：独立居中，只随父级 scale 等比缩放，不参与任何形变 */
 .orb-text {
   position: absolute; inset: 0; z-index: 2;
   display: grid; place-items: center; pointer-events: none;
@@ -127,26 +135,19 @@
   transition: opacity .12s linear;
 }
 
-/* 第四层：边缘光与顶部高光，覆盖在球上方 */
+/* 第四层：边缘光（只在最外圈），覆盖在球上方 */
 .orb-rim {
   position: absolute; left: 50%; top: 50%;
   width: var(--shell-d); height: var(--shell-d);
   margin-left: calc(var(--shell-d) / -2); margin-top: calc(var(--shell-d) / -2);
   z-index: 3; border-radius: 50%; pointer-events: none;
-  /* 只在边缘发光，中心必须完全透明，否则会盖住球面上的球 */
   background: none;
   box-shadow:
       inset 0 0 0 2px rgba(255, 255, 255, .45),
       inset 0 0 34px rgba(255, 255, 255, .12),
       0 0 40px rgba(42, 167, 155, .06);
 }
-.orb-rim::before {
-  content: ""; position: absolute; left: 16%; top: 8%; width: 46%; height: 26%;
-  border-radius: 50%;
-  background: radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, .55), transparent 72%);
-  filter: blur(14px);
-}
-.orb-rim::after {          /* 玻璃边缘光：只在最外一圈 */
+.orb-rim::after {          /* 玻璃边缘光：中心完全透明 */
   content: ""; position: absolute; inset: 0; border-radius: 50%;
   background: radial-gradient(circle closest-side,
       transparent 90%, rgba(255, 255, 255, .16) 96%, rgba(255, 255, 255, .42) 100%);
@@ -171,14 +172,12 @@
 /* 中球层：隐藏顶栏切换器与身份选择器 */
 .page.orb-split .ui-switch, .page.orb-split .identity-bar { display: none; }
 
-/* ===== 分裂 / 中球层 ===== */
+/* ===== 分裂 / 中球层（时序与 v4/v5 一致） ===== */
 .orb-minor {
   --R: 175px; --d: 200px;
   visibility: hidden; opacity: 0;
 }
 .orb-stage.major-out .orb-major { opacity: 0; pointer-events: none; }
-.orb-stage.major-out .orb-major[data-picked="1"] { --push: 60px; }
-.orb-stage.major-out .orb-major:not([data-picked="1"]) { --push: -40px; }
 
 .orb-stage.minor-on .orb-minor.is-current {
   visibility: visible;
