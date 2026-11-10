@@ -1,17 +1,18 @@
-/* 校园健康助手 · 小球视图 + 双 UI 切换
- * 纯 CSS 伪 3D 球体：只用 radial-gradient / box-shadow / scale / translate，
- * 不使用 Three.js、不使用 rotate3d、不引用任何外部图片。
+/* 校园健康助手 · 小球视图 v5：真正的 CSS 3D 球面
+ * 四层：.orb-scene(3D 舞台) → .orb-shell(透明大球) / .orb-stage(旋转层) → .orb-item(球面三球) / .orb-rim(边缘光)
+ * .orb-stage 与 .orb-item 均无 overflow:hidden，3D 上下文不被打断；
+ * 玻璃质感与裁剪收在最内层的 .orb-skin。
+ * 纯 CSS，无 Three.js / 无 rotate3d / 无外部图片。
  */
 :root {
-  --orb-dur: 600ms;
   --orb-ease: cubic-bezier(.22, 1, .36, 1);
 }
 
 /* 视图显示/隐藏：优先级要盖过 .workspace / .identity-bar 的 display 声明 */
 .workspace[hidden], .identity-bar[hidden], .orb-view[hidden],
-.orb-reset[hidden], .orb-detail[hidden], .orb-detail-backdrop[hidden] { display: none !important; }
+.orb-back[hidden], .orb-detail[hidden], .orb-detail-backdrop[hidden] { display: none !important; }
 
-/* ===== 双 UI 分段切换器 ===== */
+/* ===== 双 UI 分段切换器（保留 v4） ===== */
 .ui-switch {
   display: inline-flex; align-items: center; gap: 4px; flex: none;
   margin: 0 0 12px; padding: 4px; white-space: nowrap;
@@ -28,108 +29,175 @@
 .ui-seg.active { background: var(--blue); color: #fff; box-shadow: 0 4px 12px rgba(42, 167, 155, .26); }
 .ui-seg.active:hover { background: var(--blue-dark); color: #fff; }
 
-/* ===== 小球舞台 ===== */
+/* ===== 第一层：3D 舞台 ===== */
 .orb-view { min-width: 0; }
-.orb-stage {
-  position: relative; min-height: 628px; min-width: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
-  padding: 18px 0 10px; overflow: hidden;
+.orb-scene {
+  --shell-d: 720px;
+  position: relative;
+  width: 100%; height: 740px;
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  overflow: hidden;              /* 仅舞台裁剪外壳；stage / item 绝不裁剪 */
+  border: 1px solid var(--line); border-radius: var(--radius);
   background:
     radial-gradient(520px 300px at 50% 0%, rgba(42, 167, 155, .07), transparent 70%),
-    rgba(255, 255, 255, .66);
-  border: 1px solid var(--line); border-radius: var(--radius); box-shadow: var(--shadow);
+    linear-gradient(180deg, rgba(255, 255, 255, .74), rgba(240, 250, 248, .88));
+  box-shadow: var(--shadow);
+  touch-action: none;
+  cursor: grab;
 }
-.orb-row { display: flex; justify-content: center; align-items: flex-start; gap: 60px; min-width: 0; }
-.orb-hint { margin: 10px 0 0; text-align: center; font-size: 11.5px; color: var(--muted); }
-.orb-reset {
-  position: absolute; top: 12px; right: 14px; z-index: 12;
-  border: 1px solid var(--line); background: rgba(255, 255, 255, .94); color: var(--blue);
-  border-radius: 999px; padding: 6px 14px; font-size: 12px; font-weight: 700;
-  box-shadow: var(--shadow-sm);
-}
-.orb-reset:hover { background: var(--blue-soft); }
+.orb-scene.dragging { cursor: grabbing; }
 
-/* 每个大球 + 它的 3 个中球共处一个定位槽 */
-.orb-slot {
-  --big-d: 150px; --big-r: 75px;
-  --mini-d: 100px; --mini-r: 50px;
-  --cy: 150px;
-  position: relative; width: 340px; height: 300px; flex: none; min-width: 0;
+/* 透明大球外壳：背景层，不参与旋转 */
+.orb-shell {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--shell-d); height: var(--shell-d);
+  margin-left: calc(var(--shell-d) / -2); margin-top: calc(var(--shell-d) / -2);
+  z-index: 0; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 50% 50%,
+      rgba(255, 255, 255, .02) 0%,
+      rgba(255, 255, 255, .05) 58%,
+      rgba(255, 255, 255, .12) 78%,
+      rgba(255, 255, 255, .24) 90%,
+      transparent 100%);
+  box-shadow:
+      inset 0 0 90px rgba(255, 255, 255, .10),
+      inset 0 -50px 90px rgba(255, 255, 255, .06),
+      0 0 140px rgba(42, 167, 155, .10);
 }
 
-/* 大球：径向渐变 + 内阴影做立体感 */
-.orb-main {
-  position: absolute; left: 50%; top: calc(var(--cy) - var(--big-r));
-  width: var(--big-d); height: var(--big-d); margin-left: calc(-1 * var(--big-r));
-  z-index: 2; display: block; padding: 0; border: 0; border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, var(--c-hi), var(--c-main) 55%, var(--c-dark));
-  box-shadow: inset -6px -8px 18px rgba(0, 0, 0, .18),
-              inset 6px 8px 16px rgba(255, 255, 255, .22),
-              0 12px 28px rgba(0, 0, 0, .14);
-  transform: scale(1); opacity: 1; cursor: pointer;
-  transition: transform var(--orb-dur) var(--orb-ease), opacity var(--orb-dur) var(--orb-ease);
+/* 第二层：旋转层（无 overflow / 无 opacity / 无 filter） */
+.orb-stage {
+  position: absolute; inset: 0; z-index: 1;
+  transform-style: preserve-3d;
+  transform: rotateY(var(--ry, 0deg)) rotateX(var(--rx, 0deg));
 }
-.orb-main::before {
-  content: ""; position: absolute; left: 19%; top: 13%;
-  width: 34%; height: 27%; border-radius: 50%;
-  background: rgba(255, 255, 255, .62); filter: blur(9px); pointer-events: none;
-}
-.orb-main:focus-visible { outline: 3px solid rgba(42, 167, 155, .5); outline-offset: 4px; }
 
-/* 大球文字：独立的 HTML 层，不随球体做旋转/缩放 */
-.orb-label {
-  position: absolute; left: 50%; top: calc(var(--cy) - var(--big-r));
-  width: var(--big-d); height: var(--big-d); margin-left: calc(-1 * var(--big-r));
-  z-index: 4; display: grid; place-items: center; pointer-events: none;
+/* 第三层：挂在球面上的球 */
+.orb-item {
+  --R: 250px;
+  --d: 150px;
+  --push: 0px;
+  --t: 1;
+  --txt-op: 1;
+  position: absolute; left: 50%; top: 50%;
+  width: var(--d); height: var(--d);
+  margin-left: calc(var(--d) / -2); margin-top: calc(var(--d) / -2);
+  transform-style: preserve-3d;
+  transform: rotateY(var(--az)) rotateX(var(--el)) translateZ(calc(var(--R) + var(--push)));
+  transition: transform .24s var(--orb-ease), opacity .24s var(--orb-ease);
+  cursor: pointer;
+  /* 分裂淡出由 .orb-item 的 opacity 承担；深度由 .orb-skin 承担 */
+}
+.orb-item:focus-visible { outline: 3px solid rgba(42, 167, 155, .5); outline-offset: 6px; }
+
+/* 质感层：唯一允许 overflow:hidden 的元素 */
+.orb-skin {
+  position: absolute; inset: 0; border-radius: 50%; overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 118%, rgba(255, 255, 255, .55), transparent 55%),
+    radial-gradient(circle at 32% 26%, var(--c-hi), var(--c-main) 52%, var(--c-dark) 100%);
+  box-shadow:
+    inset 0 0 24px rgba(0, 0, 0, .28),
+    inset 0 -18px 26px rgba(255, 255, 255, .18),
+    0 18px 40px rgba(0, 0, 0, .22);
+  /* 深度：Zmin = -R，Zmax = +R，t = (Z + R) / 2R */
+  opacity: calc(.30 + .70 * var(--t));
+  filter: brightness(calc(.62 + .38 * var(--t))) blur(calc((1 - var(--t)) * 2.5px));
+  will-change: opacity, filter;
+}
+.orb-skin::before {           /* 顶部弧形高光 */
+  content: ""; position: absolute; left: 18%; top: 10%;
+  width: 52%; height: 34%; border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, .92), rgba(255, 255, 255, 0) 70%);
+  filter: blur(4px);
+}
+.orb-skin::after {            /* 边缘光 rim light */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle at 68% 78%, transparent 55%, rgba(255, 255, 255, .22) 82%, transparent 92%);
+}
+
+/* 文字层：跟着球面一起缩小、透视形变，不做反向抵消 */
+.orb-text {
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; place-items: center; pointer-events: none;
   color: #fff; font-size: 17px; font-weight: 600; letter-spacing: .5px;
   text-shadow: 0 1px 2px rgba(0, 0, 0, .25);
-  transition: opacity var(--orb-dur) var(--orb-ease);
+  opacity: var(--txt-op);
+  transition: opacity .12s linear;
 }
 
-/* 中球：初始为「若隐若现」的背景预览，无文字 */
-.orb-mini {
-  --tx: var(--tx-d); --ty: var(--ty-d);
-  position: absolute; left: 50%; top: var(--cy);
-  width: var(--mini-d); height: var(--mini-d);
-  margin-left: calc(-1 * var(--mini-r)); margin-top: calc(-1 * var(--mini-r));
-  z-index: 1; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%;
-  background: radial-gradient(circle at 32% 28%, var(--m-hi), var(--m-main) 55%, var(--m-dark));
-  box-shadow: inset -5px -6px 14px rgba(0, 0, 0, .16),
-              inset 5px 6px 12px rgba(255, 255, 255, .20),
-              0 10px 22px rgba(0, 0, 0, .12);
-  color: #fff; font-size: 13px; font-weight: 600; text-shadow: 0 1px 2px rgba(0, 0, 0, .25);
-  opacity: .14; filter: blur(5px);
-  transform: translate(var(--tx), var(--ty)) scale(.82);
-  transition: opacity .35s ease, filter .35s ease, transform .35s ease;
-  pointer-events: none;
+/* 第四层：边缘光与顶部高光，覆盖在球上方 */
+.orb-rim {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--shell-d); height: var(--shell-d);
+  margin-left: calc(var(--shell-d) / -2); margin-top: calc(var(--shell-d) / -2);
+  z-index: 3; border-radius: 50%; pointer-events: none;
+  /* 只在边缘发光，中心必须完全透明，否则会盖住球面上的球 */
+  background: none;
+  box-shadow:
+      inset 0 0 0 2px rgba(255, 255, 255, .45),
+      inset 0 0 34px rgba(255, 255, 255, .12),
+      0 0 40px rgba(42, 167, 155, .06);
 }
-.orb-mini::before {
-  content: ""; position: absolute; left: 20%; top: 14%;
-  width: 32%; height: 26%; border-radius: 50%;
-  background: rgba(255, 255, 255, .58); filter: blur(7px); pointer-events: none;
+.orb-rim::before {
+  content: ""; position: absolute; left: 16%; top: 8%; width: 46%; height: 26%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 40%, rgba(255, 255, 255, .55), transparent 72%);
+  filter: blur(14px);
 }
-.orb-mini-label { opacity: 0; transition: opacity .3s ease .18s; position: relative; z-index: 1; }
-.orb-slot.hovered .orb-mini {
-  opacity: .3; filter: blur(2.5px);
-  transform: translate(var(--tx), var(--ty)) scale(.9);
+.orb-rim::after {          /* 玻璃边缘光：只在最外一圈 */
+  content: ""; position: absolute; inset: 0; border-radius: 50%;
+  background: radial-gradient(circle closest-side,
+      transparent 90%, rgba(255, 255, 255, .16) 96%, rgba(255, 255, 255, .42) 100%);
 }
 
-/* 点击分裂 */
-.orb-slot.dimmed .orb-main { opacity: .25; transform: scale(.9); }
-.orb-slot.dimmed .orb-label { opacity: .25; }
-.orb-slot.active .orb-main { transform: scale(.9); }
-.orb-stage.split .orb-slot.active .orb-mini {
-  z-index: 6; pointer-events: auto; cursor: pointer;
-  animation: orbPop var(--orb-dur) var(--orb-ease) forwards;
+/* 左上角半透明圆形返回按钮（中球层） */
+.orb-back {
+  position: absolute; top: 14px; left: 14px; z-index: 6;
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1px solid rgba(42, 167, 155, .42);
+  background: rgba(255, 255, 255, .2);
+  backdrop-filter: blur(6px);
+  color: #fff; font-size: 20px; font-weight: 700; line-height: 1;
+  text-shadow: 0 1px 4px rgba(15, 60, 56, .9), 0 0 2px rgba(15, 60, 56, .7);
+  box-shadow: 0 3px 14px rgba(15, 60, 56, .22), inset 0 0 0 1px rgba(255, 255, 255, .5);
+  display: grid; place-items: center;
 }
-.orb-stage.split .orb-slot.active .orb-mini-label { opacity: 1; }
-.orb-stage.split .orb-slot.active .orb-mini:hover { filter: brightness(1.06); }
-@keyframes orbPop {
-  from { opacity: 0; filter: blur(5px); transform: translate(0, 0) scale(.82); }
-  to   { opacity: 1; filter: blur(0);  transform: translate(var(--tx), var(--ty)) scale(1); }
+.orb-back:hover { background: rgba(255, 255, 255, .38); }
+
+.orb-hint { margin: 10px 0 0; text-align: center; font-size: 11.5px; color: var(--muted); }
+
+/* 中球层：隐藏顶栏切换器与身份选择器 */
+.page.orb-split .ui-switch, .page.orb-split .identity-bar { display: none; }
+
+/* ===== 分裂 / 中球层 ===== */
+.orb-minor {
+  --R: 175px; --d: 200px;
+  visibility: hidden; opacity: 0;
+}
+.orb-stage.major-out .orb-major { opacity: 0; pointer-events: none; }
+.orb-stage.major-out .orb-major[data-picked="1"] { --push: 60px; }
+.orb-stage.major-out .orb-major:not([data-picked="1"]) { --push: -40px; }
+
+.orb-stage.minor-on .orb-minor.is-current {
+  visibility: visible;
+  animation: minorIn .42s var(--orb-ease) .22s forwards;
+}
+@keyframes minorIn {
+  from { opacity: 0; filter: blur(6px); }
+  to   { opacity: 1; filter: blur(0px); }
+}
+.orb-stage.minor-out .orb-minor.is-current {
+  visibility: visible;
+  animation: minorOut .24s var(--orb-ease) forwards;
+}
+@keyframes minorOut {
+  from { opacity: 1; filter: blur(0px); }
+  to   { opacity: 0; filter: blur(6px); }
 }
 
-/* ===== 模块详情占位面板 ===== */
+/* ===== 模块详情占位面板（保持 v4，完全不动） ===== */
 .orb-detail-backdrop {
   position: fixed; inset: 0; z-index: 70;
   background: rgba(15, 23, 42, .45); backdrop-filter: blur(2px);
@@ -171,26 +239,20 @@
 }
 .orb-detail-return:hover { background: var(--blue-dark); }
 
-/* ===== ≤768px：三球竖排、中球在下方三角、详情全屏 ===== */
+/* ===== ≤768px：外壳 96vw、R/球径缩小、详情全屏 ===== */
 @media (max-width: 768px) {
   .ui-switch { margin-bottom: 10px; }
   .ui-seg { font-size: 12.5px; padding: 6px 18px; }
-  .orb-stage {
-    min-height: 0; padding: 14px 0 18px; gap: 20px;
-    margin: 0 -10px; border-left: 0; border-right: 0; border-radius: 0;
+  .orb-scene {
+    --shell-d: 96vw;
+    width: calc(100% + 20px); margin: 0 -10px;
+    height: calc(96vw + 40px); min-height: 420px;
+    border-left: 0; border-right: 0; border-radius: 0;
   }
-  .orb-row { flex-direction: column; align-items: center; gap: 20px; }
-  .orb-slot {
-    --big-d: 120px; --big-r: 60px;
-    --mini-d: 84px; --mini-r: 42px;
-    --cy: 60px;
-    width: 100%; max-width: 370px; height: 120px;
-    transition: height var(--orb-dur) var(--orb-ease);
-  }
-  .orb-mini { --tx: var(--tx-m); --ty: var(--ty-m); }
-  .orb-label { font-size: 15px; }
-  .orb-reset { top: 10px; right: 10px; font-size: 11.5px; padding: 5px 11px; }
-  .orb-stage.split .orb-slot.active { height: 280px; }
+  .orb-item { --R: 140px; --d: 104px; }
+  .orb-minor { --R: 96px; --d: 140px; }
+  .orb-text { font-size: 15px; }
+  .orb-back { top: 10px; left: 10px; }
   .orb-hint { font-size: 11px; padding: 0 8px; }
   .orb-detail { width: 100%; }
   .orb-detail-head { padding: 15px 16px; }

@@ -46,14 +46,15 @@
 
   <main id="top">
 
-    <!-- 4. 小球视图：三大健康主题，默认显示 -->
+    <!-- 4. 小球视图：3D 球面（四层结构，默认显示） -->
     <section class="orb-view" id="orbView" aria-label="小球视图">
-      <div class="orb-stage" id="orbStage">
-        <button class="orb-reset" id="orbReset" type="button" hidden>← 收起</button>
-        <div class="orb-row orb-row-top" id="orbRowTop"></div>
-        <div class="orb-row orb-row-bottom" id="orbRowBottom"></div>
+      <div class="orb-scene" id="orbScene">
+        <div class="orb-shell" aria-hidden="true"></div>
+        <div class="orb-stage" id="orbStage"></div>
+        <div class="orb-rim" aria-hidden="true"></div>
+        <button class="orb-back" id="orbBack" type="button" aria-label="返回三大球" hidden>←</button>
       </div>
-      <p class="orb-hint" id="orbHint">点一个大球，展开它的三个子模块</p>
+      <p class="orb-hint" id="orbHint">拖动旋转大球 · 点一个球展开子模块</p>
     </section>
 
     <!-- 5. 对话窗口：原有功能完整保留，只做显示/隐藏切换 -->

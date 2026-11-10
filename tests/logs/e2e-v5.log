@@ -1,0 +1,183 @@
+INIT: {
+ "scene": {
+  "perspective": "1200px",
+  "origin": "576px 370px",
+  "overflow": "hidden"
+ },
+ "stage": {
+  "overflow": "visible",
+  "style": "preserve-3d",
+  "transform": "matrix(1, 0, 0, 1, 0, 0)",
+  "z": "1"
+ },
+ "item": {
+  "overflow": "visible",
+  "style": "preserve-3d",
+  "transform": "matrix3d(1, 0, 0, 0, 0, 0.669131, 0.743145, 0, 0, -0.743145, 0.669131, 0, 0, -185.786, 167.283, 1)"
+ },
+ "skin": {
+  "overflow": "hidden",
+  "bg": "radial-gradient(circle at 50% 118%, rgba(255, 255, 255, 0.55), rgba(0, 0, 0, 0) 55%), radial-gradient(circle at 32% 26%, rgb(255, 217, 190), rgb(255, 138, 91) 52%, rgb(201, 68, 42) 100%)",
+  "shadow": "rgba(0, 0, 0, 0.28) 0px 0px 24px 0px inset, rgba(255, 255, 255, 0.18) 0px -18px 26px 0px inset, rgba(0, 0, 0, 0.22) 0px 18px 40px 0px"
+ },
+ "shell": {
+  "z": "0",
+  "rect": {
+   "w": 720,
+   "h": 720,
+   "cx": 713,
+   "cy": 488,
+   "left": 353,
+   "right": 1073
+  },
+  "bg": "radial-gradient(circle, rgba(255, 255, 255, 0.02) 0%, rgba(255, 255, 255, 0.05) 58%, rgba(255, 255, 255, 0.12) 78%, rgba(255, 255, 255, 0.24) 90%, rgba(0, 0, 0, 0) 100%)"
+ },
+ "rim": {
+  "z": "3",
+  "bg": "none",
+  "shadow": "rgba(255, 255, 255, 0.45) 0px 0px 0px 2px inset, rgba(255, 255, 255, 0.12) 0px 0px 34px 0px inset, rgba(42, 167, 155, 0.06) 0px 0px 40px 0px"
+ },
+ "order": [
+  "orb-shell",
+  "orb-stage",
+  "orb-rim",
+  "orb-back"
+ ],
+ "centers": [
+  {
+   "w": 184,
+   "h": 94,
+   "cx": 713,
+   "cy": 275,
+   "left": 620,
+   "right": 805
+  },
+  {
+   "w": 160,
+   "h": 171,
+   "cx": 894,
+   "cy": 591,
+   "left": 814,
+   "right": 974
+  },
+  {
+   "w": 160,
+   "h": 171,
+   "cx": 531,
+   "cy": 591,
+   "left": 451,
+   "right": 611
+  }
+ ],
+ "base": 363,
+ "l1": 364.66422912043345,
+ "l2": 364.16617086159994,
+ "topHit": "orb-skin",
+ "azel": [
+  "0/48",
+  "42/-20",
+  "-42/-20"
+ ],
+ "names": [
+  "食品健康",
+  "作息健康",
+  "运动健康"
+ ],
+ "majorCount": 3,
+ "minorCount": 9,
+ "identityHidden": true,
+ "introHidden": true,
+ "scrollWidth": 1425,
+ "clientWidth": 1425,
+ "imgs": 0,
+ "scripts": [
+  "https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js",
+  "http://127.0.0.1:8123/config.js",
+  "http://127.0.0.1:8123/evidence.js",
+  "http://127.0.0.1:8123/faqs.js",
+  "http://127.0.0.1:8123/campus-data.js",
+  "http://127.0.0.1:8123/data-query.js",
+  "http://127.0.0.1:8123/app.js",
+  "http://127.0.0.1:8123/orb-view.js"
+ ],
+ "ai": "AI 意图识别 · 已就绪",
+ "mode": "内容库：云数据库（30 条）"
+}
+PASS  验收1 · 四层 3D 结构、等边三角形、玻璃边缘光可见且球未被遮挡  {"base":363,"l1":364.66422912043345,"l2":364.16617086159994,"centers":[{"w":184,"h":94,"cx":713,"cy":275,"left":620,"right":805},{"w":160,"h":171,"cx":894,"cy":591,"left":814,"right":974},{"w":160,"h":171,"cx":531,"cy":591,"left":451,"right":611}],"topHit":"orb-skin"}
+PASS  验收2 · 初始三球大小接近（等效直径差异 <35%），深度因子接近  {"eq":[132,165,165],"t":[0.8346,0.8492,0.8492],"op":[0.88422,0.89444,0.89444]}
+DRAG_LEFT: {"ry":"-38.000deg","rx":"0.000deg","t":[0.7636,0.9687,0.5816],"txt":["1","1","1"],"w":[209,191,58],"h":[114,171,157],"cx":[597,735,471],"cy":[279,593,581],"textW":[209,191,58],"textTransform":["none","none","none"],"op":[0.83452,0.97809,0.70712],"filter":["brightness(0.910168) blur(0.591px)","brightness(0.988106) blur(0.07825px)","brightness(0.841008) blur(1.046px)"],"orb":["food","sleep","sport"]}
+PASS  验收3 · 向左拖：左球明显缩小变暗变虚、右球变大变亮（球面绕行非整体倾斜）  {"ry":"-38.000deg","t":[0.7636,0.9687,0.5816],"w":[209,191,58],"op":[0.83452,0.97809,0.70712],"cx":[597,735,471]}
+PASS  验收5 · 拖动时球内文字跟着缩小、透视形变，且不做反向旋转抵消  {"textW":[209,191,58],"transforms":["none","none","none"]}
+PASS  验收6 · 转到背面的球变暗变虚，文字不会硬糊在正面  {"darkOp":0.70712,"darkFilter":"brightness(0.841008) blur(1.046px)","darkTextW":58}
+PASS  验收6b · t<0.25 时文字透明度降到 0.35、球体显著变暗（背面保护）  {"t":[0.2437,0.0304,0.4346],"txt":["0.35","0.35","1"],"op":[0.47059,0.32128,0.60422]}
+PASS  验收7 · 松手后 500ms 内回到 0deg / 0deg  {"ry":"0.000deg","rx":"0.000deg","t":[0.8346,0.8492,0.8492]}
+PASS  验收4 · 向右拖效果相反：右球变小变暗、左球变大变亮  {"ry":"38.000deg","t":[0.7636,0.5816,0.9687],"w":[209,58,191],"op":[0.83452,0.70712,0.97809]}
+PASS  验收8 · 位移 <8px 不旋转，判定为点击并正常触发分裂  {"ry":"0.000deg","split":true,"minors":3}
+SPLIT: {
+ "cls": "orb-stage major-out minor-on",
+ "page": "page orb-split",
+ "switchDisplay": "none",
+ "idDisplay": "none",
+ "backHidden": false,
+ "backW": 44,
+ "backBg": "rgba(255, 255, 255, 0.2)",
+ "majorOp": [
+  "0",
+  "0",
+  "0"
+ ],
+ "minors": [
+  {
+   "name": "菜品营养",
+   "w": 238,
+   "op": "1",
+   "vis": "visible",
+   "dur": "0.42s",
+   "delay": "0.22s",
+   "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+   "R": "175px",
+   "d": "200px"
+  },
+  {
+   "name": "饮食记录",
+   "w": 207,
+   "op": "1",
+   "vis": "visible",
+   "dur": "0.42s",
+   "delay": "0.22s",
+   "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+   "R": "175px",
+   "d": "200px"
+  },
+  {
+   "name": "食堂安全",
+   "w": 207,
+   "op": "1",
+   "vis": "visible",
+   "dur": "0.42s",
+   "delay": "0.22s",
+   "ease": "cubic-bezier(0.22, 1, 0.36, 1)",
+   "R": "175px",
+   "d": "200px"
+  }
+ ],
+ "majorDur": "0.24s, 0.24s",
+ "scrollWidth": 1440,
+ "clientWidth": 1440
+}
+PASS  验收9 · 分裂后三个中球更大占满视图、切换器隐藏、44px 返回按钮、时序正确  {"minors":[{"name":"菜品营养","w":238,"R":"175px","d":"200px"},{"name":"饮食记录","w":207,"R":"175px","d":"200px"},{"name":"食堂安全","w":207,"R":"175px","d":"200px"}],"switchDisplay":"none"}
+PASS  验收9b · 中球层同样支持拖动自转与逐帧深度处理  {"ry":"-35.000deg","t":[0.7741,0.9663,0.6057]}
+PASS  验收10 · 点返回倒放：中球收起、大球恢复、切换器与身份条回来  {"cls":"orb-stage","page":"page","switchDisplay":"inline-flex","backHidden":true,"majorOp":["1","1","1"],"majorPush":["0px","0px","0px"],"minorVis":["hidden","hidden","hidden","hidden","hidden","hidden","hidden","hidden","hidden"],"ry":"0.000deg"}
+PASS  验收11 · 点中球仍右侧滑出 480px 详情面板，标题与占位说明正确  {"hidden":false,"open":true,"w":480,"right":1440,"title":"菜品营养","tag":"模块开发中","desc":"每道菜的热量、蛋白质、脂肪、钠含量与搭配建议","foot":"返回小球视图"}
+PASS  硬约束 · 九个子模块占位文案逐字不动  {"count":9}
+PASS  硬约束 · 纯 CSS 3D（无 Three.js、无外部图片、无 rotate3d、无横向溢出）  {"imgs":0,"ai":"AI 意图识别 · 已就绪","mode":"内容库：云数据库（30 条）"}
+PASS  回归 · 对话视图 30 条问答 / 智能问数 / 身份切换 / 问答弹窗 / 请假表单全部未受影响  {"chat":{"shown":true,"orbHidden":true,"idShown":true,"stored":"chat","quick":6,"scrollWidth":1440,"clientWidth":1440},"qa":{"cards":1,"steps":3},"expected":"明天（11 月 11 日 周三）你有 2 门课","dqOk":true,"faq":{"shown":true,"tabs":10,"items":30,"visible":3},"form":{"name":"同学B","sid":"SIM20260201","fields":6}}
+MOBILE: {"shell":{"w":374,"h":374,"left":8,"right":382,"cx":195,"cy":317},"rim":{"w":374,"h":374,"left":8,"right":382,"cx":195,"cy":317},"scene":{"w":390,"h":420,"left":0,"right":390,"cx":195,"cy":317},"items":[{"w":117,"h":68,"left":137,"right":253,"cx":195,"cy":205},{"w":106,"h":109,"left":237,"right":343,"cx":290,"cy":370},{"w":106,"h":109,"left":47,"right":153,"cx":100,"cy":370}],"d":"104px","R":"140px","font":"15px","switchW":186,"scrollWidth":390,"clientWidth":390,"perspective":"1200px"}
+PASS  验收12a · 390px 外壳不溢出、三球完整可见、切换器可见、R/球径/字号按手机规格  {"shell":{"w":374,"h":374,"left":8,"right":382,"cx":195,"cy":317},"d":"104px","R":"140px","scrollWidth":390}
+PASS  验收12b · 390px 拖动自转正常、不掉帧、无横向溢出  {"ry":"-26.250deg","t":[0.8001,0.9522,0.6741],"scrollWidth":390,"clientWidth":390}
+PASS  验收12c · 390px 分裂中球 R=96px / 球径 140px 且不出屏  {"count":3,"rects":[{"w":155,"left":117,"right":273},{"w":141,"left":187,"right":328},{"w":141,"left":62,"right":203}],"R":"96px","d":"140px","scrollWidth":390,"clientWidth":390}
+PASS  验收12d · 390px 详情面板全屏滑出、标题与占位正确  {"w":390,"h":844,"left":0,"open":true,"title":"睡眠质量","desc":"睡眠评分与影响因素分析"}
+PASS  验收13 · 全流程无 jsError  {"jsErrors":[]}
+
+===== SUMMARY =====
+TOTAL 21 PASS 21 FAIL 0
