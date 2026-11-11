@@ -1,0 +1,28 @@
+PASS  硬约束 · 投影公式/事件绑定/尺寸配色五层配方逐字未改，只改动画与层级  {"projSame":true,"orbSame":true,"htmlSame":true,"dragSame":true,"cssMissing":[],"visualOK":true,"colorsOK":true,"noKeyframes":true,"no3d":true,"stateOK":true}
+GEO: {"scene":{"cx":713,"cy":488,"left":137,"right":1289},"balls":[{"x":713,"y":272,"w":174,"h":174},{"x":896,"y":588,"w":176,"h":176},{"x":529,"y":588,"w":176,"h":176}],"minors":[],"back":{"x":0,"y":0}}
+PHASE_A: {"phase":"A-start","hit":{"cls":"orb-item orb-major","group":null,"mod":null,"picked":"1","tf":"translate3d(0px, 0px, 0px) scale(1.35)","op":"1","filter":"blur(0px)","trans":"transform 280ms cubic-bezier(0.4, 0, 0.2, 1)","vis":"visible","z":"999","skinShadow":"","cw":1.3259,"ch":1.3259,"compVis":"visible","compOp":"1","px":"0.00px","py":"-215.88px","sc":"1.1620","keep":null},"others":[{"tf":"translate3d(183.96px, 100.06px, 0px) scale(0.6437)","op":"0.15","filter":"blur(4px)"},{"tf":"translate3d(-183.96px, 100.06px, 0px) scale(0.6437)","op":"0.15","filter":"blur(4px)"}]}
+PASS  验收4 · 被点球放大居中到 1.35、z 提最高；另两球缩小到 0.55 并虚化变暗  {"phase":"A-start","hitTf":"translate3d(0px, 0px, 0px) scale(1.35)","hitZ":"999","others":[{"tf":"translate3d(183.96px, 100.06px, 0px) scale(0.6437)","op":"0.15","filter":"blur(4px)"},{"tf":"translate3d(-183.96px, 100.06px, 0px) scale(0.6437)","op":"0.15","filter":"blur(4px)"}]}
+PHASE_B: {"phase":"B-start","hitTf":"translate3d(0px, 0px, 0px) scale(0.15)","hitOp":"0","shadow":"rgba(255, 255, 255, 0.5) 0px 0px 60px 12px","minors":[{"tf":"translate3d(0px, 0px, 0px) scale(0.15)","vis":"visible","op":"0"},{"tf":"translate3d(0px, 0px, 0px) scale(0.15)","vis":"visible","op":"0"},{"tf":"translate3d(0px, 0px, 0px) scale(0.15)","vis":"visible","op":"0"}]}
+PASS  验收5a · 被点球收缩到 0.15 并淡出，内层白光扩散；三个中球在场景中心生成  {"phase":"B-start","shadow":"rgba(255, 255, 255, 0.5) 0px 0px 60px 12px","minorTf":"translate3d(0px, 0px, 0px) scale(0.15)"}
+PHASE_C: {"phase":"C2","flown":3,"marks":["A-start","B-start","C-start","C0","C1","C2"]}
+PASS  验收5b · 中球从中心飞向各自投影目标、opacity 1、blur 归零  {"flown":3,"tfs":["translate3d(0px, -144.11px, 0px) scale(1.1081)","translate3d(122.51px, 66.64px, 0px) scale(1.1134)","translate3d(-122.51px, 66.64px, 0px) scale(1.1134)"]}
+PASS  验收5c · 动画结束落到 sub 静止态，中球三个可见且为正圆  {"level":"sub","stageIsSub":true,"minors":3}
+PASS  验收6 · 三个中球错开 40ms 出发，不同时弹出  {"c0":3333,"c1":3381,"c2":3416,"d1":48,"d2":35}
+PASS  验收7 · 进入动画总时长约 700ms，无跳帧（三段时序齐全）  {"total":726,"phases":["A-start","B-start","C-start","C0","C1","C2","settle-sub"]}
+PASS  验收1a · 点中球正常打开详情面板（level=detail）  {"level":"detail","title":"菜品营养","open":true}
+PASS  验收1 · 详情面板返回后回到「中球层」，不是三个大球  {"level":"sub","stageIsSub":true,"backHidden":false,"minorsVisible":3}
+PASS  验收3 · 详情返回不重建 stage，三个中球节点与投影值原样保留  {"children":[12,12],"stageSame":true,"vars":[["0.00px|-144.11px|1.1081","122.51px|66.64px|1.1134","-122.51px|66.64px|1.1134"],["0.00px","122.51px","-122.51px"]]}
+PHASE_OUT: {"phase":"OUT1","minors":[{"tf":"translate3d(0px, 0px, 0px) scale(0.2)","op":"0"},{"tf":"translate3d(0px, 0px, 0px) scale(0.2)","op":"0"},{"tf":"translate3d(0px, 0px, 0px) scale(0.2)","op":"0"}],"majors":[{"tf":"translate3d(0px, -215.88px, 0px) scale(1.162)","op":"1"},{"tf":"translate3d(183.96px, 100.06px, 0px) scale(1.1703)","op":"1"},{"tf":"translate3d(0px, 0px, 0px) scale(0.2)","op":"0"}]}
+PASS  验收8 · 返回时三个中球向中心收拢到 0.2 淡出，大球随后从中心放大出现  {"phase":"OUT1","minorTf":"translate3d(0px, 0px, 0px) scale(0.2)","majorOps":["1","1","0"]}
+PASS  验收2 · 中球层返回到达「大球层」，静止态完整复位  {"level":"root","stageIsSub":false,"backHidden":true}
+PASS  验收8b · 返回动画约 520ms、大球错开 40ms 出现  {"total":521,"d1":46,"d2":39}
+PASS  验收9 · 动画进行中点击/拖动/键盘一律无响应，不会卡在半截状态  {"midLevel":"root","midPicked":"food","endLevel":"sub","endPicked":"food"}
+PASS  验收10a · 动画结束后空白处拖动正常，松手 500ms 回弹归零  {"ry":-35.2,"endRy":0}
+PASS  验收10b · 动画结束后重新分裂、点中球开详情都正常  {"level":"detail","picked":"sleep","title":"作息记录"}
+PASS  验收10c · 第二次详情返回仍只回中球层（逐级返回可重复）  {"level":"sub"}
+PASS  回归 · 对话视图 30 问答 / 问数 / 请假 6 字段 / 9 条文案 / 无横向滚动条未受影响  {"qaOk":true,"dqOk":true,"faq":{"tabs":10,"items":30},"form":6,"descs":9,"scrollOK":true}
+PASS  验收11 · 390px 下进入/返回动画完整、球为正圆、无横向滚动条  {"subLevel":"sub","rootLevel":"root","sw":390,"cw":390}
+PASS  验收12 · 全流程无 jsError  {"jsErrors":[]}
+
+===== SUMMARY =====
+TOTAL 20 PASS 20 FAIL 0

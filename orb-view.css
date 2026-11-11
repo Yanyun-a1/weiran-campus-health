@@ -1,8 +1,10 @@
-/* 校园健康助手 · 小球视图 v6：JS 逐帧透视投影
+/* 校园健康助手 · 小球视图 v8：JS 逐帧透视投影 + 三段式分裂动画
  * 四层：.orb-scene(定位容器) → .orb-shell(透明大球，背景层)
  *       .orb-stage(球层容器) → .orb-item(三个正圆球) / .orb-rim(边缘光)
  * 球自身只做 translate + scale，永远是正圆；位置、大小、前后层级全部由
  * orb-view.js 每帧算出来写进 CSS 变量。无 Three.js / 无 3D 库 / 无外部图片。
+ * v8：层级由 JS 的 level: root/sub/detail 唯一决定，静止态只用 .orb-stage.is-sub
+ * 表达；进入 / 返回动画改由 JS 时序 + CSS transition 控制，不再有 keyframes。
  * 对话视图（30 条问答 / 智能问数 / 请假表单 / 身份切换 / 问答弹窗）完全不碰。
  */
 :root {
@@ -110,7 +112,8 @@
   transform: translate3d(var(--px), var(--py), 0) scale(var(--sc));
   transform-origin: center center;
   will-change: transform;
-  transition: opacity .24s var(--orb-ease);
+  /* 静止态不设过渡：进入 / 返回的 transition 由 orb-view.js 内联逐阶段下发，
+   * 动画结束清除内联后即回到无过渡的静止态，避免残留动画抢属性。 */
   cursor: pointer;
 }
 .orb-item:focus-visible { outline: 3px solid rgba(42, 167, 155, .5); outline-offset: 6px; }
@@ -186,34 +189,29 @@
 /* 中球层：隐藏顶栏切换器与身份选择器 */
 .page.orb-split .ui-switch, .page.orb-split .identity-bar { display: none; }
 
-/* ===== 分裂 / 中球层（时序与 v4/v5 一致） ===== */
+/* ===== 层级静止态 =====
+ * level root   → stage 无 class，只有三个大球可见
+ * level sub    → stage.is-sub，大球隐藏、当前大类的三个中球可见
+ * level detail → 与 sub 同，只多一个滑出的详情面板
+ * 进入 / 返回动画不用 keyframes：JS 逐阶段内联下发 transition + transform，
+ * 动画结束清除内联后由这里的静止态接管，全程不重建 stage、不复用布尔堆。
+ */
 .orb-minor {
   --R: 175px; --d: 200px;
-  visibility: hidden; opacity: 0;
+  visibility: hidden; opacity: 0; pointer-events: none;
 }
-.orb-stage.major-out .orb-major { opacity: 0; pointer-events: none; }
-
-.orb-stage.minor-on .orb-minor.is-current {
-  visibility: visible;
-  animation: minorIn .42s var(--orb-ease) .22s forwards;
+.orb-stage.is-sub .orb-major {
+  visibility: hidden; opacity: 0; pointer-events: none;
 }
-@keyframes minorIn {
-  from { opacity: 0; filter: blur(6px); }
-  to   { opacity: 1; filter: blur(0px); }
-}
-.orb-stage.minor-out .orb-minor.is-current {
-  visibility: visible;
-  animation: minorOut .24s var(--orb-ease) forwards;
-}
-@keyframes minorOut {
-  from { opacity: 1; filter: blur(0px); }
-  to   { opacity: 0; filter: blur(6px); }
+.orb-stage.is-sub .orb-minor.is-current {
+  visibility: visible; opacity: 1; pointer-events: auto;
 }
 
 /* ===== 模块详情占位面板（保持 v4，完全不动） ===== */
 .orb-detail-backdrop {
   position: fixed; inset: 0; z-index: 70;
   background: rgba(15, 23, 42, .45); backdrop-filter: blur(2px);
+  transition: opacity .32s ease;
 }
 .orb-detail {
   position: fixed; top: 0; right: 0; z-index: 71;
