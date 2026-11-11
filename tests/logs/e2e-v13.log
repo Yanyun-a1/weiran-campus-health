@@ -1,0 +1,14 @@
+PASS  验收1 · 移动端点中球，详情面板正常滑出并停住（不闪）  {"panel":true,"backdrop":true,"open":true,"ret":true}
+PASS  验收2 · 移动端面板内容完整，底部「返回小球视图」按钮可见可点  {"ret":{"cx":195,"cy":800,"w":358,"h":47,"top":777,"bottom":824,"left":16,"right":374},"titleOk":true}
+SHOT  v13-mobile-detail.png  29319 bytes
+PASS  验收4 · 移动端点「返回」，面板正常关闭  {"panel":false,"backdrop":false,"open":false,"ret":true}
+PASS  验收5 · 桌面端点中球，面板正常滑出并停住  {"panel":true,"backdrop":true,"open":true,"ret":true}
+SHOT  v13-desktop-detail.png  212615 bytes
+PASS  验收3 · 点遮罩空白处，面板正常关闭（桌面端遮罩可见区）  {"panel":false,"backdrop":false,"open":false,"ret":true}
+PASS  验收7 · 面板打开后 350ms 内点遮罩，不关闭  {"panel":true,"backdrop":true,"open":true,"ret":true}
+PASS  验收8 · 面板打开后超过 350ms 点遮罩，正常关闭  {"panel":false,"backdrop":false,"open":false,"ret":true}
+PASS  验收6 · 桌面端从面板上按下、拖到遮罩松手，不触发关闭  {"panel":true,"backdrop":true,"open":true,"ret":true}
+PASS  验收9 · 连续点两个中球，面板能正确切换到第二个  {"t0":"菜品营养","t1":"饮食记录","opened0":true,"opened1":true}
+PASS  验收10 · 全流程无 jsError  []
+
+==== 10/10 PASS ====
