@@ -1,0 +1,11 @@
+PASS  验收1 · 三个快捷胶囊文字完整显示不裁切(scrollWidth<=clientWidth 且文本=属性)
+PASS  验收2 · 胶囊容器 flex-wrap=wrap 且多按钮换行到多行
+PASS  验收3 · AI 正文颜色为深青灰 #2C3A38(rgb(44,58,56))
+PASS  验收4 · AI 正文字号 15px 且 行高 1.65(≈24.75px)
+PASS  验收5 · 用户消息与AI字号一致(均 15px)
+PASS  验收6 · 胶囊 hover 有反馈(背景 #F0FAF8=rgb(240,250,248))
+PASS  验收7 · AI 有头像(圆形/青绿/「健」)且用户无头像
+PASS  验收8 · 390 胶囊换行(多行)且不溢出(容器/页面无横滚)
+PASS  验收9 · 全流程无 jsError
+
+9/9 PASS
