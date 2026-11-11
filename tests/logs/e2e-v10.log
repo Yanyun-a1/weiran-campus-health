@@ -1,0 +1,22 @@
+PASS  D0 · 桌面初始：三球正圆 / 等边 / 层级 / 无横向滚动 / CSS 手势控制齐备  {"ratios":[1,1,1],"sc":[1.162,1.1703,1.1703],"z":[83,85,85],"cursor":"grab","touchAction":"none","overflowX":0}
+SHOT  v10-desktop-initial.png  456021 bytes
+PASS  验收1 · 找到透明背景空白点（不是球、不是按钮）  {"x":173,"y":154,"hit":"orb-stage"}
+PASS  验收1/3 · 空白处按住拖动生效，左球退后变小变暗、右球变大变亮  {"ry":-42,"downOrb":null,"isDragging":true,"left":{"sc0":1.1703,"sc":1.0209,"z":55},"right":{"sc0":1.1703,"sc":1.2434,"z":97}}
+PASS  验收2/3 · 拖动不选中文字、不产生原生拖拽 / 长按菜单，指针为 grabbing  {"selection":"","counters":{"drag":0,"sel":0,"ctx":0},"cursor":"grabbing"}
+PASS  验收5/6 · 拖动中三球仍为正圆且前后层级正确  {"ratios":[1,1,1],"z":[75,97,55]}
+SHOT  v10-desktop-dragging.png  458935 bytes  (按住未松手)
+PASS  验收7/9 · 容器外松手：不分裂、状态复位、500ms 内角度归零、指针恢复 grab  {"level":"root","ry":0,"pointerId":null,"dragging":false,"cursor":"grab"}
+PASS  验收10 · 单击球正常分裂进入中球层（3 个中球 / 切换器隐藏 / 左上返回可见）  {"level":"sub","minors":3,"ratios":[1,1,1],"sc":[1.1081,1.1134,1.1134],"uiSwitch":0,"backHidden":false}
+PASS  验收10 · 中球层同样支持空白处拖动（投影随角度变化、球仍正圆）  {"ry":-35.2,"scBefore":[1.1081,1.1134,1.1134],"scAfter":[1.0866,1.1575,1.0313]}
+PASS  验收11 · 点中球仍能滑出详情面板  {"level":"detail","detailHidden":false,"title":"菜品营养"}
+PASS  验收6 · 单击空白处不触发分裂，只做回弹  {"level":"root","ry":0}
+PASS  验收7 · 拖动超过 8px 后松手不触发分裂、角度归零  {"level":"root","ry":0}
+PASS  验收12 · 390px 初始：三球正圆完整可见、外壳不溢出、无横向滚动条  {"ratios":[1,1,1],"sc":[1.0847,1.0887,1.0887],"shell":{"l":8,"r":382,"w":374},"overflowX":0,"balls":[[138.6,251.4],[234.2,347.5],[42.5,155.8]]}
+SHOT  v10-mobile-initial.png  261765 bytes
+PASS  验收4/12 · 手指在空白处拖动生效且不触发页面滚动 / 选中文字 / 浏览器手势  {"ry":-22.4,"isDragging":true,"scrollY":[0,0],"counters":{"drag":0,"sel":0,"ctx":0},"ratios":[1,1,1]}
+SHOT  v10-mobile-dragging.png  262555 bytes  (手指未抬起)
+PASS  手机 · 松手复位，角度归零，仍无横向溢出  {"ry":0,"overflowX":0}
+PASS  手机 · 触摸单击球正常进入中球层  {"level":"sub","minors":3}
+PASS  验收12 · 全流程无 jsError  {"errors":[],"count":0}
+
+TOTAL: 16/16 PASS
