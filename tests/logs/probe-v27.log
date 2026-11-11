@@ -1,0 +1,12 @@
+
+========== 视口 390x844 ==========
+抽屉收起    vw=390 topbar.b=56 shell.t=227 shell.b=617 major.minTop=275 center.t=380 handle.t=792 chat.t=792 shrunken=false topbarH=56px | 60px文案区 y=[116,144]
+抽屉展开    vw=390 topbar.b=56 shell.t=45 shell.b=209 major.minTop=65 center.t=109 handle.t=203 chat.t=203 shrunken=true topbarH=56px | 60px文案区 y=[116,144]
+
+========== 视口 820x1180 ==========
+抽屉收起    vw=820 topbar.b=62 shell.t=254 shell.b=926 major.minTop=321 center.t=535 handle.t=1128 chat.t=1128 shrunken=false topbarH=62px | 60px文案区 y=[122,150]
+抽屉展开    vw=820 topbar.b=62 shell.t=36 shell.b=318 major.minTop=64 center.t=154 handle.t=283 chat.t=283 shrunken=true topbarH=62px | 60px文案区 y=[122,150]
+
+========== 视口 1023x768 ==========
+抽屉收起    vw=1023 topbar.b=62 shell.t=85 shell.b=684 major.minTop=148 center.t=329 handle.t=716 chat.t=716 shrunken=false topbarH=62px | 60px文案区 y=[122,150]
+抽屉展开    vw=1023 topbar.b=62 shell.t=-11 shell.b=241 major.minTop=16 center.t=92 handle.t=184 chat.t=184 shrunken=true topbarH=62px | 60px文案区 y=[122,150]

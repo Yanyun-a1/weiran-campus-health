@@ -1,0 +1,93 @@
+/* ============================================================
+   v27 · 桌面棱镜文案放大拉开 + 手机端新增静态渐变文案
+   最后加载：只覆盖 v26.css 里 .prism-wrap / .prism-line / .prism-title
+   的三个尺寸值与 ::before 光斑尺寸，并新增 .prism-mobile-* 一组选择器。
+   渐变配色 / background-size 220% / prism-flow 9s / drop-shadow 柔光 /
+   顶部 56px 居中 / 手机隐藏规则 / 拖动暂停规则 全部沿用 v26.css，不改。
+   小球投影 / 三段式动画 / 玻璃五层配方 / 主色 / 毛玻璃 / 圆角 / 顶栏
+   均不在本文件的选择器范围内。
+   ============================================================ */
+
+/* ---------- 一、桌面端：放大拉开（仅改尺寸，配方一字不动） ---------- */
+.prism-wrap { gap: 20px; }                  /* 装饰线与文字间距 12px → 20px */
+.prism-line { width: 40px; }               /* 装饰线 24px → 40px，颜色沿用 v26 */
+.prism-title {
+  font-size: 32px;                         /* 23px → 32px */
+  letter-spacing: 0.26em;                  /* 0.12em → 0.26em */
+}
+.prism-title::before {
+  width: 460px;                            /* 340px → 460px */
+  height: 140px;                           /* 110px → 140px */
+  filter: blur(24px);                      /* 18px → 24px */
+}
+
+/* ---------- 二、手机端（≤1023px）：静态渐变文案「防患于未然」 ---------- */
+/* 桌面隐藏：默认不渲染，避免影响桌面布局与截图 */
+.prism-mobile-wrap { display: none; }
+
+@media (max-width: 1023px) {
+  .prism-mobile-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;                             /* 与两侧装饰线各留 14px */
+    position: fixed;
+    /* 顶栏下方 60px；--xt-topbar-h 由 app.js 写入，未就绪时回退 56px。
+       v27.js 会实测球舞台顶部，必要时改为空隙垂直中点或避让隐藏。 */
+    top: calc(var(--xt-topbar-h, 56px) + 60px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 6;                            /* 高于球舞台(z1)，低于顶栏(z30)与抽屉(z40) */
+    pointer-events: none;                  /* 不拦截小球拖拽、抽屉手势与点击 */
+    white-space: nowrap;
+  }
+  .prism-m-line {
+    display: block;
+    flex: none;
+    width: 28px;
+    height: 1px;
+    background: rgba(79, 168, 232, .25);
+  }
+  .prism-m-title {
+    display: inline-block;
+    position: relative;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    line-height: 1.4;
+    /* 与桌面同一套六段棱镜渐变；静态展示完整六段，不播放流动动画 */
+    background: linear-gradient(
+      100deg,
+      #2E7FD9 0%,
+      #5B6FE0 22%,
+      #1E8C82 45%,
+      #4FA8E8 68%,
+      #7B8CFF 85%,
+      #2E7FD9 100%
+    );
+    background-size: 100% 100%;
+    background-position: 0% 50%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    filter: drop-shadow(0 0 10px rgba(79, 168, 232, .30));
+  }
+  /* 降级：不支持 background-clip:text 时改纯色，避免文字被透明填充吞掉 */
+  @supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+    .prism-m-title {
+      background: none;
+      -webkit-text-fill-color: #2E7FD9;
+      color: #2E7FD9;
+      filter: none;
+    }
+  }
+
+  /* 避让：抽屉展开后上方可见带被缩小的小球群占满，淡出这行文案，
+     不压球、不遮球；收起后自动恢复。空隙确实不足时由 v27.js 加此 class。 */
+  body:has(.pane-chat.drawer-open) .prism-mobile-wrap,
+  .prism-mobile-wrap.is-avoid-hidden {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
