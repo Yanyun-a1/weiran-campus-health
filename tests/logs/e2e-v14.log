@@ -1,0 +1,19 @@
+PASS  验收D1 · 桌面左右分屏，左栏宽度=380px
+PASS  验收D2 · 右栏小球已按容器重算(--shell-d)且不溢出/无横滚
+PASS  验收D2b · 桌面无横向滚动条(scrollWidth<=innerWidth)
+PASS  验收D3 · 点大球，左栏追加两条短响应消息(用户+AI概览)
+PASS  验收D4 · 点中球，左栏追加内容卡片(数据卡+模拟声明)
+PASS  验收D5 · 桌面取消详情滑出面板(#orbDetail 保持 hidden)
+PASS  验收D6 · 左侧提问，右侧对应大球高亮(.is-hot)
+PASS  验收D7 · 初始欢迎语 + 三个快捷问句(data-q)
+PASS  验收D8 · 缩窗至 1024 重算不溢出(左栏仍 380 / 小球<=右栏 / 无横滚)
+PASS  验收M1 · 手机初始：小球全屏 + 56px 把手收起 + 小球未缩放
+PASS  验收M2 · 点把手展开抽屉(82vh) + 小球缩放(orb-shrunk)
+PASS  验收M3 · 向上拖>30% 把手 → 抽屉展开
+PASS  验收M4 · 内容区滚动不误触收起(抽屉保持展开)
+PASS  验收M5 · 手机点中球自动展开抽屉 + 插入内容卡片
+PASS  验收M6 · 刷新后抽屉状态保持(localStorage 记忆)
+PASS  验收M7 · 390 无横向滚动条
+PASS  验收0 · 全流程无 jsError
+
+17/17 PASS
