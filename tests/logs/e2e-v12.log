@@ -1,0 +1,26 @@
+PASS  验收1 · 首访显示登录页，主界面被挡住（小球/对话不可达）  {"loginShown":true,"consentHidden":true,"recoHidden":true}
+SHOT  v12-login.png  371152 bytes
+PASS  验收3 · 错误账号密码红字提示且不跳转  {"hidden":false,"text":"学号或密码不正确"}
+PASS  验收2 · 演示账号登录后身份切到同学A(c1)且进入同意书  {"identity":"c1","demoFill":{"sid":"20260101","pwd":"123456"}}
+PASS  验收5 · 同意书三项默认全部未勾选  [false,false,false]
+PASS  验收6 · 一项都不勾时「同意并继续」置灰  {"agreeDisabled":true}
+SHOT  v12-consent-empty.png  421741 bytes
+PASS  验收7 · 勾选一项后「同意并继续」可点  {"togglesOne":[true,false,false],"agreeEnabled":true}
+SHOT  v12-consent-checked.png  425938 bytes
+PASS  验收7/8 · 同意并继续进入主界面并自动弹出推荐弹窗  {"recoShown":true,"consentGone":true,"loginStillGone":true}
+PASS  验收8 · 推荐弹窗桌面双栏（视觉在文案右侧）  {"cols":"478px 320px","copyRight":788,"visualLeft":810,"copyBottom":848,"visualTop":612}
+SHOT  v12-reco-desktop.png  267507 bytes
+PASS  验收11(一) · 未授权数据类别在对话视图显示「未授权」  {"chatVisible":true,"hasUnauth":true}
+PASS  验收11 · 顶栏「隐私」重新打开同意书并改授权后，问数数据随授权变化  {"privacyOpen":true,"dietChecked":true,"sleepUnchecked":true,"consentClosed":true,"showsData":true}
+PASS  验收11(二) · 小球视图授权条随授权同步（2 已授权/1 未授权）  {"hidden":false,"chips":["已授权 · 饮食记录","已授权 · 作息记录","未授权 · 运动记录"]}
+PASS  验收10 · 顶栏「介绍」能重新打开推荐弹窗  {"recoMobileShown":true}
+PASS  验收15 · 推荐弹窗手机端单栏、无横向溢出  {"oneCol":true,"recoOverflow":0}
+SHOT  v12-reco-mobile.png  154142 bytes
+PASS  验收12 · 顶栏「退出」回到登录页  {"logoutToLogin":true}
+PASS  验收15 · 登录页手机端不溢出  {"loginOverflow":0}
+PASS  验收15 · 同意书手机端全屏不溢出  {"consentMobile":true,"consentOverflow":0}
+PASS  验收14 · 小球视图功能正常（三球存在、授权条可见）  {"orb":true,"items":12,"major":0,"consent":false}
+PASS  验收13 · 刷新后已登录状态保持，不重复走流程  {"persistLogin":true,"persistConsent":true,"persistReco":true}
+PASS  验收16 · 全流程无 jsError  []
+
+==== 19/19 PASS ====
