@@ -1,10 +1,11 @@
-/* 校园健康助手 · 小球视图 v8：JS 逐帧透视投影 + 三段式分裂动画
+/* 校园健康助手 · 小球视图 v9：JS 逐帧透视投影 + 三段式分裂动画 + 顶栏渐隐渐显
  * 四层：.orb-scene(定位容器) → .orb-shell(透明大球，背景层)
  *       .orb-stage(球层容器) → .orb-item(三个正圆球) / .orb-rim(边缘光)
  * 球自身只做 translate + scale，永远是正圆；位置、大小、前后层级全部由
  * orb-view.js 每帧算出来写进 CSS 变量。无 Three.js / 无 3D 库 / 无外部图片。
  * v8：层级由 JS 的 level: root/sub/detail 唯一决定，静止态只用 .orb-stage.is-sub
  * 表达；进入 / 返回动画改由 JS 时序 + CSS transition 控制，不再有 keyframes。
+ * v9：顶栏切换器 / 身份选择器进入中球层渐隐、返回渐显（opacity 过渡）。
  * 对话视图（30 条问答 / 智能问数 / 请假表单 / 身份切换 / 问答弹窗）完全不碰。
  */
 :root {
@@ -186,8 +187,22 @@
 
 .orb-hint { margin: 10px 0 0; text-align: center; font-size: 11.5px; color: var(--muted); }
 
-/* 中球层：隐藏顶栏切换器与身份选择器 */
-.page.orb-split .ui-switch, .page.orb-split .identity-bar { display: none; }
+/* ===== 顶栏过渡：只用 opacity / transform，不用 display / visibility =====
+ * 进入中球层：与「聚焦」阶段同步启动，0 → 240ms 渐隐；
+ * 返回大球层：延迟 200ms 启动，240ms 完成（JS 用 setTimeout 控制这个延迟）。
+ * .orb-head-hidden 是渐隐静止态；.orb-head-snap 供动画中途取消 / 切视图时
+ * 跳过过渡直接落到终态，避免停在 0.4 之类的中间透明度。
+ * 保留布局占位，不用 display:none；淡出后 pointer-events:none 防止误点。 */
+.ui-switch, .identity-bar {
+  transition: opacity 240ms ease, transform 240ms ease;
+  will-change: opacity, transform;
+}
+.ui-switch.orb-head-hidden, .identity-bar.orb-head-hidden {
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+}
+.ui-switch.orb-head-snap, .identity-bar.orb-head-snap { transition: none; }
 
 /* ===== 层级静止态 =====
  * level root   → stage 无 class，只有三个大球可见

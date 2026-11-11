@@ -1,0 +1,17 @@
+PASS  硬约束 · 仅 orb-view.css / orb-view.js 变动；投影公式、ORBS、球 HTML、事件绑定、三段式动画逐字未改  {"changed":["orb-view.css","orb-view.js"],"projSame":true,"orbSame":true,"htmlSame":true,"dragSame":true,"animSame":true,"cssVisualOK":true,"noDisplayToggle":true,"no3d":true}
+PASS  硬约束 · 两个容器都挂了 240ms opacity/transform 过渡，且初始可见可点  {"sw":{"op":1,"pe":"auto","disp":"inline-flex","transDur":"0.24s, 0.24s","transProp":"opacity, transform","willChange":"opacity, transform","tf":"none","tx":0,"ty":0,"hiddenCls":false,"snapCls":false,"left":137,"right":343,"w":206,"h":42},"id":{"op":1,"pe":"auto","disp":"none","transDur":"0.24s, 0.24s","transProp":"opacity, transform","willChange":"opacity, transform","tf":"none","tx":0,"ty":0,"hiddenCls":false,"snapCls":false,"left":0,"right":0,"w":0,"h":0}}
+HEAD0: {"sw":{"op":1,"pe":"auto","disp":"inline-flex","transDur":"0.24s, 0.24s","transProp":"opacity, transform","willChange":"opacity, transform","tf":"none","tx":0,"ty":0,"hiddenCls":false,"snapCls":false,"left":137,"right":343,"w":206,"h":42},"id":{"op":1,"pe":"auto","disp":"none","transDur":"0.24s, 0.24s","transProp":"opacity, transform","willChange":"opacity, transform","tf":"none","tx":0,"ty":0,"hiddenCls":false,"snapCls":false,"left":0,"right":0,"w":0,"h":0},"level":"root","animating":false,"orbSplit":false,"chatHidden":true,"orbHidden":false,"scrollWidth":1425,"clientWidth":1425}
+FADE_OUT_CURVE: {"start":[0,1],"mid":[220,0.005],"end":[1003,0],"frames":63} start=20 end=203 mids=10
+PASS  验收1 · 点球进入中球层，顶栏切换器是渐隐不是瞬间消失（0→240ms）  {"mids":10,"t0":20,"t1":203,"duration":183,"op":0,"disp":"inline-flex","ty":-6,"level":"sub"}
+PASS  验收3 · 淡出后 pointer-events:none，真实鼠标点击不会误触切视图  {"pointerEvents":"none","hit":"page orb-split","chatHidden":true,"level":"sub"}
+FADE_IN_CURVE: {"start":[0,0],"mid":[224,0.053],"end":[1007,1],"frames":63} start=224 end=407 mids=10
+PASS  验收2 · 返回大球层，顶栏切换器延迟约 200ms 后渐显（240ms 完成）不是瞬间弹出  {"mids":10,"t0":224,"t1":407,"duration":183,"op":1,"ty":0,"level":"root"}
+PASS  验收4 · 淡入后 pointer-events 恢复，真实鼠标点切换器能进入对话视图  {"chatHidden":false,"op":1,"pe":"auto"}
+PASS  验收5 · 动画中途切视图：立即落到 opacity 1 终态，无中间值残留  {"during":0.295,"after":1,"snap":false,"animating":false,"chatHidden":false}
+PASS  验收5b · 中途切视图后回到小球视图，顶栏状态与当前层级一致（sub 仍隐藏）  {"level":"sub","op":0,"pe":"none"}
+PASS  回归 · 对话视图 30 问答 / 问数 / 9 条占位文案不受顶栏过渡影响  {"qaOk":true,"dqOk":true,"faq":{"tabs":10,"items":30},"descs":9}
+MOBILE_CURVES: {"out":{"start":[0,1],"mid":[233,0.005],"end":[1000,0],"frames":62},"in":{"start":[0,0],"mid":[227,0.053],"end":[1010,1],"frames":63},"M0":{"op":1,"pe":"auto","disp":"inline-flex","transDur":"0.24s, 0.24s","transProp":"opacity, transform","willChange":"opacity, transform","tf":"none","tx":0,"ty":0,"hiddenCls":false,"snapCls":false,"left":10,"right":196,"w":186,"h":40},"M1":{"op":0,"pe":"none","disp":"inline-flex","transDur":"0.24s, 0.24s","transProp":"opacity, transform","willChange":"opacity, transform","tf":"matrix(1, 0, 0, 1, 0, -6)","tx":0,"ty":-6,"hiddenCls":true,"snapCls":false,"left":10,"right":196,"w":186,"h":40},"M2":{"op":1,"pe":"auto","disp":"inline-flex","transDur":"0.24s, 0.24s","transProp":"opacity, transform","willChange":"opacity, transform","tf":"none","tx":0,"ty":0,"hiddenCls":false,"snapCls":false,"left":10,"right":196,"w":186,"h":40}}
+PASS  验收6 · 390px 下淡出/淡入都有逐帧中间值，translateY 不造成横向溢出或滚动条  {"outMids":10,"inMids":10,"noOverflow":true,"noXShift":true,"op":[1,0,1]}
+PASS  验收7 · 全流程无 jsError  {"errors":[],"count":0}
+
+TOTAL: 11/11 PASS

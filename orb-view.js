@@ -1,8 +1,9 @@
-/* 校园健康助手 · 小球视图 v8
- * v6 的逐帧投影 / 质感 / 尺寸 / 文案、v7 的指针事件绑定全部一字未改。
- * v8 只做两件事：
- *  1) level = root | sub | detail 单一三级状态，逐级返回，详情关闭不再 collapse；
- *  2) 分裂 / 返回改为 JS 时序 + CSS transition 的三段式动画（无 keyframes）。
+/* 校园健康助手 · 小球视图 v9
+ * v6 的逐帧投影 / 质感 / 尺寸 / 文案、v7 的指针事件绑定、v8 的三级状态与
+ * 三段式动画全部一字未改（v8 做的两件事：level = root|sub|detail 单一三级状态、
+ * 逐级返回；分裂 / 返回改为 JS 时序 + CSS transition 三段式、无 keyframes）。
+ * v9 只补一个过渡：进入中球层时顶栏切换器 / 身份选择器渐隐，返回时延迟
+ * 200ms 渐显；动画中途取消或切视图强落终态。
  * JS 每帧计算球面坐标 → 两次旋转 → 透视投影，只写位置 / 缩放 / 深度。
  * 球自身只有 translate + scale，永远是正圆；不使用任何 3D 库。
  * 对话视图（30 条问答 / 智能问数 / 请假表单 / 身份切换 / 问答弹窗）完全不碰。
@@ -377,6 +378,31 @@
     if (skin) { skin.style.removeProperty('box-shadow'); skin.style.removeProperty('transition'); }
   }
 
+  /* ================= v9 顶栏过渡 =================
+   * 只切 .ui-switch / .identity-bar 的 opacity / transform / pointer-events，
+   * 完全不用 display / visibility，过渡才不会被打断。
+   * instant=true 时跳过过渡直接落终态：动画中途切视图或取消动画用，
+   * 保证不会停在 opacity 0.4 这类中间值。 */
+  function setHeader(hidden, instant) {
+    var els = [$('#uiSwitch'), $('#identityBar')];
+    els.forEach(function (el) {
+      if (!el) return;
+      if (instant) el.classList.add('orb-head-snap');
+      el.classList.toggle('orb-head-hidden', !!hidden);
+      void el.offsetWidth;              // 提交这一帧：过渡立即启动 / 终态立即生效
+    });
+    if (instant) {
+      requestAnimationFrame(function () {
+        els.forEach(function (el) { if (el) el.classList.remove('orb-head-snap'); });
+      });
+    }
+  }
+  /* 由「当前视图 + level」推导顶栏终态：对话视图一律可见，不受小球层影响 */
+  function syncHeader(instant) {
+    var orbActive = !($('#orbView') && $('#orbView').hidden);
+    setHeader(orbActive && level !== 'root', instant);
+  }
+
   /* 强制落到某一级的静止态：动画正常结束与中途取消共用，绝不重建 stage */
   function settle(target) {
     clearTimers();
@@ -400,6 +426,7 @@
       picked = null;
     }
     setLevel(target === 'sub' ? 'sub' : 'root');
+    syncHeader(true);                  // 终态强落：正常结束 / 中途取消都不会卡在中间透明度
     isAnimating = false;
     animPhase = null;
     applyProjection(0, 0);
@@ -429,6 +456,7 @@
       else m.removeAttribute('data-picked');
     });
     document.querySelector('.page').classList.add('orb-split');
+    setHeader(true, false);           // 与聚焦阶段同步启动：0 → 240ms 渐隐
     $('#orbBack').hidden = false;
     $('#orbHint').textContent = '拖动旋转 · 点中球查看详情 · 点左上角返回';
 
@@ -561,6 +589,8 @@
     stage.classList.remove('is-sub');     // 大球不再被静止态隐藏，内联 opacity 接管
     mark('OUT-start');
     void stage.offsetWidth;
+    /* 返回时淡入延迟 200ms 启动、240ms 完成，与三个大球放大出现大致同步 */
+    later(function () { setHeader(false, false); }, 200);
 
     minors.forEach(function (m) {
       m.style.transition = 'transform 280ms ' + EASE_OUT + ', opacity 280ms ' + EASE_OUT + ', filter 280ms ' + EASE_OUT;
@@ -642,6 +672,7 @@
     if (save) { try { localStorage.setItem(UI_KEY, v); } catch (e) {} }
     if (isAnimating) cancelAnim();
     if (v === 'chat' && level === 'detail') closeDetail();
+    syncHeader(true);                  // 切视图终态强落：对话视图切换器始终可见可点
   }
 
   function bind() {
