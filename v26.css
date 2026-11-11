@@ -1,0 +1,140 @@
+/* ============================================================
+   v26 · 桌面棱镜渐变文案 + 手机端上拉栏显眼化
+   最后加载；只新增本轮选择器，不改动任何既有样式文件。
+   小球投影 / 三段式动画 / 玻璃五层配方 / 主色 / 毛玻璃 / 圆角 / 顶栏
+   均不在本文件的选择器范围内。
+   ============================================================ */
+
+/* ---------- 一、桌面端（≥1024px）：小球舞台顶部棱镜渐变文案 ---------- */
+.prism-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;                         /* 与两侧装饰线各留 12px */
+  position: absolute;
+  top: 56px;                          /* 舞台顶部往下 56px */
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 6;                         /* 高于球层(z1~3)与返回按钮(z5)，低于顶栏 */
+  pointer-events: none;               /* 不拦截小球拖拽与点击 */
+  white-space: nowrap;
+}
+.prism-line {
+  display: block;
+  flex: none;
+  width: 24px;
+  height: 1px;
+  background: rgba(79, 168, 232, .25);
+}
+.prism-title {
+  display: inline-block;
+  position: relative;
+  font-size: 23px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+  background: linear-gradient(
+    100deg,
+    #2E7FD9 0%,
+    #5B6FE0 22%,
+    #1E8C82 45%,
+    #4FA8E8 68%,
+    #7B8CFF 85%,
+    #2E7FD9 100%
+  );
+  background-size: 220% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  filter: drop-shadow(0 0 14px rgba(79, 168, 232, .35));
+  animation: prism-flow 9s linear infinite;
+}
+.prism-title::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 340px;
+  height: 110px;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(ellipse,
+    rgba(79, 168, 232, .13) 0%,
+    rgba(123, 140, 255, .08) 40%,
+    transparent 72%);
+  filter: blur(18px);
+  z-index: -1;
+  pointer-events: none;
+}
+@keyframes prism-flow {
+  0%   { background-position: 0% 50%; }
+  100% { background-position: 220% 50%; }
+}
+/* 降级：不支持 background-clip:text 时改纯色，避免文字被透明填充吞掉 */
+@supports not ((-webkit-background-clip: text) or (background-clip: text)) {
+  .prism-title {
+    background: none;
+    -webkit-text-fill-color: #2E7FD9;
+    color: #2E7FD9;
+    filter: none;
+    animation: none;
+  }
+  .prism-title::before { display: none; }
+}
+/* 尊重减少动态效果偏好 */
+@media (prefers-reduced-motion: reduce) {
+  .prism-title { animation: none; }
+  .dh-arrow { animation: none; }
+}
+/* 拖动小球时暂停流动，松手自动继续 */
+body:has(.orb-scene.is-dragging) .prism-title { animation-play-state: paused; }
+/* 手机端不显示这行文案 */
+@media (max-width: 1023px) {
+  .prism-wrap { display: none !important; }
+}
+
+/* ---------- 二、手机端（≤1023px）：上拉栏显眼化 ---------- */
+@keyframes arrow-hint {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-2px); }
+}
+/* 首次引导：0→200ms ease-out 上移 10px，200→400ms ease-in 回落；只作用于把手条本身 */
+@keyframes handle-hint {
+  0%   { transform: translateY(0);     animation-timing-function: ease-out; }
+  50%  { transform: translateY(-10px); animation-timing-function: ease-in; }
+  100% { transform: translateY(0); }
+}
+@media (max-width: 1023px) {
+  /* 圆角上边缘沿用 split.css 的 20px 20px 0 0，此处不覆盖 */
+  .drawer-handle {
+    background: rgba(255, 255, 255, .92);
+    box-shadow: inset 0 1px 0 rgba(43, 92, 217, .10),
+                0 -2px 10px rgba(15, 40, 38, .06);
+  }
+  .dh-bar {
+    width: 44px;
+    height: 4px;
+    border-radius: 999px;
+    background: linear-gradient(90deg,
+      rgba(43, 92, 217, .30) 0%,
+      rgba(30, 140, 130, .60) 50%,
+      rgba(43, 92, 217, .30) 100%);
+  }
+  .dh-row { display: flex; align-items: center; justify-content: center; gap: 6px; }
+  .dh-arrow {
+    display: inline-block;              /* transform 对 inline 元素无效 */
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+    color: #2B5CD9;
+    animation: arrow-hint 2.4s ease-in-out infinite;
+  }
+  .dh-text {
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    line-height: 1.25;
+    color: #2B5CD9;
+  }
+  .drawer-handle.is-hinting { animation: handle-hint 400ms both; }
+}
