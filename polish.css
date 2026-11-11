@@ -1,0 +1,88 @@
+/* ===========================================================
+   v20 · 视觉质感升级（环境光 / 毛玻璃 / 圆角统一）
+   纯样式层：不改任何结构、文案、功能、交互逻辑。
+   最后加载，仅覆盖视觉属性；小球舞台与小球本体完全不在选择器范围内。
+   =========================================================== */
+
+/* ---------- 一、背景环境光 ---------- */
+body {
+  background:
+    radial-gradient(ellipse 900px 700px at 12% 8%,
+      rgba(42, 167, 155, .07), transparent 62%),
+    radial-gradient(ellipse 800px 600px at 88% 92%,
+      rgba(107, 123, 232, .05), transparent 62%),
+    #F7FAF9;
+}
+/* 左栏半透明，让底层光晕透上来 */
+.pane-chat { background: rgba(247, 250, 249, .72); }
+.pane-chat .pane-head,
+.pane-chat .composer { background: transparent; }
+/* 顶栏保持纯白不透；小球舞台保持纯白，不叠加光晕 */
+.topbar { background: #FFFFFF; }
+.pane-orb { background: #FFFFFF; }
+
+/* ---------- 二、卡片毛玻璃 ---------- */
+:root {
+  --glass-bg: rgba(255, 255, 255, .72);
+  --glass-blur: blur(20px) saturate(140%);
+  --glass-border: 1px solid rgba(255, 255, 255, .7);
+  --glass-shadow: 0 8px 32px rgba(31, 58, 54, .06);
+}
+.msg-bot .bubble,
+.doctor-cards .doc-card,
+.doctor-modal,
+#leaveModal .modal,
+.quick-chips button,
+.ca-btn {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+/* ---------- 三、圆角统一 ---------- */
+.msg-bot .bubble { border-radius: 20px; border-top-left-radius: 4px; }
+.doctor-cards .doc-card { border-radius: 20px; }
+.doctor-modal { border-radius: 24px; }
+#leaveModal .modal,
+#leaveModal.booking-mode .modal { border-radius: 24px; }
+/* 快捷胶囊仍为 999px、用户气泡仍为 16px + 右下角 4px 切角，均不在上方选择器内 */
+
+/* ---------- 手机端（抽屉把手条毛玻璃） ---------- */
+@media (max-width: 1023px) {
+  .pane-chat { background: rgba(247, 250, 249, .72); }
+  .pane-chat .composer { background: transparent; }
+  .drawer-handle {
+    background: var(--glass-bg);
+    -webkit-backdrop-filter: var(--glass-blur);
+    backdrop-filter: var(--glass-blur);
+    border: var(--glass-border);
+    box-shadow: var(--glass-shadow);
+  }
+}
+@media (max-width: 768px) {
+  .doctor-modal { border-radius: 24px; }
+  #leaveModal.booking-mode .modal { border-radius: 24px; }
+  /* 非预约模式的手机请假条仍是贴底面板，保留原有上圆角 */
+  #leaveModal:not(.booking-mode) .modal { border-radius: 18px 18px 0 0; }
+}
+
+/* ---------- 性能：拖动小球时关闭 backdrop-filter ----------
+   小球舞台区域（含返回按钮）与所有毛玻璃层在拖动期间一律不模糊，避免掉帧；
+   松手后 .is-dragging 移除，毛玻璃自动恢复。 */
+body:has(.orb-scene.is-dragging) .modal-backdrop,
+body:has(.orb-scene.is-dragging) .msg-bot .bubble,
+body:has(.orb-scene.is-dragging) .quick-chips button,
+body:has(.orb-scene.is-dragging) .ca-btn,
+body:has(.orb-scene.is-dragging) .doctor-modal,
+body:has(.orb-scene.is-dragging) #leaveModal .modal,
+body:has(.orb-scene.is-dragging) .doctor-cards .doc-card,
+body:has(.orb-scene.is-dragging) .drawer-handle,
+body:has(.orb-scene.is-dragging) .orb-back {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* 打印仍输出白底请假条 */
+@media print { body { background: #fff; } }
