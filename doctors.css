@@ -1,0 +1,172 @@
+/* ===========================================================
+   v19 · 校医院医生列表弹窗 + 预约专用请假表单 + 我的预约
+   v22 · 三卡统一预约按钮 / 预约时段只读字段 / 对话流预约凭证卡
+   v23 · 状态与预约时刻按真实时间计算（仅新增时间前缀提示样式，其余一律不动）
+   最后加载：覆盖 styles.css 里移动端 .modal-backdrop 贴底规则
+   =========================================================== */
+
+/* 顶栏高度由 app.js 写入 --xt-topbar-h；遮罩从顶栏下缘开始，顶栏始终可见可点 */
+:root { --xt-topbar-h: 64px; }
+
+/* ---------- 医生列表弹窗 ---------- */
+#doctorModal.doctor-backdrop {
+  top: var(--xt-topbar-h);
+  padding: 18px;
+  align-items: center;
+  justify-content: center;
+  z-index: 55;
+  background: rgba(17, 32, 62, .42);
+}
+.doctor-modal {
+  width: 720px;
+  max-width: 100%;
+  max-height: calc(100vh - var(--xt-topbar-h) - 36px);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 26px 70px rgba(15, 60, 56, .26);
+  overflow: hidden;
+}
+.doctor-head {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;
+  padding: 20px 24px 16px; border-bottom: 1px solid rgba(0, 0, 0, .06); flex: none;
+}
+.doctor-head-copy { min-width: 0; }
+.doctor-pill {
+  display: inline-block; font-size: 11px; font-weight: 700; color: #1E8C82;
+  background: #EDF9F7; border: 1px solid #D5F0EC; padding: 2px 9px; border-radius: 999px;
+}
+.doctor-head h2 { margin: 8px 0 4px; font-size: 20px; font-weight: 800; color: #20302E; }
+.doctor-sub { margin: 0; font-size: 13px; color: #8A9694; line-height: 1.5; }
+.doctor-close {
+  width: 40px; height: 40px; flex: none; border: 1px solid #E3EDEC; background: #F6F8F7;
+  color: #6C7A78; border-radius: 50%; font-size: 24px; line-height: 1; cursor: pointer;
+}
+.doctor-close:hover { background: #EAF4F2; color: #1E8C82; }
+.doctor-body { padding: 20px 24px 22px; overflow-y: auto; min-height: 0; }
+
+.doctor-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.doc-card {
+  min-width: 0; display: flex; flex-direction: column;
+  border: 1px solid #E6EFED; border-radius: 16px; padding: 16px 14px 14px; background: #fff;
+}
+.doc-card.is-on { border-color: rgba(42, 167, 155, .35); background: #FCFEFD; }
+.dc-top { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.dc-avatar {
+  width: 48px; height: 48px; flex: none; border-radius: 50%;
+  display: grid; place-items: center; font-size: 19px; font-weight: 800;
+}
+.dc-avatar.av-teal { background: #E3F5F1; color: #1E8C82; }
+.dc-avatar.av-purple { background: #EFEAFA; color: #7C6BB0; }
+.dc-avatar.av-orange { background: #FCEEDF; color: #C07B3A; }
+.dc-id { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.dc-id b { font-size: 15px; font-weight: 800; color: #20302E; white-space: nowrap; }
+.dc-id span { font-size: 12px; color: #8A9694; }
+.dc-status {
+  margin: 12px 0 10px; display: flex; align-items: center; gap: 6px;
+  font-size: 12px; font-weight: 700;
+}
+.dc-status i { width: 8px; height: 8px; flex: none; border-radius: 50%; }
+.dc-status.is-online { color: #1F9A6B; }
+.dc-status.is-online i { background: #22B573; box-shadow: 0 0 0 3px rgba(34, 181, 115, .14); }
+.dc-status.is-off { color: #8A9694; }
+.dc-status.is-off i { border: 1.5px solid #A8B4B1; background: transparent; }
+.dc-row {
+  display: flex; gap: 6px; align-items: flex-start; font-size: 12.5px; line-height: 1.5;
+  padding: 5px 0; border-top: 1px dashed #EDF2F1; min-width: 0;
+}
+.dc-row > span { flex: none; color: #8A9694; }
+.dc-row > b { font-weight: 600; color: #2C3A38; min-width: 0; word-break: break-word; }
+.dc-btn {
+  margin-top: 12px; width: 100%; padding: 9px 8px; border-radius: 10px;
+  font-size: 13px; font-weight: 700; cursor: pointer; transition: background .15s, border-color .15s;
+}
+.dc-btn.is-primary { border: 0; background: #2AA79B; color: #fff; }
+.dc-btn.is-primary:hover { background: #238E84; }
+/* v22：未在线医生改为绿色描边预约按钮（与实心主按钮同主色） */
+.dc-btn.is-outline { border: 1px solid #2AA79B; background: #fff; color: #1E8C82; }
+.dc-btn.is-outline:hover { background: #EDF9F7; border-color: #238E84; }
+.doctor-foot { margin: 16px 0 0; font-size: 11.5px; color: #9AA7A4; text-align: center; line-height: 1.5; }
+
+/* ---------- 预约专用请假表单（复用 #leaveModal 容器与 form-grid 组件） ---------- */
+#leaveModal.booking-mode {
+  top: var(--xt-topbar-h);
+  align-items: center;
+  padding: 18px;
+  z-index: 55;
+}
+#leaveModal.booking-mode .modal {
+  width: min(680px, 100%);
+  max-height: calc(100vh - var(--xt-topbar-h) - 36px);
+  border-radius: 20px;
+}
+.bk-note {
+  margin-bottom: 16px; padding: 9px 12px; border-radius: 9px;
+  background: #F6F8F7; color: #8A9694; font-size: 12px; line-height: 1.5;
+}
+.bk-readonly { background: #F6F8F7 !important; color: #5C6A68 !important; }
+/* v23：开始 / 结束时间标签上的「今日 · 明日 · 次日 HH:MM」提示（datetime-local 自身无法渲染前缀） */
+.bk-dayhint {
+  margin-left: 8px; padding: 1px 8px; border-radius: 999px;
+  background: #EDF9F7; color: #1E8C82; font-size: 11px; font-weight: 700; white-space: nowrap;
+}
+.bk-submit {
+  border: 0; background: #2AA79B; color: #fff; border-radius: 11px;
+  padding: 10px 19px; font-size: 13.5px; font-weight: 700; cursor: pointer;
+}
+.bk-submit:hover { background: #238E84; }
+/* ---------- v22：提交成功后的对话流预约凭证卡（消息气泡内，不是弹窗） ---------- */
+.bk-ticket {
+  background: #FFFFFF;
+  border: 1px solid #EAF3F1;
+  border-left: 3px solid #B7DDD6;          /* 浅青绿左边框 */
+  border-radius: 20px;
+  padding: 14px 16px;
+  min-width: 0;
+}
+.bk-ticket h4 { margin: 0 0 8px; font-size: 15px; font-weight: 600; color: #2C3A38; line-height: 1.5; }
+.bk-ticket p { margin: 0; font-size: 13.5px; line-height: 1.7; color: #5A6B68; }
+.bk-ticket .bk-ticket-no {
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12.5px; color: #8A9694;
+}
+
+/* ---------- 「我的预约」对话流卡片 ---------- */
+.bk-list-title { font-size: 14px; font-weight: 800; color: #20302E; margin-bottom: 10px; }
+.bk-empty { margin: 0; font-size: 14px; line-height: 1.65; color: #2C3A38; }
+.bk-item {
+  display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px;
+  padding: 9px 0; border-top: 1px dashed #E6EFED; font-size: 13px;
+}
+.bk-item:first-of-type { border-top: 0; }
+.bk-item b { color: #20302E; font-weight: 700; }
+.bk-item span { color: #5C6A68; }
+.bk-item em {
+  font-style: normal; font-size: 11.5px; font-weight: 700; color: #B0792C;
+  background: #FCF3E4; border-radius: 999px; padding: 2px 9px;
+}
+/* 凭证号独占一行，等宽小字 */
+.bk-item .bk-ticket-no {
+  flex-basis: 100%;
+  font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  font-size: 12.5px; color: #8A9694;
+}
+
+/* ---------- 手机端：92vw 居中、卡片竖向堆叠 ---------- */
+@media (max-width: 768px) {
+  #doctorModal.doctor-backdrop { padding: 12px; align-items: center; }
+  .doctor-modal { width: 92vw; max-width: 92vw; border-radius: 20px; max-height: calc(100vh - var(--xt-topbar-h) - 24px); }
+  .doctor-head { padding: 16px 16px 13px; }
+  .doctor-head h2 { font-size: 17px; }
+  .doctor-sub { font-size: 12px; }
+  .doctor-body { padding: 14px 14px 18px; }
+  .doctor-cards { grid-template-columns: 1fr; gap: 10px; }
+  .doc-card { padding: 13px 13px 12px; }
+  .dc-avatar { width: 44px; height: 44px; font-size: 18px; }
+  .dc-status { margin: 9px 0 7px; }
+  .dc-btn { margin-top: 9px; }
+  #leaveModal.booking-mode { padding: 12px; }
+  #leaveModal.booking-mode .modal {
+    width: 92vw; max-width: 92vw; border-radius: 20px;
+    max-height: calc(100vh - var(--xt-topbar-h) - 24px);
+  }
+}
