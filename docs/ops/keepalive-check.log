@@ -1,0 +1,48 @@
+
+========== 场景A · 干净访客 + 本地服务已关闭 ==========
+  诊断: {"sdkFailed":false,"scripts":["https://xiaotong-campus.app.workbuddy.host/data-query.js","https://xiaotong-campus.app.workbuddy.host/app.js","https://xiaotong-campus.app.workbuddy.host/orb-view.js","https://xiaotong-campus.app.workbuddy.host/gate.js","https://xiaotong-campus.app.workbuddy.host/split.js","https://xiaotong-campus.app.workbuddy.host/v26.js","https://xiaotong-campus.app.workbuddy.host/v27.js","https://xiaotong-campus.app.workbuddy.host/v28.js"],"source":"cloud","aiReady":true}
+  页面请求总数 28，失败 0，API 请求 1
+  失败请求: []
+  API 样例: ["https://xiaotong-campus.app.workbuddy.host/.cloud/database/rest/campus_faqs?select=*&order=sort_order.asc&limit=100"]
+  资源样例: ["https://xiaotong-campus.app.workbuddy.host/v28.css","https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js","https://xiaotong-campus.app.workbuddy.host/config.js"]
+  态: {"title":"未然 · 校园健康","url":"https://xiaotong-campus.app.workbuddy.host/?sharecode=J7SOPQ2ENF","ready":"complete","hero":"持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然","sdk":true,"cfg":true,"catalog":30,"match":{"threshold":0.45,"top":[{"id":1,"q":"食堂几点开饭","score":0.9604},{"id":4,"q":"宿舍几点熄灯","score":0.564},{"id":11,"q":"校医室几点上班","score":0.5585},{"id":7,"q":"体育馆开放时间","score":0.504},{"id":2,"q":"食堂哪个窗口有低脂餐","score":0.0429}],"bestId":1,"score":0.9604,"source":"cloud","aiReady":true},"hint":""}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 线上首页独立返回 200（无 cookie 的新访客）  {"status":200,"title":"未然 · 校园健康"}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 页面零本地依赖（不含 127.0.0.1 / localhost / file://）  {"hits":[]}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 云 SDK 与公开配置就绪  {"sdk":true,"cfg":true}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 云数据库 campus_faqs 读到 30 条且 source=cloud  {"catalog":30,"source":"cloud","bestId":1}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 云端 API 请求返回 2xx  {"total":1,"ok":1}
+PASS  场景A · 干净访客 + 本地服务已关闭 · v28 新资源正常加载  {"count":2,"statuses":[200,200]}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 桌面新主文案完整且无句号  {"hero":"持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然"}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 三道门禁可正常通过并进入主界面  {"chat":true,"msgs":1,"loginHidden":false}
+PASS  场景A · 干净访客 + 本地服务已关闭 · FAQ 弹窗 10 个分类标签由云端数据渲染  {"count":10}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 医生列表 / 预约入口正常  {"cards":3}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 我的预约读取正常  {"text":"你还没有预约记录。点右侧中间的校医院球可以发起预"}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 问答能出结果（云端 30 条匹配链路通）  {"n":4,"last":"未🧠 AI 意图识别 · 健康问答先说判断，再说能自己做什么、什么时候该找校医","typing":false}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 请假条流程正常  {"open":true,"form":true}
+PASS  场景A · 干净访客 + 本地服务已关闭 · 全流程 0 未捕获 jsError  {"count":0,"sample":[]}
+SHOT  keepalive-sceneA.png  285460 bytes
+
+========== 场景B · 再叠加 CDN SDK 不可达（站内副本兜底） ==========
+  诊断: {"sdkFailed":true,"scripts":["https://xiaotong-campus.app.workbuddy.host/data-query.js","https://xiaotong-campus.app.workbuddy.host/app.js","https://xiaotong-campus.app.workbuddy.host/orb-view.js","https://xiaotong-campus.app.workbuddy.host/gate.js","https://xiaotong-campus.app.workbuddy.host/split.js","https://xiaotong-campus.app.workbuddy.host/v26.js","https://xiaotong-campus.app.workbuddy.host/v27.js","https://xiaotong-campus.app.workbuddy.host/v28.js"],"source":"cloud","aiReady":true}
+  页面请求总数 29，失败 1，API 请求 1
+  失败请求: [{"url":"https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js","err":""}]
+  API 样例: ["https://xiaotong-campus.app.workbuddy.host/.cloud/database/rest/campus_faqs?select=*&order=sort_order.asc&limit=100"]
+  资源样例: ["https://xiaotong-campus.app.workbuddy.host/v28.css","https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js","https://xiaotong-campus.app.workbuddy.host/config.js"]
+  态: {"title":"未然 · 校园健康","url":"https://xiaotong-campus.app.workbuddy.host/?sharecode=J7SOPQ2ENF","ready":"complete","hero":"持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然","sdk":true,"cfg":true,"catalog":30,"match":{"threshold":0.45,"top":[{"id":1,"q":"食堂几点开饭","score":0.9604},{"id":4,"q":"宿舍几点熄灯","score":0.564},{"id":11,"q":"校医室几点上班","score":0.5585},{"id":7,"q":"体育馆开放时间","score":0.504},{"id":2,"q":"食堂哪个窗口有低脂餐","score":0.0429}],"bestId":1,"score":0.9604,"source":"cloud","aiReady":true},"hint":""}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 线上首页独立返回 200（无 cookie 的新访客）  {"status":200,"title":"未然 · 校园健康"}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 页面零本地依赖（不含 127.0.0.1 / localhost / file://）  {"hits":[]}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 云 SDK 与公开配置就绪  {"sdk":true,"cfg":true}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 云数据库 campus_faqs 读到 30 条且 source=cloud  {"catalog":30,"source":"cloud","bestId":1}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 云端 API 请求返回 2xx  {"total":1,"ok":1}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · v28 新资源正常加载  {"count":2,"statuses":[200,200]}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 桌面新主文案完整且无句号  {"hero":"持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然"}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 三道门禁可正常通过并进入主界面  {"chat":true,"msgs":1,"loginHidden":false}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · FAQ 弹窗 10 个分类标签由云端数据渲染  {"count":10}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 医生列表 / 预约入口正常  {"cards":3}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 我的预约读取正常  {"text":"你还没有预约记录。点右侧中间的校医院球可以发起预"}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 问答能出结果（云端 30 条匹配链路通）  {"n":4,"last":"未🧠 AI 意图识别 · 健康问答先说判断，再说能自己做什么、什么时候该找校医","typing":false}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 请假条流程正常  {"open":true,"form":true}
+PASS  场景B · 再叠加 CDN SDK 不可达（站内副本兜底） · 全流程 0 未捕获 jsError  {"count":0,"sample":[]}
+SHOT  keepalive-sceneB.png  284584 bytes
+
+===== 汇总 28/28 PASS =====
