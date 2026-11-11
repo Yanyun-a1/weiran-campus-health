@@ -1,0 +1,68 @@
+/* ===========================================================
+   v21 · 背景图替换（纯样式层，最后加载）
+   仅覆盖 body 背景、左右栏底色、顶栏与中心遮罩；
+   小球投影公式 / 三段式动画 / 玻璃五层配方 / 毛玻璃卡片 / 圆角 / 主色
+   一律不在本文件的选择器范围内，保持不变。
+   =========================================================== */
+
+/* ---------- 一、body 背景图（桌面） ---------- */
+body {
+  background-image: url('bg-desktop-v2.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: #F7FAF9;
+}
+
+/* ---------- 二、右栏小球舞台：完全透明，让背景图透上来 ---------- */
+/* 同时清掉 v9 舞台自带的白色渐变层与 v20 的纯白右栏 */
+.pane-orb,
+.orb-scene {
+  background: transparent !important;
+}
+
+/* ---------- 三、左栏对话：半透明磨砂，透出左侧青绿 ---------- */
+.pane-chat {
+  background: rgba(255, 255, 255, .58);
+  -webkit-backdrop-filter: blur(24px) saturate(140%);
+  backdrop-filter: blur(24px) saturate(140%);
+}
+
+/* ---------- 四、顶栏：纯白不透明 ---------- */
+.topbar { background: #FFFFFF; }
+
+/* ---------- 五、中心白色径向遮罩：垫在球的下方 ----------
+   ::before 是 .orb-scene 的第一个子元素，z-index:0 低于球层(.orb-stage,z1)、
+   中心球(z2)、边缘光(z3)；pointer-events:none 不拦截拖拽与点击。
+   尺寸跟随 JS 每帧写入的 --shell-d，桌面/手机自动适配。 */
+.orb-scene::before {
+  content: "";
+  position: absolute;
+  left: 50%; top: 50%;
+  width: var(--shell-d); height: var(--shell-d);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 50%,
+      rgba(255,255,255,.55) 0%,
+      rgba(255,255,255,.25) 45%,
+      transparent 72%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ---------- 六、手机 / 平板（≤1023px）：换竖版背景图 ---------- */
+@media (max-width: 1023px) {
+  body { background-image: url('bg-mobile-v2.png'); }
+}
+
+/* ---------- 七、沿用 v20 性能守卫：拖动小球时关闭左栏磨砂 ---------- */
+body:has(.orb-scene.is-dragging) .pane-chat {
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* 打印仍输出白底（覆盖本文件的背景图声明） */
+@media print {
+  body { background: #fff; }
+}
