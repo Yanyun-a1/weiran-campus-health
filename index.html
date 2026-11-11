@@ -4,190 +4,149 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#eff9f7" />
-<title>校园健康助手 · 校园健康</title>
-<meta name="description" content="校园健康助手（参赛原型）：食品 / 作息 / 运动三大健康主题的小球视图，以及可查询 30 条校园事务问答的对话视图。全部为虚构脱敏模拟数据。" />
+<title>未然 · 校园健康</title>
+<meta name="description" content="未然（参赛原型）：食品 / 作息 / 运动三大健康主题的小球视图，与 AI 对话视图左右分屏联动。全部为虚构脱敏模拟数据。" />
 <link rel="stylesheet" href="styles.css" />
 <link rel="stylesheet" href="orb-view.css" />
+<link rel="stylesheet" href="split.css" />
+<link rel="stylesheet" href="gate.css" />
+<link rel="stylesheet" href="doctors.css" />
+<link rel="stylesheet" href="polish.css" />
+<link rel="stylesheet" href="bg-v2.css" />
+<link rel="stylesheet" href="v25.css" />
+<link rel="stylesheet" href="v26.css" />
+<link rel="stylesheet" href="v27.css" />
+<link rel="stylesheet" href="v28.css" />
 </head>
 <body>
 
 <div class="page">
 
-  <!-- 1. 顶栏 -->
+  <!-- 1. 顶栏（移除小球/对话切换器；保留隐私 / 介绍 / 退出） -->
   <header class="topbar">
-    <a class="brand" href="#top" aria-label="校园健康助手首页">
-      <span class="brand-mark" aria-hidden="true">健</span>
+    <a class="brand" href="#top" aria-label="未然首页">
+      <span class="brand-mark" aria-hidden="true">未</span>
       <span class="brand-text">
-        <strong>校园健康助手</strong>
-        <small>校园健康 · 食品 / 作息 / 运动</small>
+        <strong>未然</strong>
+        <small>食序 · 息衡 · 动跃</small>
       </span>
     </a>
     <div class="topbar-right">
+      <button class="top-btn" id="privacyBtn" type="button" aria-label="隐私与授权">隐私</button>
       <button class="intro-btn" id="introBtn" type="button" aria-label="查看介绍">
         <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.4v.2"/></svg>
         介绍
       </button>
+      <button class="top-btn" id="logoutBtn" type="button" aria-label="退出登录">退出</button>
       <span class="demo-chip">参赛原型 · 模拟数据</span>
     </div>
   </header>
 
-  <!-- 2. 双 UI 视图切换：即时生效，状态存 localStorage -->
-  <div class="ui-switch" id="uiSwitch" role="tablist" aria-label="界面视图切换">
-    <button class="ui-seg active" type="button" data-view="orb" role="tab" aria-selected="true">小球视图</button>
-    <button class="ui-seg" type="button" data-view="chat" role="tab" aria-selected="false">对话视图</button>
-  </div>
-
-  <!-- 3. 轻量身份选择器：非登录，选择结果只存浏览器本地（对话视图专用） -->
+  <!-- 身份选择器：保留（供门禁同步身份），由 split.css 强制隐藏，不占据界面 -->
   <div class="identity-bar" id="identityBar">
     <label for="identitySelect"><span class="id-dot" aria-hidden="true"></span>当前身份</label>
     <select id="identitySelect" aria-label="当前身份"></select>
     <span class="identity-hint" id="identityHint">切换即时生效 · 本地保存 · 无需登录</span>
   </div>
 
-  <main id="top">
+  <main id="top" class="app-shell">
 
-    <!-- 4. 小球视图：JS 逐帧投影的四层结构（默认显示） -->
-    <section class="orb-view" id="orbView" aria-label="小球视图">
-      <div class="orb-scene" id="orbScene">
-        <div class="orb-shell" aria-hidden="true"></div>
-        <div class="orb-stage" id="orbStage"></div>
-        <div class="orb-rim" aria-hidden="true"></div>
-        <button class="orb-back" id="orbBack" type="button" aria-label="返回三大球" hidden>←</button>
+    <!-- 左栏：对话面板（桌面固定 380px；手机为底部抽屉） -->
+    <section class="pane pane-chat" id="chatPane">
+      <!-- 手机端把手条（桌面隐藏）：渐变横线 + 上浮箭头 + 显眼文案 -->
+      <div class="drawer-handle" id="drawerHandle">
+        <div class="dh-bar" aria-hidden="true"></div>
+        <div class="dh-row">
+          <span class="dh-arrow" aria-hidden="true">↑</span>
+          <span class="dh-text">和助手聊聊</span>
+        </div>
       </div>
-      <p class="orb-hint" id="orbHint">拖动旋转大球 · 点一个球展开子模块</p>
-    </section>
 
-    <!-- 5. 对话窗口：原有功能完整保留，只做显示/隐藏切换 -->
-    <section class="workspace" id="chatView" aria-label="对话窗口" hidden>
-      <div class="chat-card">
-        <div class="chat-head">
-          <span class="mini-avatar">健</span>
-          <div class="chat-head-text">
-            <strong>和校园健康助手聊聊</strong>
-            <small>把事说一句话就行，我来判断该「答」、该「办」还是该「查」</small>
-          </div>
-          <span class="ai-chip" id="aiStatus">AI 意图识别 · 连接中</span>
+      <div class="pane-head">
+        <span class="mini-avatar">未</span>
+        <div class="pane-head-text">
+          <strong>和未然聊聊</strong>
+          <small>AI 意图识别 · 健康问答</small>
         </div>
+        <span class="ai-chip" id="aiStatus">AI 意图识别 · 连接中</span>
+      </div>
 
-        <div class="chat-log" id="chatLog" role="log" aria-live="polite">
-          <div class="msg msg-bot">
-            <span class="bubble-avatar">健</span>
-            <div class="bubble">
-              <p>你好，我是<strong>校园健康助手</strong> 👋 办一件事不用跑五个入口。</p>
-              <p>可以直接问流程、说「我要请假三天」，或者查课表、空教室和图书馆座位：</p>
-              <div class="quick-chips">
-                <button type="button" data-q="请假流程">请假流程</button>
-                <button type="button" data-q="在读证明去哪开">在读证明去哪开</button>
-                <button type="button" data-q="报销要哪些材料">报销要哪些材料</button>
-                <button type="button" data-q="我要请假三天" class="quick-do">我要请假三天</button>
-                <button type="button" data-q="我明天有什么课" class="quick-data">我明天有什么课</button>
-                <button type="button" data-q="图书馆还有座位吗" class="quick-data">图书馆还有座位吗</button>
-              </div>
-            </div>
-          </div>
+      <div class="chat-log" id="chatLog"></div>
+
+      <div class="composer">
+        <div class="composer-actions">
+          <button class="ca-btn" id="faqOpenBtn" type="button">📚 30 条高频问答</button>
+          <button class="ca-btn" id="bookBtn" type="button">📋 我的预约</button>
         </div>
-
-        <div class="composer">
-          <button class="faq-open-btn" id="faqOpenBtn" type="button">
-            <span class="faq-open-ico" aria-hidden="true">☰</span>
-            <span class="faq-open-main">30 条高频问答 · 点开看看</span>
-            <span class="faq-open-sub">10 类 · 每类 3 条</span>
-            <span class="faq-open-arrow" aria-hidden="true">›</span>
+        <div class="composer-box">
+          <!-- v25：placeholder 由 app.js 按设备宽度生成（手机端短版，桌面端完整版） -->
+          <textarea id="userInput" rows="1" aria-label="输入你的问题"></textarea>
+          <button id="sendBtn" class="send-btn" type="button" aria-label="发送">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 20 4l-7.5 16-2.2-6.3z"/></svg>
           </button>
-          <div class="composer-box">
-            <textarea id="userInput" rows="1" placeholder="例如：请假流程 / 我要请假三天 / 我明天有什么课" aria-label="输入你的问题"></textarea>
-            <button id="sendBtn" class="send-btn" type="button" aria-label="发送">
-              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11.5 20 4l-7.5 16-2.2-6.3z"/></svg>
-            </button>
-          </div>
-          <div class="composer-hint">
-            <span>Enter 发送 · Shift + Enter 换行</span>
-            <span id="modeHint">内容库：云数据库</span>
-          </div>
         </div>
       </div>
     </section>
 
-    <!-- 6. 页脚 -->
-    <footer class="footer">
-      <span>模拟数据 · 不接真实学校系统 · 无需登录</span>
-    </footer>
+    <!-- 右栏：小球舞台（桌面占剩余空间；手机全屏背景） -->
+    <section class="pane pane-orb" id="orbPane">
+      <!-- v28：桌面端主文案。棱镜类 CSS 定义仍保留在 v26.css / v27.css 以便恢复，
+           本轮只把 .prism-wrap 元素（含两侧横线、光斑伪元素、流动动画）从 DOM 移除。
+           顶栏底部 → 球舞台圆顶的空隙由 v28.js 实测后写入 CSS 变量，flex 垂直居中。 -->
+      <div class="hero-slogan-wrap" id="heroSloganWrap" aria-hidden="true">
+        <span class="hero-slogan" id="heroSlogan">持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然</span>
+      </div>
+      <section class="orb-view" id="orbView" aria-label="小球视图">
+        <div class="orb-scene" id="orbScene">
+          <div class="orb-shell" aria-hidden="true"></div>
+          <div class="orb-stage" id="orbStage"></div>
+          <svg class="orb-link-svg" id="orbLinkSvg" width="1" height="1" viewBox="0 0 1 1" overflow="visible" aria-hidden="true">
+            <path class="orb-link link-food" id="link-food" data-orb="food" d="" />
+            <path class="orb-link link-sleep" id="link-sleep" data-orb="sleep" d="" />
+            <path class="orb-link link-sport" id="link-sport" data-orb="sport" d="" />
+          </svg>
+          <div class="orb-center" id="orbCenter" role="button" tabindex="0" aria-label="校医院预约">
+            <svg class="oc-cross" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 3h4v7h7v4h-7v7h-4v-7H3v-4h7z" fill="#E5484D" /></svg>
+            <span class="oc-label">校医院</span>
+          </div>
+          <div class="orb-rim" aria-hidden="true"></div>
+          <button class="orb-back" id="orbBack" type="button" aria-label="返回三大球" hidden>←</button>
+        </div>
+        <p class="orb-hint" id="orbHint">拖动旋转大球 · 点一个球展开子模块</p>
+        <div class="orb-consent" id="orbConsent" hidden></div>
+      </section>
+    </section>
   </main>
 </div>
 
-<!-- ===== 首次访问引导弹窗：本轮取消自动弹出，内容保留旧版供「介绍」按钮手动打开 ===== -->
-<div class="modal-backdrop intro-backdrop" id="introModal" hidden>
-  <div class="modal intro-dialog" role="dialog" aria-modal="true" aria-labelledby="heroTitle">
-    <button class="intro-close" id="closeIntro" type="button" aria-label="关闭介绍">×</button>
-    <div class="intro-scroll">
-
-      <!-- 上半：左文案 / 右示意图 -->
-      <div class="intro-grid">
-        <div class="intro-copy">
-          <span class="eyebrow">给高校在校生与教职工的校园事务小助手</span>
-          <h1 id="heroTitle">办一件事，<em>不用跑五个入口</em></h1>
-          <p class="hero-lead">
-            请假要去教务系统，报修要找后勤，开证明要跑 OA，社团活动还要翻通知……
-            入口分散、流程看不懂、只能反复问人。<strong>「小通同学」把这些事收进一个对话框</strong>：先问清楚，再一步办完。
+<!-- ===== 首次推荐弹窗（亦为顶栏「介绍」入口；旧的事务介绍弹窗已删除） ===== -->
+<div class="modal-backdrop intro-backdrop reco-backdrop" id="introModal" hidden>
+  <div class="modal intro-dialog reco-dialog" role="dialog" aria-modal="true" aria-labelledby="recoTitle">
+    <button class="intro-close reco-close" id="closeIntro" type="button" aria-label="关闭">×</button>
+    <div class="reco-scroll">
+      <div class="reco-grid">
+        <div class="reco-copy">
+          <span class="eyebrow">未然 · 参赛演示版</span>
+          <h1 id="recoTitle">你的饮食、作息、运动，<br/>终于能在一个地方看清了</h1>
+          <p class="reco-lead">
+            食堂不知道你昨晚几点睡，校医看不到你一周的运动量，而你自己也说不清这周到底睡够了没有。<br/>
+            我们把食堂、宿舍、体育场三个场景的健康数据收进一个视图，用一个球转给你看。<br/>
+            不接入任何真实系统，不存储任何真实个人信息，所有数据均为模拟演示。
           </p>
           <div class="hero-actions">
-            <button class="btn btn-primary" type="button" data-demo="请假流程">试试问一句：请假流程</button>
-            <button class="btn btn-ghost" type="button" data-demo="我要请假三天">试试办一件：我要请假三天</button>
+            <button class="btn btn-primary" id="recoStart" type="button">开始体验</button>
+            <button class="btn btn-ghost" id="recoMore" type="button">了解更多</button>
           </div>
         </div>
-
-        <div class="hero-visual" aria-hidden="true">
-          <div class="visual-title">以前：一件事，四个地方找</div>
-          <div class="entry-grid">
-            <span class="entry e1">教务系统</span>
-            <span class="entry e2">OA 办公</span>
-            <span class="entry e3">后勤平台</span>
-            <span class="entry e4">社团通知</span>
+        <div class="reco-visual" aria-hidden="true">
+          <div class="reco-orbs">
+            <span class="reco-orb orb-food"></span>
+            <span class="reco-orb orb-sleep"></span>
+            <span class="reco-orb orb-exercise"></span>
           </div>
-          <div class="flow-lines">
-            <svg viewBox="0 0 300 62" preserveAspectRatio="none">
-              <path d="M38 2 C 38 34, 140 26, 150 56" />
-              <path d="M112 2 C 112 32, 146 28, 150 56" />
-              <path d="M188 2 C 188 32, 154 28, 150 56" />
-              <path d="M262 2 C 262 34, 160 26, 150 56" />
-            </svg>
-          </div>
-          <div class="one-box">
-            <div class="one-box-head"><span class="mini-avatar">通</span><b>现在：一个对话框</b></div>
-            <div class="one-box-row"><span class="dot dot-qa"></span>事务问答 → 分步骤答案</div>
-            <div class="one-box-row"><span class="dot dot-do"></span>一键办事 → 请假条 + 审批顺序</div>
-            <div class="one-box-row"><span class="dot dot-data"></span>智能问数 → 结论 + 明细</div>
-          </div>
-          <div class="visual-foot">示意 · 全部为虚构流程</div>
+          <div class="reco-orb-cap">食品 · 作息 · 运动</div>
         </div>
       </div>
-
-      <!-- 中间：数据证据（数值/来源全部来自 evidence.js） -->
-      <div class="evidence" id="evidence" aria-label="数据依据"></div>
-
-      <!-- 底部：三个能力紧凑一行 -->
-      <div class="intro-caps" aria-label="本版三个能力">
-        <div class="intro-cap">
-          <span class="intro-cap-ico blue" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v9a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 3.5v-3.5A2.5 2.5 0 0 1 4 14.5z"/><path d="M8 8h8M8 11.5h5"/></svg>
-          </span>
-          <div><b>事务问答</b><span>分步骤讲清去哪办、带什么、多久</span></div>
-        </div>
-        <div class="intro-cap">
-          <span class="intro-cap-ico orange" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M7 3h10a1 1 0 0 1 1 1v16l-3-2-3 2-3-2-3 2V4a1 1 0 0 1 1-1z"/><path d="M9 8h6M9 12h6M9 16h3"/></svg>
-          </span>
-          <div><b>一键办事</b><span>说一句「我要请假三天」，直接出请假条</span></div>
-        </div>
-        <div class="intro-cap">
-          <span class="intro-cap-ico mint" aria-hidden="true">
-            <svg viewBox="0 0 24 24"><path d="M4 19V9M9 19V5M14 19v-7M19 19v-4"/><path d="M3 19h18"/></svg>
-          </span>
-          <div><b>智能问数</b><span>课表、空教室、图书馆座位，问一句出结果</span></div>
-        </div>
-      </div>
-
-      <div class="intro-foot">模拟数据 · 不接真实学校系统 · 无需登录</div>
     </div>
   </div>
 </div>
@@ -205,17 +164,35 @@
     <div class="faq-body">
       <p class="faq-intro">10 个分类 · 每类 3 条 · 点任意一条，直接把答案发到对话里</p>
       <div id="faqList"></div>
-      <div class="faq-foot">三段式答案：分步骤办理 · 去哪办 · 大概耗时 ｜ 全部为虚构脱敏模拟数据，学生以同学A / B / C 代称</div>
+      <div class="faq-foot">四段式答案：一句话判断 · 可以自己做的 · 什么情况要找校医 · 注意 ｜ 全部为虚构脱敏模拟数据</div>
     </div>
   </div>
 </div>
 
-<!-- ===== 一键办事：请假表单 / 生成结果 ===== -->
+<!-- ===== 校医院 · 今日值班（医生列表，预约唯一入口的点球弹窗） ===== -->
+<div class="modal-backdrop doctor-backdrop" id="doctorModal" hidden>
+  <div class="modal doctor-modal" role="dialog" aria-modal="true" aria-labelledby="doctorTitle">
+    <div class="doctor-head">
+      <div class="doctor-head-copy">
+        <span class="doctor-pill">模拟演示</span>
+        <h2 id="doctorTitle">校医院 · 今日值班</h2>
+        <p class="doctor-sub">三个时段轮值，均可提前预约</p>
+      </div>
+      <button class="doctor-close" id="closeDoctor" type="button" aria-label="关闭">×</button>
+    </div>
+    <div class="doctor-body" id="doctorBody">
+      <div class="doctor-cards" id="doctorCards"></div>
+      <p class="doctor-foot">全部为虚构脱敏模拟数据，在线状态与预约时刻按当前时间实时计算，不接入任何真实系统</p>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 就诊预约：请假表单 / 生成结果 ===== -->
 <div class="modal-backdrop" id="leaveModal" hidden>
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="leaveTitle">
     <div class="modal-head">
       <div>
-        <span class="pill">一键办事</span>
+        <span class="pill">就诊预约</span>
         <h2 id="leaveTitle">请假条生成</h2>
       </div>
       <button class="icon-btn" id="closeModal" type="button" aria-label="关闭">×</button>
@@ -224,7 +201,7 @@
   </div>
 </div>
 
-<!-- ===== 小球视图：模块详情占位面板 ===== -->
+<!-- ===== 小球视图：模块详情占位面板（桌面已不再使用，保留 DOM 以免破坏既有引用） ===== -->
 <div class="orb-detail-backdrop" id="orbDetailBackdrop" hidden></div>
 <aside class="orb-detail" id="orbDetail" hidden aria-label="模块详情">
   <div class="orb-detail-head">
@@ -242,6 +219,89 @@
   </div>
 </aside>
 
+<!-- ===== 模拟登录页（未登录时挡住整个应用） ===== -->
+<div class="gate-overlay login-overlay" id="loginPage" hidden>
+  <div class="login-card" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="brand-mark login-mark" aria-hidden="true">未</div>
+    <h1 class="login-title" id="loginTitle">未然</h1>
+    <p class="login-sub">防患于未然 · 校园健康助手</p>
+    <form class="login-form" id="loginForm" novalidate>
+      <label class="login-field">
+        <span>学号</span>
+        <input id="loginSid" type="text" inputmode="numeric" autocomplete="off" placeholder="请输入学号" />
+      </label>
+      <label class="login-field">
+        <span>密码</span>
+        <input id="loginPwd" type="password" autocomplete="off" placeholder="请输入密码" />
+      </label>
+      <div class="login-err" id="loginErr" hidden></div>
+      <button class="login-btn" id="loginBtn" type="submit">登录</button>
+    </form>
+    <div class="login-divider"><span>演示账号（点击自动填充）</span></div>
+    <div class="login-demo">
+      <button type="button" class="demo-acc" data-sid="20260101" data-pwd="123456"><span class="da-sid">20260101</span><span class="da-meta">同学A · 2026级1班</span></button>
+      <button type="button" class="demo-acc" data-sid="20260102" data-pwd="123456"><span class="da-sid">20260102</span><span class="da-meta">同学B · 2026级1班</span></button>
+      <button type="button" class="demo-acc" data-sid="20260201" data-pwd="123456"><span class="da-sid">20260201</span><span class="da-meta">同学C · 2026级2班</span></button>
+      <button type="button" class="demo-acc" data-sid="20260202" data-pwd="123456"><span class="da-sid">20260202</span><span class="da-meta">同学D · 2026级2班</span></button>
+    </div>
+    <p class="login-foot">本系统为参赛演示原型，不接入任何真实学校系统，所有学生信息与健康数据均为模拟生成，不涉及真实个人信息。</p>
+  </div>
+</div>
+
+<!-- ===== 隐私知情同意书（登录后、进入主界面前的必过步骤） ===== -->
+<div class="gate-overlay consent-overlay" id="consentModal" hidden>
+  <div class="consent-card" role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+    <div class="consent-head">
+      <h2 id="consentTitle">个人信息收集与使用知情同意书</h2>
+      <p class="consent-sub">请阅读以下内容，并选择你愿意授权的数据范围</p>
+    </div>
+    <div class="consent-body">
+      <div class="consent-sec"><h3>一、我们收集哪些信息</h3><ul>
+        <li><b>饮食记录：</b>你在食堂的用餐记录、菜品热量</li>
+        <li><b>作息记录：</b>你的入睡时间、起床时间、睡眠时长</li>
+        <li><b>运动记录：</b>你的运动项目、时长、消耗热量</li>
+      </ul></div>
+      <div class="consent-sec"><h3>二、这些信息用来做什么</h3><ul>
+        <li>生成你的个人健康概览，帮助你了解自己的饮食、作息、运动状况</li>
+        <li>在你主动发起就诊时，生成一份健康摘要提供给校医参考</li>
+        <li>不用于任何商业用途，不用于任何形式的广告推送</li>
+      </ul></div>
+      <div class="consent-sec"><h3>三、谁可以看到这些信息</h3><ul>
+        <li><b>你自己：</b>随时可以在健康档案中查看全部记录</li>
+        <li><b>校医：</b>仅在你主动发起就诊并确认发送时，才能看到对应的健康摘要</li>
+        <li>除此之外，任何第三方都无法访问</li>
+      </ul></div>
+      <div class="consent-sec"><h3>四、保存多久</h3><p>数据保存在你的账号下，直到你主动删除或撤销授权。撤销授权后，已生成的历史摘要不受影响，但不再生成新的摘要。</p></div>
+      <div class="consent-sec"><h3>五、你的权利</h3><ul>
+        <li>你可以随时查看自己记录的全部数据</li>
+        <li>你可以随时关闭任意一项授权</li>
+        <li>你可以要求删除全部健康记录</li>
+        <li>以上操作都在「健康档案」页面完成</li>
+      </ul></div>
+      <div class="consent-auth">
+        <label class="auth-row"><input class="auth-cb" type="checkbox" id="consent_diet" /><span class="auth-box" aria-hidden="true"></span><span class="auth-text"><b>允许收集饮食记录</b><i>用于统计每日热量摄入、分析饮食结构</i></span></label>
+        <label class="auth-row"><input class="auth-cb" type="checkbox" id="consent_sleep" /><span class="auth-box" aria-hidden="true"></span><span class="auth-text"><b>允许收集作息记录</b><i>用于分析睡眠规律、生成作息建议</i></span></label>
+        <label class="auth-row"><input class="auth-cb" type="checkbox" id="consent_exercise" /><span class="auth-box" aria-hidden="true"></span><span class="auth-text"><b>允许收集运动记录</b><i>用于统计运动量、生成运动建议</i></span></label>
+      </div>
+    </div>
+    <div class="consent-foot">
+      <button class="btn-ghost-lg" id="consentAll" type="button">全部同意</button>
+      <button class="btn-primary-lg" id="consentAgree" type="button" disabled>同意并继续</button>
+      <div class="consent-tip">本同意书仅用于参赛演示，不产生任何法律效力。你可以随时在「健康档案」中修改授权范围。</div>
+    </div>
+  </div>
+</div>
+
+<!-- v27：手机端（≤1023px）静态棱镜文案。放在 .page 之外，避免被 .pane-orb.orb-shrunk 的 transform 一起缩小；
+     fixed 绝对定位、pointer-events:none，不参与小球定位计算，桌面端由 CSS 隐藏。 -->
+<div class="prism-mobile-wrap" id="prismMobileWrap" aria-hidden="true">
+  <span class="prism-m-line"></span>
+  <span class="prism-m-title">防患于未然</span>
+  <span class="prism-m-line"></span>
+  <!-- v28：下方 10px 的功能说明；绝对定位不占父元素高度，不参与球舞台定位计算 -->
+  <span class="prism-m-sub">校园健康助手 · 点球看数据，上拉聊天</span>
+</div>
+
 <!-- 云服务 SDK：CDN @dev 优先，失败时用本地同版本副本 -->
 <script src="https://cdn.jsdelivr.net/npm/@tencent-ai/workbuddy-cloud-sdk@dev/lib/index.global.js" onerror="window.__sdkCdnFailed=true"></script>
 <script>if (window.__sdkCdnFailed || !window.WorkBuddyCloud) { document.write('<script src="./vendor/workbuddy-cloud-sdk.global.js"><\/script>'); }</script>
@@ -252,5 +312,10 @@
 <script src="data-query.js"></script>
 <script src="app.js"></script>
 <script src="orb-view.js"></script>
+<script src="gate.js"></script>
+<script src="split.js"></script>
+<script src="v26.js"></script>
+<script src="v27.js"></script>
+<script src="v28.js"></script>
 </body>
 </html>

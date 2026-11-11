@@ -29,7 +29,7 @@
   /* 三色与九个占位文案逐字沿用 v4，不动 */
   var ORBS = [
     {
-      id: 'food', name: '食品健康', az: 0, el: 48,
+      id: 'food', name: '食序', az: 0, el: 48,
       hi: '#FFD9BE', main: '#FF8A5B', dark: '#C9442A',
       minis: [
         { name: '菜品营养', desc: '每道菜的热量、蛋白质、脂肪、钠含量与搭配建议' },
@@ -38,7 +38,7 @@
       ]
     },
     {
-      id: 'sleep', name: '作息健康', az: 42, el: -20,
+      id: 'sleep', name: '息衡', az: 42, el: -20,
       hi: '#C7CFFF', main: '#6B7BE8', dark: '#3B49A8',
       minis: [
         { name: '作息记录', desc: '入睡与起床时间统计、睡眠时长趋势' },
@@ -47,7 +47,7 @@
       ]
     },
     {
-      id: 'sport', name: '运动健康', az: -42, el: -20,
+      id: 'sport', name: '动跃', az: -42, el: -20,
       hi: '#A8F0E8', main: '#2AA79B', dark: '#16756C',
       minis: [
         { name: '运动记录', desc: '运动类型、时长与消耗统计' },
@@ -100,11 +100,19 @@
           hi: shade(o.hi, d), main: shade(o.main, d), dark: shade(o.dark, d) });
       }).join('');
     });
+    /* v28：手机端三个大球下方的通俗标签，与球同放在 .orb-stage 球层容器里。
+       只新增元素，不改球体 HTML；由 applyProjection 每帧下发与大球一致的位移。 */
+    html += [['food', '饮食'], ['sleep', '作息'], ['sport', '运动']].map(function (t) {
+      return '<span class="orb-tag" data-tag="' + t[0] + '" aria-hidden="true">' + t[1] + '</span>';
+    }).join('');
     stage.innerHTML = html;
   }
 
   /* 预索引：避免每帧做 DOM 查询；半径 R 从 CSS 变量读，自动跟随桌面/手机断点 */
-  var MAJORS = [], MINORS = {}, R_CACHE = { major: 250, minor: 175 };
+  var MAJORS = [], MINORS = {}, R_CACHE = { major: 250, minor: 175, majorD: 150, minorD: 200 };
+  /* v18：中心「校医院」球 + 三条虚线（目的地节点，独立于 ORBS，不参与 3D 绕行） */
+  var LINKS = {};
+  var HUB = { center: null, centerR: 55, inConverge: false };
   function rec(el) {
     return {
       el: el, skin: el.querySelector('.orb-skin'),
@@ -113,7 +121,12 @@
     };
   }
   function indexItems() {
-    MAJORS = $$('.orb-major').map(rec);
+    MAJORS = $$('.orb-major').map(function (el) {
+      var r = rec(el);
+      /* v28：预索引同组标签，避免每帧 DOM 查询 */
+      r.tag = document.querySelector('.orb-tag[data-tag="' + el.getAttribute('data-orb') + '"]');
+      return r;
+    });
     MINORS = {};
     $$('.orb-minor').forEach(function (m) {
       var g = m.getAttribute('data-group');
@@ -122,8 +135,15 @@
   }
   function measure() {
     var a = $('.orb-major'), b = $('.orb-minor');
-    if (a) R_CACHE.major = parseFloat(getComputedStyle(a).getPropertyValue('--R')) || 250;
-    if (b) R_CACHE.minor = parseFloat(getComputedStyle(b).getPropertyValue('--R')) || 175;
+    if (a) {
+      R_CACHE.major = parseFloat(getComputedStyle(a).getPropertyValue('--R')) || 250;
+      R_CACHE.majorD = parseFloat(getComputedStyle(a).getPropertyValue('--d')) || 150;
+    }
+    if (b) {
+      R_CACHE.minor = parseFloat(getComputedStyle(b).getPropertyValue('--R')) || 175;
+      R_CACHE.minorD = parseFloat(getComputedStyle(b).getPropertyValue('--d')) || 200;
+    }
+    if (HUB.center) HUB.centerR = HUB.center.offsetWidth / 2 || 55;
   }
 
   /* ================= 三级层级状态（唯一数据源） =================
@@ -143,6 +163,8 @@
   var animTarget = 'root';
   var animTimers = [];
   var detailTimer = null;
+  var detailOpenedAt = 0;            // 详情面板打开时刻，用于关闭冷却期
+  var detailDownOnOverlay = false;   // 遮罩 pointerdown 是否落在遮罩本身（保护 3）
   var animPhase = null, animMarks = [];
 
   /* ================= 每帧投影（核心公式） =================
@@ -185,6 +207,42 @@
       o.skin.style.opacity = (0.35 + 0.65 * t).toFixed(3);
       o.skin.style.filter = 'brightness(' + (0.65 + 0.35 * t).toFixed(3) + ') blur(' + ((1 - t) * 2.2).toFixed(2) + 'px)';
       el.style.zIndex = String(Math.round(t * 100));
+      /* v28：标签与大球共用同一组投影位移，但不套用球的 --sc 缩放、不参与旋转；
+         球底 +6px 的间距由 CSS 承担。拖动 / relayout / 返回大球层时逐帧同步。 */
+      if (layer === 'major' && o.tag) {
+        o.tag.style.setProperty('--tag-px', (x2 * k).toFixed(2) + 'px');
+        o.tag.style.setProperty('--tag-py', (-y2 * k + R_CACHE.majorD * k / 2).toFixed(2) + 'px');
+      }
+    }
+    /* v18：大球层下，按三个大球当前投影位置实时重算三条虚线（中心固定，线随大球走） */
+    if (layer === 'major') updateLinks();
+  }
+
+  /* v18：三条虚线——从大球边缘连到中心球边缘；中心球固定在投影中心(0,0)，
+   * 大球端随投影坐标移动，因此拖动 / 动画时连线始终贴合。轻微贝塞尔弯曲。 */
+  function updateLinks() {
+    if (!HUB.center) return;
+    var cr = HUB.centerR || (HUB.center.offsetWidth / 2) || 55;
+    for (var i = 0; i < MAJORS.length; i++) {
+      var o = MAJORS[i];
+      var id = o.el.getAttribute('data-orb');
+      var path = LINKS[id];
+      if (!path) continue;
+      var px = parseFloat(o.el.style.getPropertyValue('--px')) || 0;
+      var py = parseFloat(o.el.style.getPropertyValue('--py')) || 0;
+      var k = parseFloat(o.el.style.getPropertyValue('--sc')) || 1;
+      var mr = (R_CACHE.majorD / 2) * k;          // 大球当前渲染半径
+      var len = Math.sqrt(px * px + py * py);
+      if (len < 1) { path.setAttribute('d', ''); continue; }
+      var ux = px / len, uy = py / len;            // 中心→大球方向
+      var ix = ux * cr, iy = uy * cr;              // 中心球边缘起点
+      var ox = px - ux * mr, oy = py - uy * mr;    // 大球边缘终点
+      var mx = (ix + ox) / 2, my = (iy + oy) / 2;  // 中点 + 垂直微弯
+      var nx = -uy, ny = ux, bow = 10;
+      var cx = mx + nx * bow, cy = my + ny * bow;
+      path.setAttribute('d', 'M ' + ix.toFixed(1) + ' ' + iy.toFixed(1) +
+        ' Q ' + cx.toFixed(1) + ' ' + cy.toFixed(1) +
+        ' ' + ox.toFixed(1) + ' ' + oy.toFixed(1));
     }
   }
 
@@ -266,6 +324,7 @@
   var downX = 0, downY = 0;
   var downOrb = null;        // pointerdown 命中的球，空白处为 null
   var downBack = false;      // 命中的是左上角返回按钮
+  var downCenter = false;    // 命中的是中心「校医院」球（v18）
   var isDragging = false;
 
   function bindDrag() {
@@ -286,22 +345,31 @@
     function handleUp(e, allowClick) {
       var pid = e.pointerId;
       var moved = Math.hypot(e.clientX - downX, e.clientY - downY);
-      var hitOrb = downOrb, hitBack = downBack;
+      var hitOrb = downOrb, hitBack = downBack, hitCenter = downCenter;
       pointerId = null;                  // 先置空，避免兜底逻辑重复收尾
       try { scene.releasePointerCapture(pid); } catch (err) {}
       if (allowClick && moved < 8) {     // pointerup 的 target 已被捕获，只能用 downOrb
+        var wasDetail = (level === 'detail');
         if (hitOrb) triggerSplit(hitOrb);
         else if (hitBack) goRoot();
+        else if (hitCenter) convergeToCenter();
+        /* 排查 1：若这次点击打开了详情（仅中球会，level 从非 detail 进入 detail），
+         * 立刻拦住事件，防止冒泡到 window 兜底，并抑制移动端补发的 click
+         * 命中遮罩误关。绝不影响返回按钮（返回不改 level 到 detail）。 */
+        if (!wasDetail && level === 'detail') {
+          e.stopPropagation();
+          e.preventDefault();
+        }
       }
       scene.classList.remove('is-dragging');
       target.ry = 0; target.rx = 0;
-      downOrb = null; downBack = false; isDragging = false;
+      downOrb = null; downBack = false; downCenter = false; isDragging = false;
       startEaseBack();                   // 点击与拖动都走回弹，角度归零
     }
 
     function handleCancel() {
       if (pointerId === null) return;
-      pointerId = null; downOrb = null; downBack = false; isDragging = false;
+      pointerId = null; downOrb = null; downBack = false; downCenter = false; isDragging = false;
       scene.classList.remove('is-dragging');
       target.ry = 0; target.rx = 0;
       startEaseBack();
@@ -316,6 +384,7 @@
       downX = e.clientX; downY = e.clientY;
       downOrb = (e.target && e.target.closest) ? e.target.closest('.orb-item') : null;
       downBack = !!(e.target && e.target.closest && e.target.closest('#orbBack'));
+      downCenter = !!(e.target && e.target.closest && e.target.closest('#orbCenter'));
       isDragging = false;
       scene.classList.add('is-dragging');
       try { scene.setPointerCapture(e.pointerId); } catch (err) {}
@@ -615,9 +684,20 @@
    * 大球 → 分裂；当前中球 → 详情面板；键盘 Enter / Space 也走这里。 */
   function triggerSplit(it) {
     if (!it || isAnimating || level === 'detail') return;
-    if (it.classList.contains('orb-major') && level === 'root') enterSub(it.getAttribute('data-orb'));
-    else if (it.classList.contains('orb-minor') && it.classList.contains('is-current') && level === 'sub') {
-      openDetail(it.getAttribute('data-mod'), it.getAttribute('data-desc'));
+    if (it.classList.contains('orb-major') && level === 'root') {
+      /* 大球：原有分裂动画照常；同时通知左侧对话做轻量响应 */
+      var id = it.getAttribute('data-orb');
+      enterSub(id);
+      if (window.XT_CHAT) {
+        var orb = null;
+        for (var i = 0; i < ORBS.length; i++) if (ORBS[i].id === id) { orb = ORBS[i]; break; }
+        if (orb) window.XT_CHAT.onMajor(orb.name, orb.minis.map(function (m) { return m.name; }));
+      }
+    } else if (it.classList.contains('orb-minor') && it.classList.contains('is-current') && level === 'sub') {
+      /* 中球：桌面取消滑出详情面板，内容卡片直接插入左侧对话流（XT_CHAT.onMid 处理） */
+      if (window.XT_CHAT) {
+        window.XT_CHAT.onMid(it.getAttribute('data-mod'), it.getAttribute('data-desc'), it.getAttribute('data-group'));
+      }
     }
   }
 
@@ -633,6 +713,7 @@
     if (d) d.textContent = desc;
     var bd = $('#orbDetailBackdrop'), p = $('#orbDetail');
     if (bd) { bd.hidden = false; bd.style.opacity = '1'; }
+    detailOpenedAt = performance.now();   // 记录打开时刻，进入 350ms 冷却期
     if (p) {
       p.hidden = false;
       p.classList.remove('open');
@@ -642,7 +723,7 @@
     document.body.style.overflow = 'hidden';
   }
   function closeDetail() {
-    if (level !== 'detail') return;
+    if (isAnimating || level !== 'detail') return;   // 动画期间不响应关闭（排查 3）
     setLevel('sub');                       // 只退一级：detail → sub
     var bd = $('#orbDetailBackdrop'), p = $('#orbDetail');
     if (p) p.classList.remove('open');    // 播放面板自身 translateX(100%) 退出
@@ -683,8 +764,7 @@
     document.addEventListener('click', function (e) {
       if (!e.target || typeof e.target.closest !== 'function') return;
       var isBack = e.target.id === 'orbBack';
-      var isDetailClose = e.target.id === 'orbDetailBack' || e.target.id === 'orbDetailReturn' ||
-                          e.target.id === 'orbDetailBackdrop';
+      var isDetailClose = e.target.id === 'orbDetailBack' || e.target.id === 'orbDetailReturn';
       if (isAnimating) {
         if (isBack || isDetailClose) cancelAnim(); // 狂点返回：取消动画，直接落到目标静止态
         return;                                    // 其余点击一律忽略
@@ -702,6 +782,16 @@
       if (it) { e.preventDefault(); triggerSplit(it); }
     });
 
+    /* v18：中心「校医院」球键盘可达（Enter / Space 触发汇聚 + 预约） */
+    var centerEl = $('#orbCenter');
+    if (centerEl) {
+      centerEl.addEventListener('keydown', function (e) {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        e.preventDefault();
+        convergeToCenter();
+      });
+    }
+
     document.addEventListener('keydown', function (e) {
       if (e.key !== 'Escape') return;
       if (isAnimating) { cancelAnim(); return; }
@@ -709,19 +799,161 @@
       if (level === 'sub') goRoot();
     });
 
+    /* 详情遮罩关闭：只走 pointer 事件（不再用 document click 判定 backdrop，
+     * 否则打开详情的同一次手势补发的 click 命中遮罩会立即关闭，移动端闪退）。
+     * 三道保护：① 350ms 冷却期挡住打开手势本身；② 关闭必须 e.target === 遮罩本身；
+     * ③ 起终点都在遮罩上（从面板按下拖到遮罩松手不关）。 */
+    var bdEl = $('#orbDetailBackdrop');
+    if (bdEl) {
+      bdEl.addEventListener('pointerdown', function (e) {
+        detailDownOnOverlay = (e.target === bdEl);   // 保护 ③：起点落在遮罩本身
+      });
+      bdEl.addEventListener('pointerup', function (e) {
+        var canClose = (performance.now() - detailOpenedAt >= 350)  // 保护 ①：冷却期
+                    && detailDownOnOverlay                         // 保护 ③：起点在遮罩
+                    && (e.target === bdEl);                        // 保护 ②：终点在遮罩
+        detailDownOnOverlay = false;                 // 复位，避免跨手势残留
+        if (canClose) closeDetail();
+      });
+      bdEl.addEventListener('pointercancel', function () { detailDownOnOverlay = false; });
+    }
+
     bindDrag();
-    window.addEventListener('resize', function () { measure(); requestFrame(); });
+    window.addEventListener('resize', function () { measure(); requestFrame(); relayout(); });
+  }
+
+  /* ================= v14：分屏 / 抽屉联动（只改布局与联动，不碰投影公式） =================
+   * relayout：按右栏容器尺寸重算外壳直径 / R / 球径，再 applyProjection 重跑；
+   *           用 offset 尺寸（忽略 transform），避免抽屉缩放影响尺寸计算。
+   * highlight：对应大球高亮（scale 脉冲 + 同色光晕），600ms 后自动复位，叠加在玻璃质感之上。 */
+  function relayout() {
+    var pane = $('#orbPane');
+    var W = pane ? pane.offsetWidth : window.innerWidth;
+    var H = pane ? pane.offsetHeight : window.innerHeight;
+    if (!W || !H) return;
+    /* 手机端(≤768)放宽宽度系数，让三角形铺开，给固定的中心「校医院」球留出间隙，
+     * 避免在 390 等窄屏下与侧球边缘相碰；桌面系数与投影公式均不变。 */
+    var wf = (W <= 768) ? 1.0 : 0.82;
+    var D = Math.min(W * wf, H * 0.78, 720);
+    var R = D * 0.33, d = D * 0.21;
+    var scene = $('#orbScene');
+    if (scene) scene.style.setProperty('--shell-d', D.toFixed(1) + 'px');
+    var Rm = R * 0.7, dm = d * (200 / 150);   // 中球沿用 v4 比例（R 0.7×、d 大球的 1.333×）
+    $$('.orb-major').forEach(function (m) {
+      m.style.setProperty('--R', R.toFixed(1) + 'px');
+      m.style.setProperty('--d', d.toFixed(1) + 'px');
+    });
+    $$('.orb-minor').forEach(function (m) {
+      m.style.setProperty('--R', Rm.toFixed(1) + 'px');
+      m.style.setProperty('--d', dm.toFixed(1) + 'px');
+    });
+    measure();
+    applyProjection(cur.ry, cur.rx);
+  }
+  /* v25：脉冲高亮（CSS orbHot 600ms：scale 1 → 1.15 → 1 + 同色光晕），660ms 后复位 */
+  function pulse(el) {
+    if (!el) return;
+    el.classList.remove('is-hot');
+    void el.offsetWidth;
+    el.classList.add('is-hot');
+    setTimeout(function () { el.classList.remove('is-hot'); }, 660);
+  }
+  function highlight(group) { pulse($('.orb-major[data-orb="' + group + '"]')); }
+  /* v25：「去点球」落点。点大球后视图已分裂到中球层、大球按静止态隐藏，
+     先走既有 goRoot 返回大球层，待动画落定再脉冲，保证引导光晕真的可见；
+     中球卡片则直接脉冲当前可见的那一颗。投影公式 / 分裂动画 / 玻璃质感均不动。 */
+  function focusOrb(kind, group, mod, tries) {
+    tries = tries || 0;
+    var stage = $('#orbStage');
+    if (kind === 'major') {
+      var m = $('.orb-major[data-orb="' + group + '"]');
+      if (!m) return;
+      if (stage && stage.classList.contains('is-sub')) {
+        if (isAnimating) {
+          if (tries < 8) setTimeout(function () { focusOrb(kind, group, mod, tries + 1); }, 180);
+          return;
+        }
+        goRoot();
+        setTimeout(function () { pulse(m); }, 560);
+      } else pulse(m);
+    } else if (kind === 'minor') {
+      pulse($('.orb-minor[data-group="' + group + '"][data-mod="' + mod + '"]'));
+    }
+  }
+  window.XT_ORB = window.XT_ORB || {};
+  window.XT_ORB.recompute = relayout;
+  window.XT_ORB.highlight = highlight;
+  window.XT_ORB.focus = focusOrb;
+
+  /* v18：索引中心球与三条虚线；并缓存中心球半径（measure 时刷新） */
+  function indexHub() {
+    LINKS = {};
+    $$('#orbLinkSvg .orb-link').forEach(function (p) {
+      LINKS[p.getAttribute('data-orb')] = p;
+    });
+    HUB.center = $('#orbCenter');
+    if (HUB.center) HUB.centerR = HUB.center.offsetWidth / 2 || 55;
+  }
+
+  /* v18：点中心「校医院」球——轻量「汇聚」动作，随后在对话面板追加预约消息并打开表单。
+   * 只动 --cv（汇聚倍率），不碰投影公式 / 玻璃质感 / 三段式动画。 */
+  function convergeToCenter() {
+    if (isAnimating || level !== 'root' || HUB.inConverge) return;
+    HUB.inConverge = true;
+    var majors = $$('.orb-major');
+    var center = HUB.center;
+    /* 阶段 1（100ms）：三个大球内吸到 0.94，中心球放大到 1.12 */
+    majors.forEach(function (m) {
+      m.style.transition = 'transform 100ms ease';
+      m.style.setProperty('--cv', '0.94');
+    });
+    if (center) {
+      center.style.transition = 'transform 100ms ease';
+      center.style.setProperty('--cv', '1.12');
+    }
+    setTimeout(function () {
+      /* 阶段 2（200ms）：全部回到 1 */
+      majors.forEach(function (m) {
+        m.style.transition = 'transform 200ms cubic-bezier(.22, 1, .36, 1)';
+        m.style.setProperty('--cv', '1');
+      });
+      if (center) {
+        center.style.transition = 'transform 200ms cubic-bezier(.22, 1, .36, 1)';
+        center.style.setProperty('--cv', '1');
+      }
+      setTimeout(function () {
+        /* 清理内联，交还静止态（避免残留 transition 干扰后续分裂动画） */
+        majors.forEach(function (m) {
+          m.style.removeProperty('--cv');
+          m.style.removeProperty('transition');
+        });
+        if (center) {
+          center.style.removeProperty('--cv');
+          center.style.removeProperty('transition');
+        }
+        HUB.inConverge = false;
+        /* 动作结束后：对话面板追加两条消息 + 打开校医预约表单（手机端展开抽屉） */
+        if (window.XT_CHAT && window.XT_CHAT.bookDoctor) window.XT_CHAT.bookDoctor();
+      }, 220);
+    }, 110);
   }
 
   function boot() {
     buildStage();
     indexItems();
+    indexHub();
     measure();
     var saved = null;
     try { saved = localStorage.getItem(UI_KEY); } catch (e) { saved = null; }
     setView(saved === 'chat' ? 'chat' : 'orb', false);
     bind();
     applyProjection(0, 0);
+    /* v14：按右栏容器重算小球尺寸，并监听尺寸变化 */
+    requestAnimationFrame(function () { relayout(); });
+    if (window.ResizeObserver && $('#orbPane')) {
+      var _ro = new ResizeObserver(function () { relayout(); });
+      _ro.observe($('#orbPane'));
+    }
     /* 只读验收钩子：供无头浏览器直接指定角度、读取状态 */
     window.__orbApply = function (ry, rx) {
       cur.ry = ry; cur.rx = rx; target.ry = ry; target.rx = rx;

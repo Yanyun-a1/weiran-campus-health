@@ -1,0 +1,119 @@
+/* ============================================================
+   v28 · 桌面主文案 / 手机顶部说明 / 手机三个大球下标签
+   最后加载：只新增本轮选择器，既有 23 个文件一字未改
+   （校验见 E:/gzkj/v28-baseline.sha256）。
+   棱镜类 CSS 定义保留在 v26.css / v27.css 以便日后恢复，本轮只从 DOM 移除元素。
+   小球投影公式、分裂动画、玻璃质感、拖动交互、30 问答、医生预约均不碰。
+   ============================================================ */
+
+/* ---------- 一、桌面端（≥1024px）主文案 ---------- */
+.hero-slogan-wrap {
+  position: absolute;
+  left: 0;
+  right: 0;
+  /* top / height 由 v28.js 实测「顶栏底部 → 球舞台圆顶」后写入变量，
+     再用 flex 在空隙正中垂直居中，不写死像素。 */
+  top: var(--hero-top, 0px);
+  height: var(--hero-gap, 0px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 6;
+  pointer-events: none;
+}
+.hero-slogan {
+  display: block;
+  flex: none;                       /* 不被 flex 压缩，scrollWidth 才是真实文字宽 */
+  white-space: nowrap;
+  text-align: center;
+  font-size: 40px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  background: linear-gradient(
+    95deg,
+    #2C6EA0 0%,
+    #257F9C 45%,
+    #1A847E 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  /* 硬约束：不加柔光滤镜、不加背景位流动动画、不引入紫色相 */
+}
+/* 不支持 background-clip:text 时降级纯色，避免透明填充把文字吞掉 */
+@supports not (-webkit-background-clip: text) {
+  .hero-slogan {
+    color: #2C6EA0;
+    -webkit-text-fill-color: #2C6EA0;
+  }
+}
+/* 窗口 <1200px 且已降到 16px 下限仍放不下：切纯色，保持单行不换行 */
+.hero-slogan.is-solid {
+  background: none;
+  color: #2C6EA0;
+  -webkit-text-fill-color: #2C6EA0;
+}
+@media (max-width: 1023px) {
+  .hero-slogan-wrap { display: none !important; }
+}
+
+/* ---------- 二、手机端（≤1023px）顶部功能说明 ---------- */
+/* 放在 .prism-mobile-wrap 内部、绝对定位在它下方 10px；
+   绝对定位不增加父元素 offsetHeight，因此不参与 v27.js 的球舞台定位计算，
+   并随父元素的避让 / 抽屉展开 opacity + visibility 一起显隐。 */
+.prism-m-sub { display: none; }
+@media (max-width: 1023px) {
+  .prism-m-sub {
+    display: block;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    text-align: center;
+    font-size: 12px;
+    font-weight: 400;
+    color: rgba(60, 80, 90, .50);
+    letter-spacing: 0.02em;
+    line-height: 1.4;
+    pointer-events: none;
+  }
+}
+
+/* ---------- 三、手机端（≤1023px）三个大球下标签 ---------- */
+/* 标签与球同在 .orb-stage（球层容器）里，由 orb-view.js 的 applyProjection
+   每帧写入与大球相同的投影位移；transform 只做 translate3d，不套用球的
+   --sc 缩放，也没有任何旋转，因此拖动时逐帧跟随、字号恒定。 */
+.orb-tag {
+  --tag-comp: 1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: -1;                      /* 低于球：球由 JS 写 z-index 0~100 */
+  transform: translate3d(var(--tag-px, 0px), var(--tag-py, 0px), 0)
+             translateX(-50%)
+             translateY(calc(6px * var(--tag-comp)));
+  transform-origin: center center;
+  font-size: calc(11px * var(--tag-comp));
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  line-height: 1.4;
+  white-space: nowrap;
+  text-align: center;
+  color: rgba(60, 80, 90, .45);
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+/* 桌面端不显示 */
+@media (min-width: 1024px) {
+  .orb-tag { display: none !important; }
+}
+/* 进入中球层 / 详情层：大球隐藏时标签跟着隐藏 */
+.orb-stage.is-sub .orb-tag,
+.page.orb-split .orb-tag { opacity: 0; visibility: hidden; }
+/* 抽屉展开时 .pane-orb 整体 scale(.42)，对字号与 6px 间距反向补偿，
+   标签视觉仍是 11px / 6px，且继续跟着缩小后的球移动。 */
+.pane-orb.orb-shrunk .orb-tag { --tag-comp: 2.381; }

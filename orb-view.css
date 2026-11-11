@@ -106,11 +106,12 @@
   --R: 250px;
   --d: 150px;
   --px: 0px; --py: 0px; --sc: 1;
+  --cv: 1;                      /* 汇聚动画用的额外缩放倍率（默认 1，不改动投影 transform） */
   --txt-op: 1;
   position: absolute; left: 50%; top: 50%;
   width: var(--d); height: var(--d);
   margin-left: calc(var(--d) / -2); margin-top: calc(var(--d) / -2);
-  transform: translate3d(var(--px), var(--py), 0) scale(var(--sc));
+  transform: translate3d(var(--px), var(--py), 0) scale(calc(var(--sc) * var(--cv)));
   transform-origin: center center;
   will-change: transform;
   /* 静止态不设过渡：进入 / 返回的 transition 由 orb-view.js 内联逐阶段下发，
@@ -173,7 +174,7 @@
 
 /* 左上角半透明圆形返回按钮（中球层） */
 .orb-back {
-  position: absolute; top: 14px; left: 14px; z-index: 6;
+  position: absolute; top: 16px; left: 24px; z-index: 5;
   width: 44px; height: 44px; border-radius: 50%;
   border: 1px solid rgba(42, 167, 155, .42);
   background: rgba(255, 255, 255, .2);
@@ -184,6 +185,51 @@
   display: grid; place-items: center;
 }
 .orb-back:hover { background: rgba(255, 255, 255, .38); }
+
+/* ===== v18：中心「校医院」球 + 三条虚线（目的地节点，不参与 3D 绕行） =====
+ * 中心球与连线是 #orbStage 的兄弟节点（同处 #orbScene 坐标系，圆心＝舞台中心），
+ * 不会被 buildStage 的 innerHTML 重置；连线 z-index:0 落在球层容器(.orb-stage,z1)之下，
+ * 中心球 z-index:2 浮在球层之上。进入中球层(.page.orb-split)时整体淡出。 */
+.orb-link-svg {
+  position: absolute; left: 50%; top: 50%; width: 1px; height: 1px;
+  margin-left: -.5px; margin-top: -.5px;
+  overflow: visible; z-index: 0; pointer-events: none;
+  transition: opacity .3s ease;
+}
+.orb-link {
+  fill: none;
+  stroke: rgba(42, 167, 155, .20);
+  stroke-width: 1;
+  stroke-dasharray: 4 6;
+  animation: orbFlow 2.5s linear infinite;
+}
+.link-food { animation-delay: 0s; }
+.link-sleep { animation-delay: -.3s; }
+.link-sport { animation-delay: -.6s; }
+@keyframes orbFlow { from { stroke-dashoffset: 0; } to { stroke-dashoffset: -20; } }
+
+.orb-center {
+  position: absolute; left: 50%; top: 50%; z-index: 2;
+  --cv: 1;
+  width: 110px; height: 110px;
+  transform: translate(-50%, -50%) scale(var(--cv));
+  transform-origin: center center;
+  border-radius: 50%;
+  border: 2px solid rgba(42, 167, 155, .35);
+  background: radial-gradient(circle at 32% 26%, #FFFFFF, #F0F4F3 55%, #DDE6E4);
+  box-shadow: inset 0 0 20px rgba(42, 167, 155, .08), 0 10px 30px rgba(0, 0, 0, .10);
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
+  cursor: pointer; pointer-events: auto;
+  transition: opacity .3s ease;
+}
+.orb-center:active { filter: brightness(.97); }
+.orb-center .oc-cross { width: 16px; height: 16px; display: block; }
+.orb-center .oc-label { font-size: 15px; font-weight: 600; color: #2C3A38; line-height: 1; }
+
+/* 进入中球层 / 详情层（.page.orb-split）时，中心球与连线淡出，不干扰分裂动画 */
+.page.orb-split .orb-center,
+.page.orb-split .orb-link-svg { opacity: 0; pointer-events: none; }
+
 
 .orb-hint { margin: 10px 0 0; text-align: center; font-size: 11.5px; color: var(--muted); }
 
@@ -258,6 +304,18 @@
 }
 .orb-detail-card p { margin: 0; font-size: 14px; color: var(--ink-2); line-height: 1.8; }
 .orb-detail-foot { padding: 16px 22px 22px; border-top: 1px solid var(--line); }
+
+/* ===== v14 大球高亮 / v25 中球引导高亮（联动；叠加在玻璃质感之上，不改动五层配方 / 投影公式） =====
+ * 仅对 .orb-skin 做瞬时 scale 脉冲 + 同色光晕，动画结束自动复位，不影响投影 transform。 */
+.orb-item.is-hot .orb-skin {
+  animation: orbHot 600ms var(--orb-ease);
+}
+@keyframes orbHot {
+  /* v25：起止帧显式给零扩散阴影，让 600ms 内光晕连续扩散 / 收回，避免中途突现 */
+  0%   { transform: scale(1); box-shadow: 0 0 0 0 var(--c-main); }
+  50%  { transform: scale(1.15); box-shadow: 0 0 34px 10px var(--c-main); }
+  100% { transform: scale(1); box-shadow: 0 0 0 0 var(--c-main); }
+}
 .orb-detail-return {
   width: 100%; border: 0; border-radius: 11px; padding: 12px;
   background: var(--blue); color: #fff; font-size: 14px; font-weight: 700;
@@ -278,7 +336,10 @@
   .orb-item { --R: 140px; --d: 104px; }
   .orb-minor { --R: 96px; --d: 140px; }
   .orb-text { font-size: 15px; }
-  .orb-back { top: 10px; left: 10px; }
+  /* 手机端：中心球缩小到 84px / 13px，并隐藏三条虚线（连线在桌面才有） */
+  .orb-center { width: 84px; height: 84px; }
+  .orb-center .oc-label { font-size: 13px; }
+  .orb-link-svg { display: none; }
   .orb-hint { font-size: 11px; padding: 0 8px; }
   .orb-detail { width: 100%; }
   .orb-detail-head { padding: 15px 16px; }

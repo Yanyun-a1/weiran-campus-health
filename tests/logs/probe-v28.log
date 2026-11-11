@@ -1,0 +1,638 @@
+
+=== DESKTOP 1440x1000 ===
+{
+ "text": "持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然",
+ "fontSize": "22px",
+ "ratio": 0.9315,
+ "textW": 987,
+ "boxW": 1060,
+ "need40": 987,
+ "solid": false,
+ "solidColor": "rgba(0, 0, 0, 0)",
+ "bg": "linear-gradient(95deg, rgb(44, 110, 160) 0%, rgb(37, 127, 156) 45%, rgb(26, 132, 126) 100%)",
+ "filter": "none",
+ "anim": "none",
+ "bgPos": "0% 0%",
+ "wrapTop": 64,
+ "wrapH": 108,
+ "wrapDisplay": "flex",
+ "textTop": 104,
+ "textBottom": 132,
+ "textCy": 118,
+ "gapCy": 118,
+ "barBottom": 64,
+ "shellTop": 172,
+ "paneLeft": 380,
+ "paneW": 1060,
+ "centerOffset": 0,
+ "prismNodes": 0,
+ "heroVars": {
+  "top": "0.0px",
+  "gap": "108.0px"
+ },
+ "tagDisplay": "none",
+ "subDisplay": "none"
+}
+
+=== DESKTOP 1920x1080 ===
+{
+ "text": "持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然",
+ "fontSize": "32px",
+ "ratio": 0.9326,
+ "textW": 1436,
+ "boxW": 1540,
+ "need40": 1436,
+ "solid": false,
+ "solidColor": "rgba(0, 0, 0, 0)",
+ "bg": "linear-gradient(95deg, rgb(44, 110, 160) 0%, rgb(37, 127, 156) 45%, rgb(26, 132, 126) 100%)",
+ "filter": "none",
+ "anim": "none",
+ "bgPos": "0% 0%",
+ "wrapTop": 64,
+ "wrapH": 148,
+ "wrapDisplay": "flex",
+ "textTop": 117,
+ "textBottom": 159,
+ "textCy": 138,
+ "gapCy": 138,
+ "barBottom": 64,
+ "shellTop": 212,
+ "paneLeft": 380,
+ "paneW": 1540,
+ "centerOffset": 0,
+ "prismNodes": 0,
+ "heroVars": {
+  "top": "0.0px",
+  "gap": "148.0px"
+ },
+ "tagDisplay": "none",
+ "subDisplay": "none"
+}
+
+=== DESKTOP 1200x900 ===
+{
+ "text": "持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然",
+ "fontSize": "17px",
+ "ratio": 0.9304,
+ "textW": 763,
+ "boxW": 820,
+ "need40": 763,
+ "solid": false,
+ "solidColor": "rgba(0, 0, 0, 0)",
+ "bg": "linear-gradient(95deg, rgb(44, 110, 160) 0%, rgb(37, 127, 156) 45%, rgb(26, 132, 126) 100%)",
+ "filter": "none",
+ "anim": "none",
+ "bgPos": "0% 0%",
+ "wrapTop": 64,
+ "wrapH": 92,
+ "wrapDisplay": "flex",
+ "textTop": 99,
+ "textBottom": 121,
+ "textCy": 110,
+ "gapCy": 110,
+ "barBottom": 64,
+ "shellTop": 156,
+ "paneLeft": 380,
+ "paneW": 820,
+ "centerOffset": 0,
+ "prismNodes": 0,
+ "heroVars": {
+  "top": "0.0px",
+  "gap": "92.0px"
+ },
+ "tagDisplay": "none",
+ "subDisplay": "none"
+}
+
+=== DESKTOP 1024x800 ===
+{
+ "text": "持续关注自身状态，提前关注健康变化，及时识别潜在健康风险，科学做好预防与养护，防患于未然",
+ "fontSize": "16px",
+ "ratio": 1.1151,
+ "textW": 718,
+ "boxW": 644,
+ "need40": 718,
+ "solid": true,
+ "solidColor": "rgb(44, 110, 160)",
+ "bg": "none",
+ "filter": "none",
+ "anim": "none",
+ "bgPos": "0% 0%",
+ "wrapTop": 64,
+ "wrapH": 83,
+ "wrapDisplay": "flex",
+ "textTop": 95,
+ "textBottom": 116,
+ "textCy": 105,
+ "gapCy": 105,
+ "barBottom": 64,
+ "shellTop": 147,
+ "paneLeft": 380,
+ "paneW": 644,
+ "centerOffset": 0,
+ "prismNodes": 0,
+ "heroVars": {
+  "top": "0.0px",
+  "gap": "83.0px"
+ },
+ "tagDisplay": "none",
+ "subDisplay": "none"
+}
+
+=== MOBILE 390x844 ===
+{
+ "sub": {
+  "txt": "校园健康助手 · 点球看数据，上拉聊天",
+  "display": "block",
+  "fs": "12px",
+  "weight": "400",
+  "color": "rgba(60, 80, 90, 0.5)",
+  "ls": "0.24px",
+  "top": 154,
+  "bottom": 171,
+  "l": 92,
+  "r": 298,
+  "gapToTitle": 10
+ },
+ "wrap": {
+  "top": 116,
+  "bottom": 144,
+  "h": 28,
+  "display": "flex",
+  "opacity": "1",
+  "vis": "visible"
+ },
+ "title": "防患于未然",
+ "titleFs": "20px",
+ "barBottom": 56,
+ "shellTop": 227,
+ "handleTop": 792,
+ "tags": [
+  {
+   "txt": "饮食",
+   "tag": "food",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "0.00px",
+   "py": "-58.92px",
+   "rect": {
+    "l": 183,
+    "r": 207,
+    "t": 369,
+    "b": 384,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "作息",
+   "tag": "sleep",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "87.48px",
+   "py": "91.85px",
+   "rect": {
+    "l": 271,
+    "r": 294,
+    "t": 520,
+    "b": 535,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "运动",
+   "tag": "sport",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "-87.48px",
+   "py": "91.85px",
+   "rect": {
+    "l": 96,
+    "r": 119,
+    "t": 520,
+    "b": 535,
+    "w": 23,
+    "h": 15
+   }
+  }
+ ],
+ "balls": [
+  {
+   "id": "food",
+   "z": "83",
+   "rect": {
+    "l": 151,
+    "r": 239,
+    "t": 275,
+    "b": 363
+   }
+  },
+  {
+   "id": "sleep",
+   "z": "85",
+   "rect": {
+    "l": 238,
+    "r": 327,
+    "t": 425,
+    "b": 514
+   }
+  },
+  {
+   "id": "sport",
+   "z": "85",
+   "rect": {
+    "l": 63,
+    "r": 152,
+    "t": 425,
+    "b": 514
+   }
+  }
+ ],
+ "heroDisplay": "none",
+ "scrollW": 390,
+ "iw": 390
+}
+
+=== MOBILE 320x568 ===
+{
+ "sub": {
+  "txt": "校园健康助手 · 点球看数据，上拉聊天",
+  "display": "block",
+  "fs": "12px",
+  "weight": "400",
+  "color": "rgba(60, 80, 90, 0.5)",
+  "ls": "0.24px",
+  "top": 114,
+  "bottom": 131,
+  "l": 57,
+  "r": 263,
+  "gapToTitle": 10
+ },
+ "wrap": {
+  "top": 76,
+  "bottom": 104,
+  "h": 28,
+  "display": "flex",
+  "opacity": "1",
+  "vis": "visible"
+ },
+ "title": "防患于未然",
+ "titleFs": "20px",
+ "barBottom": 56,
+ "shellTop": 124,
+ "handleTop": 516,
+ "tags": [
+  {
+   "txt": "饮食",
+   "tag": "food",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "0.00px",
+   "py": "-47.68px",
+   "rect": {
+    "l": 148,
+    "r": 172,
+    "t": 242,
+    "b": 258,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "作息",
+   "tag": "sleep",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "70.75px",
+   "py": "74.28px",
+   "rect": {
+    "l": 219,
+    "r": 242,
+    "t": 364,
+    "b": 380,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "运动",
+   "tag": "sport",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "-70.75px",
+   "py": "74.28px",
+   "rect": {
+    "l": 78,
+    "r": 101,
+    "t": 364,
+    "b": 380,
+    "w": 23,
+    "h": 15
+   }
+  }
+ ],
+ "balls": [
+  {
+   "id": "food",
+   "z": "83",
+   "rect": {
+    "l": 124,
+    "r": 196,
+    "t": 165,
+    "b": 236
+   }
+  },
+  {
+   "id": "sleep",
+   "z": "85",
+   "rect": {
+    "l": 195,
+    "r": 267,
+    "t": 287,
+    "b": 358
+   }
+  },
+  {
+   "id": "sport",
+   "z": "85",
+   "rect": {
+    "l": 53,
+    "r": 125,
+    "t": 287,
+    "b": 358
+   }
+  }
+ ],
+ "heroDisplay": "none",
+ "scrollW": 320,
+ "iw": 320
+}
+
+=== MOBILE 820x1180 ===
+{
+ "sub": {
+  "txt": "校园健康助手 · 点球看数据，上拉聊天",
+  "display": "block",
+  "fs": "12px",
+  "weight": "400",
+  "color": "rgba(60, 80, 90, 0.5)",
+  "ls": "0.24px",
+  "top": 160,
+  "bottom": 177,
+  "l": 307,
+  "r": 513,
+  "gapToTitle": 10
+ },
+ "wrap": {
+  "top": 122,
+  "bottom": 150,
+  "h": 28,
+  "display": "flex",
+  "opacity": "1",
+  "vis": "visible"
+ },
+ "title": "防患于未然",
+ "titleFs": "20px",
+ "barBottom": 62,
+ "shellTop": 254,
+ "handleTop": 1128,
+ "tags": [
+  {
+   "txt": "饮食",
+   "tag": "food",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "0.00px",
+   "py": "-107.62px",
+   "rect": {
+    "l": 398,
+    "r": 422,
+    "t": 488,
+    "b": 504,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "作息",
+   "tag": "sleep",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "160.21px",
+   "py": "168.22px",
+   "rect": {
+    "l": 559,
+    "r": 582,
+    "t": 764,
+    "b": 780,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "运动",
+   "tag": "sport",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "-160.21px",
+   "py": "168.22px",
+   "rect": {
+    "l": 238,
+    "r": 261,
+    "t": 764,
+    "b": 780,
+    "w": 23,
+    "h": 15
+   }
+  }
+ ],
+ "balls": [
+  {
+   "id": "food",
+   "z": "83",
+   "rect": {
+    "l": 329,
+    "r": 491,
+    "t": 321,
+    "b": 482
+   }
+  },
+  {
+   "id": "sleep",
+   "z": "85",
+   "rect": {
+    "l": 489,
+    "r": 651,
+    "t": 596,
+    "b": 758
+   }
+  },
+  {
+   "id": "sport",
+   "z": "85",
+   "rect": {
+    "l": 169,
+    "r": 331,
+    "t": 596,
+    "b": 758
+   }
+  }
+ ],
+ "heroDisplay": "none",
+ "scrollW": 820,
+ "iw": 820
+}
+
+=== MOBILE 1023x768 ===
+{
+ "sub": {
+  "txt": "校园健康助手 · 点球看数据，上拉聊天",
+  "display": "block",
+  "fs": "12px",
+  "weight": "400",
+  "color": "rgba(60, 80, 90, 0.5)",
+  "ls": "0.24px",
+  "top": 160,
+  "bottom": 177,
+  "l": 408,
+  "r": 615,
+  "gapToTitle": 10
+ },
+ "wrap": {
+  "top": 122,
+  "bottom": 150,
+  "h": 28,
+  "display": "flex",
+  "opacity": "0",
+  "vis": "hidden"
+ },
+ "title": "防患于未然",
+ "titleFs": "20px",
+ "barBottom": 62,
+ "shellTop": 85,
+ "handleTop": 716,
+ "tags": [
+  {
+   "txt": "饮食",
+   "tag": "food",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "0.00px",
+   "py": "-94.43px",
+   "rect": {
+    "l": 500,
+    "r": 523,
+    "t": 296,
+    "b": 311,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "作息",
+   "tag": "sleep",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "140.47px",
+   "py": "147.49px",
+   "rect": {
+    "l": 640,
+    "r": 664,
+    "t": 537,
+    "b": 553,
+    "w": 23,
+    "h": 15
+   }
+  },
+  {
+   "txt": "运动",
+   "tag": "sport",
+   "display": "block",
+   "z": "-1",
+   "fs": "11px",
+   "color": "rgba(60, 80, 90, 0.45)",
+   "ls": "0.66px",
+   "px": "-140.47px",
+   "py": "147.49px",
+   "rect": {
+    "l": 359,
+    "r": 383,
+    "t": 537,
+    "b": 553,
+    "w": 23,
+    "h": 15
+   }
+  }
+ ],
+ "balls": [
+  {
+   "id": "food",
+   "z": "83",
+   "rect": {
+    "l": 441,
+    "r": 582,
+    "t": 148,
+    "b": 290
+   }
+  },
+  {
+   "id": "sleep",
+   "z": "85",
+   "rect": {
+    "l": 581,
+    "r": 723,
+    "t": 389,
+    "b": 531
+   }
+  },
+  {
+   "id": "sport",
+   "z": "85",
+   "rect": {
+    "l": 300,
+    "r": 442,
+    "t": 389,
+    "b": 531
+   }
+  }
+ ],
+ "heroDisplay": "none",
+ "scrollW": 1023,
+ "iw": 1023
+}
+
+JS ERRORS: []

@@ -157,7 +157,7 @@
           : d.kind === 'gym'      ? answerGym(text, identity)
           :                        answerExercise(text, identity);
 
-    return '<div class="intent-badge data">📊 智能问数 · ' + KIND_LABEL[d.kind] + '</div>' +
+    return '<div class="intent-badge data">📊 健康数据 · ' + KIND_LABEL[d.kind] + '</div>' +
       '<div class="data-head">' +
         '<div class="data-lead">' + esc(r.lead) + '</div>' +
         '<div class="data-context">当前身份：' + esc(identity.label) +
